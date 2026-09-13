@@ -1,0 +1,12 @@
+import { defineConfig, minimal2023Preset } from '@vite-pwa/assets-generator/config';
+
+// `npm run icons` → generates PWA + apple-touch icons in public/ from favicon.svg
+export default defineConfig({
+  headLinkOptions: { preset: '2023' },
+  preset: {
+    ...minimal2023Preset,
+    maskable: { ...minimal2023Preset.maskable, resizeOptions: { background: '#15803d' } },
+    apple: { ...minimal2023Preset.apple, resizeOptions: { background: '#15803d' } },
+  },
+  images: ['public/favicon.svg'],
+});

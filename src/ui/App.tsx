@@ -1,0 +1,94 @@
+import { BookOpen, CalendarDays, House, Refrigerator, ShoppingCart } from 'lucide-react';
+import { HashRouter, NavLink, Route, Routes, useLocation } from 'react-router';
+import { useRegisterSW } from 'virtual:pwa-register/react';
+import { AppDataProvider } from './data';
+import { CookMode } from './screens/CookMode';
+import { Home } from './screens/Home';
+import { Pantry } from './screens/Pantry';
+import { PantryItem } from './screens/PantryItem';
+import { Plan } from './screens/Plan';
+import { RecipeDetail } from './screens/RecipeDetail';
+import { RecipeEditor } from './screens/RecipeEditor';
+import { Recipes } from './screens/Recipes';
+import { SettingsScreen } from './screens/Settings';
+import { Shopping } from './screens/Shopping';
+import { ToastProvider } from './toast';
+
+const TABS = [
+  { to: '/', label: 'Today', icon: House },
+  { to: '/recipes', label: 'Recipes', icon: BookOpen },
+  { to: '/plan', label: 'Plan', icon: CalendarDays },
+  { to: '/shop', label: 'Shop', icon: ShoppingCart },
+  { to: '/pantry', label: 'Pantry', icon: Refrigerator },
+];
+
+function TabBar() {
+  const { pathname } = useLocation();
+  if (/\/(cook|edit|new|import)$/.test(pathname)) return null;
+  return (
+    <nav className="pb-safe fixed inset-x-0 bottom-0 z-30 border-t border-stone-200 bg-white/90 backdrop-blur">
+      <div className="mx-auto grid max-w-xl grid-cols-5">
+        {TABS.map((t) => (
+          <NavLink
+            key={t.to}
+            to={t.to}
+            end={t.to === '/'}
+            className={({ isActive }) =>
+              `flex flex-col items-center gap-0.5 pt-2 pb-1.5 text-[11px] font-medium ${isActive ? 'text-brand' : 'text-stone-500'}`
+            }
+          >
+            <t.icon size={23} strokeWidth={2} />
+            {t.label}
+          </NavLink>
+        ))}
+      </div>
+    </nav>
+  );
+}
+
+function UpdateBanner() {
+  const {
+    needRefresh: [needRefresh, setNeedRefresh],
+    updateServiceWorker,
+  } = useRegisterSW();
+  if (!needRefresh) return null;
+  return (
+    <div className="pt-safe fixed inset-x-0 top-0 z-[70] flex justify-center px-4">
+      <div className="mt-2 flex items-center gap-3 rounded-2xl bg-stone-900 px-4 py-3 text-sm text-white shadow-lg">
+        <span>A new version is ready.</span>
+        <button className="font-semibold text-green-300" onClick={() => void updateServiceWorker(true)}>Update</button>
+        <button className="text-stone-400" onClick={() => setNeedRefresh(false)}>Later</button>
+      </div>
+    </div>
+  );
+}
+
+export function App() {
+  return (
+    <HashRouter>
+      <AppDataProvider>
+        <ToastProvider>
+          <main className="mx-auto min-h-dvh max-w-xl pb-[calc(env(safe-area-inset-bottom)+5rem)]">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/recipes" element={<Recipes />} />
+              <Route path="/recipes/new" element={<RecipeEditor />} />
+              <Route path="/recipes/import" element={<RecipeEditor importMode />} />
+              <Route path="/recipes/:id" element={<RecipeDetail />} />
+              <Route path="/recipes/:id/edit" element={<RecipeEditor />} />
+              <Route path="/recipes/:id/cook" element={<CookMode />} />
+              <Route path="/plan" element={<Plan />} />
+              <Route path="/shop" element={<Shopping />} />
+              <Route path="/pantry" element={<Pantry />} />
+              <Route path="/pantry/:id" element={<PantryItem />} />
+              <Route path="/settings" element={<SettingsScreen />} />
+              <Route path="*" element={<Home />} />
+            </Routes>
+          </main>
+          <TabBar />
+          <UpdateBanner />
+        </ToastProvider>
+      </AppDataProvider>
+    </HashRouter>
+  );
+}
