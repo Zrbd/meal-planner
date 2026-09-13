@@ -1,6 +1,7 @@
 // Built-in ingredient catalog. Quantities in each ingredient's baseUnit.
 // density = g per ml, gramsPerEach = weight of one item. Packages = common US store sizes.
 import type { AisleId, Ingredient, Location } from '../domain/types';
+import { withStorage } from './storage';
 
 const oz = (n: number) => Math.round(n * 28.3495 * 10) / 10;
 const lb = (n: number) => Math.round(n * 453.592 * 10) / 10;
@@ -43,7 +44,7 @@ const looseLiquid = (id: string, name: string, aisle: AisleId, density: number, 
 const can = (id: string, name: string, grams: number, o: Opts = {}) =>
   I(id, name, 'canned', 'ea', { gramsPerEach: grams, unitAliases: { can: 1 }, displayUnit: 'can', shelfLife: { pantry: 730 }, ...o });
 
-export const INGREDIENTS: Ingredient[] = [
+const CATALOG: Ingredient[] = [
   // ---------- Produce ----------
   I('yellow-onion', 'Yellow onion', 'produce', 'ea', { aliases: ['onion', 'white onion', 'brown onion', 'sweet onion'], gramsPerEach: 150, density: 0.68, defaultLocation: 'pantry', shelfLife: { pantry: 30 } }),
   I('red-onion', 'Red onion', 'produce', 'ea', { aliases: ['purple onion'], gramsPerEach: 150, density: 0.68, defaultLocation: 'pantry', shelfLife: { pantry: 30 } }),
@@ -54,7 +55,7 @@ export const INGREDIENTS: Ingredient[] = [
   I('carrot', 'Carrots', 'produce', 'ea', { aliases: ['carrot'], gramsPerEach: 70, density: 0.54, packages: [{ label: '1 lb bag', qty: 6 }], shelfLife: { fridge: 28 } }),
   I('celery', 'Celery', 'produce', 'ea', { aliases: ['celery stalks', 'celery ribs'], gramsPerEach: 40, density: 0.43, unitAliases: { stalk: 1, rib: 1 }, displayUnit: 'stalk', packages: [{ label: 'bunch', qty: 9 }], shelfLife: { fridge: 21 } }),
   I('bell-pepper', 'Bell pepper', 'produce', 'ea', { aliases: ['red bell pepper', 'green bell pepper', 'yellow bell pepper', 'orange bell pepper', 'bell peppers'], gramsPerEach: 160, density: 0.63, shelfLife: { fridge: 10 } }),
-  I('jalapeno', 'Jalapeño', 'produce', 'ea', { aliases: ['jalapeno pepper', 'jalapeño pepper'], gramsPerEach: 20, shelfLife: { fridge: 10 } }),
+  I('jalapeno', 'Jalapeño', 'produce', 'ea', { aliases: ['jalapeno pepper', 'jalapeño pepper'], gramsPerEach: 20, density: 0.6, shelfLife: { fridge: 10 } }),
   I('broccoli', 'Broccoli', 'produce', 'g', { aliases: ['broccoli florets', 'broccoli crowns'], density: 0.38, unitAliases: { crown: 340, head: 450 }, packages: [{ label: 'crown (~12 oz)', qty: 340 }], shelfLife: { fridge: 7 } }),
   I('asparagus', 'Asparagus', 'produce', 'g', { density: 0.57, unitAliases: { bunch: 450 }, packages: [{ label: 'bunch (~1 lb)', qty: 450 }], shelfLife: { fridge: 5 } }),
   I('green-beans', 'Green beans', 'produce', 'g', { aliases: ['string beans', 'haricots verts'], density: 0.46, packages: [{ label: '12 oz bag', qty: oz(12) }, { label: '1 lb bag', qty: lb(1) }], shelfLife: { fridge: 7 } }),
@@ -66,29 +67,49 @@ export const INGREDIENTS: Ingredient[] = [
   I('tomato', 'Tomatoes', 'produce', 'ea', { aliases: ['tomato', 'roma tomatoes', 'roma tomato'], gramsPerEach: 180, density: 0.76, defaultLocation: 'pantry', shelfLife: { pantry: 5, fridge: 10 } }),
   I('cucumber', 'Cucumber', 'produce', 'ea', { aliases: ['english cucumber'], gramsPerEach: 300, density: 0.56, shelfLife: { fridge: 7 } }),
   I('avocado', 'Avocado', 'produce', 'ea', { aliases: ['avocados'], gramsPerEach: 170, defaultLocation: 'pantry', shelfLife: { pantry: 4, fridge: 7 } }),
-  I('lemon', 'Lemons', 'produce', 'ea', { aliases: ['lemon', 'lemon juice'], gramsPerEach: 100, shelfLife: { fridge: 21 } }),
-  I('lime', 'Limes', 'produce', 'ea', { aliases: ['lime', 'lime juice'], gramsPerEach: 67, shelfLife: { fridge: 21 } }),
+  I('lemon', 'Lemons', 'produce', 'ea', { aliases: ['lemon', 'lemon juice'], gramsPerEach: 100, density: 2.2, shelfLife: { fridge: 21 } }), // density lets "1 tbsp lemon juice" → fraction of a lemon (~45 ml juice each)
+  I('lime', 'Limes', 'produce', 'ea', { aliases: ['lime', 'lime juice'], gramsPerEach: 67, density: 2.2, shelfLife: { fridge: 21 } }), // ~30 ml juice each
   I('cilantro', 'Cilantro', 'produce', 'g', { aliases: ['fresh cilantro', 'coriander leaves'], density: 0.07, unitAliases: { bunch: 60 }, packages: [{ label: 'bunch', qty: 60 }], shelfLife: { fridge: 7 } }),
   I('parsley', 'Parsley', 'produce', 'g', { aliases: ['fresh parsley', 'flat-leaf parsley', 'italian parsley'], density: 0.064, unitAliases: { bunch: 60 }, packages: [{ label: 'bunch', qty: 60 }], shelfLife: { fridge: 7 } }),
-  I('basil', 'Fresh basil', 'produce', 'g', { aliases: ['basil', 'basil leaves'], density: 0.09, unitAliases: { bunch: 30 }, packages: [{ label: '0.75 oz pack', qty: 21 }], shelfLife: { fridge: 5 } }),
+  I('basil', 'Fresh basil', 'produce', 'g', { aliases: ['basil', 'basil leaves'], density: 0.09, unitAliases: { bunch: 30, leaf: 0.5, leaves: 0.5 }, packages: [{ label: '0.75 oz pack', qty: 21 }], shelfLife: { fridge: 5 } }),
   I('potato', 'Potatoes', 'produce', 'g', { aliases: ['potato', 'yukon gold potatoes', 'baby potatoes', 'russet potatoes', 'red potatoes'], gramsPerEach: 200, density: 0.64, packages: [{ label: '3 lb bag', qty: lb(3) }, { label: '5 lb bag', qty: lb(5) }], defaultLocation: 'pantry', shelfLife: { pantry: 30 } }),
   I('sweet-potato', 'Sweet potatoes', 'produce', 'g', { aliases: ['sweet potato', 'yams'], gramsPerEach: 250, density: 0.56, defaultLocation: 'pantry', shelfLife: { pantry: 21 } }),
   I('apple', 'Apples', 'produce', 'ea', { aliases: ['apple', 'honeycrisp apple', 'granny smith apple'], gramsPerEach: 180, shelfLife: { fridge: 30 } }),
   I('banana', 'Bananas', 'produce', 'ea', { aliases: ['banana'], gramsPerEach: 120, defaultLocation: 'pantry', shelfLife: { pantry: 5 } }),
-  I('orange', 'Oranges', 'produce', 'ea', { aliases: ['orange'], gramsPerEach: 140, shelfLife: { fridge: 21 } }),
+  I('orange', 'Oranges', 'produce', 'ea', { aliases: ['orange'], gramsPerEach: 140, density: 1.75, shelfLife: { fridge: 21 } }), // ~80 ml juice each
   I('strawberries', 'Strawberries', 'produce', 'g', { aliases: ['strawberry'], density: 0.6, packages: [{ label: '1 lb clamshell', qty: lb(1) }], shelfLife: { fridge: 5 } }),
   I('blueberries', 'Blueberries', 'produce', 'g', { aliases: ['blueberry'], density: 0.62, packages: [{ label: '6 oz container', qty: oz(6) }], shelfLife: { fridge: 7 } }),
+  I('poblano', 'Poblano pepper', 'produce', 'ea', { aliases: ['poblano peppers', 'poblano'], gramsPerEach: 120, shelfLife: { fridge: 10 } }),
+  I('cabbage', 'Green cabbage', 'produce', 'g', { aliases: ['cabbage', 'coleslaw mix', 'shredded cabbage', 'red cabbage', 'napa cabbage'], density: 0.3, unitAliases: { head: 900 }, packages: [{ label: 'small head (~2 lb)', qty: lb(2) }, { label: '14 oz coleslaw mix', qty: oz(14) }], shelfLife: { fridge: 21 } }),
+  I('kale', 'Kale', 'produce', 'g', { aliases: ['lacinato kale', 'curly kale', 'tuscan kale'], density: 0.09, unitAliases: { bunch: 250 }, packages: [{ label: 'bunch', qty: 250 }], shelfLife: { fridge: 7 } }),
+  I('cauliflower', 'Cauliflower', 'produce', 'g', { aliases: ['cauliflower florets'], density: 0.42, unitAliases: { head: 800 }, packages: [{ label: 'head (~1.75 lb)', qty: 800 }], shelfLife: { fridge: 10 } }),
+  I('leek', 'Leeks', 'produce', 'ea', { aliases: ['leek'], gramsPerEach: 250, density: 0.37, shelfLife: { fridge: 14 } }),
+  I('bean-sprouts', 'Bean sprouts', 'produce', 'g', { aliases: ['mung bean sprouts'], density: 0.44, packages: [{ label: '12 oz bag', qty: oz(12) }], shelfLife: { fridge: 3 } }),
+  I('snow-peas', 'Snow peas', 'produce', 'g', { aliases: ['snap peas', 'sugar snap peas', 'snow pea'], density: 0.4, packages: [{ label: '8 oz bag', qty: oz(8) }], shelfLife: { fridge: 5 } }),
+  I('fresh-dill', 'Fresh dill', 'produce', 'g', { aliases: ['dill'], density: 0.06, unitAliases: { bunch: 30 }, packages: [{ label: 'bunch', qty: 30 }], shelfLife: { fridge: 5 } }),
+  I('fresh-thyme', 'Fresh thyme', 'produce', 'g', { aliases: ['thyme sprigs'], density: 0.15, unitAliases: { sprig: 1 }, packages: [{ label: '0.75 oz pack', qty: 21 }], shelfLife: { fridge: 10 } }),
+  I('fresh-rosemary', 'Fresh rosemary', 'produce', 'g', { aliases: ['rosemary', 'rosemary sprigs'], density: 0.15, unitAliases: { sprig: 2 }, packages: [{ label: '0.75 oz pack', qty: 21 }], shelfLife: { fridge: 14 } }),
+  I('butternut-squash', 'Butternut squash', 'produce', 'g', { aliases: ['squash', 'butternut'], density: 0.6, gramsPerEach: 1100, defaultLocation: 'pantry', shelfLife: { pantry: 60 } }),
+  I('corn-on-cob', 'Fresh corn', 'produce', 'ea', { aliases: ['corn on the cob', 'ears of corn', 'ear of corn'], gramsPerEach: 150, unitAliases: { ear: 1 }, shelfLife: { fridge: 3 } }),
+  I('eggplant', 'Eggplant', 'produce', 'ea', { aliases: ['aubergine'], gramsPerEach: 450, density: 0.35, shelfLife: { fridge: 7 } }),
+  I('mango', 'Mango', 'produce', 'ea', { aliases: ['mangoes'], gramsPerEach: 200, defaultLocation: 'pantry', shelfLife: { pantry: 5, fridge: 7 } }),
+  I('arugula', 'Arugula', 'produce', 'g', { aliases: ['rocket', 'mixed greens', 'spring mix', 'salad greens'], density: 0.08, packages: [{ label: '5 oz clamshell', qty: oz(5) }], shelfLife: { fridge: 5 } }),
+  I('radishes', 'Radishes', 'produce', 'ea', { aliases: ['radish'], gramsPerEach: 10, unitAliases: { bunch: 12 }, packages: [{ label: 'bunch', qty: 12 }], shelfLife: { fridge: 10 } }),
 
   // ---------- Meat & seafood ----------
-  meat('ground-beef', 'Ground beef', { aliases: ['lean ground beef', '80/20 ground beef', 'hamburger meat', 'beef mince'], packages: [{ label: '1 lb pack', qty: lb(1) }, { label: '2 lb pack', qty: lb(2) }] }),
   meat('ground-turkey', 'Ground turkey', { aliases: ['turkey mince', 'lean ground turkey'], packages: [{ label: '1 lb pack', qty: lb(1) }] }),
   meat('chicken-breast', 'Chicken breasts', { aliases: ['chicken breast', 'boneless skinless chicken breast', 'boneless skinless chicken breasts'], gramsPerEach: 225, packages: [{ label: '1.5 lb pack', qty: lb(1.5) }, { label: '3 lb pack', qty: lb(3) }] }),
   meat('chicken-thighs', 'Chicken thighs (boneless)', { aliases: ['chicken thighs', 'boneless skinless chicken thighs', 'chicken thigh'], gramsPerEach: 115, packages: [{ label: '1.5 lb pack', qty: lb(1.5) }, { label: '3 lb pack', qty: lb(3) }] }),
-  meat('sirloin-steak', 'Sirloin steak', { aliases: ['sirloin', 'top sirloin', 'flank steak', 'steak'], packages: [{ label: '1 lb pack', qty: lb(1) }, { label: '1.5 lb pack', qty: lb(1.5) }] }),
   meat('pork-chops', 'Pork chops (boneless)', { aliases: ['pork chops', 'boneless pork chops', 'pork chop'], gramsPerEach: 200, packages: [{ label: '4-pack (~1.75 lb)', qty: lb(1.75) }] }),
   meat('smoked-sausage', 'Smoked sausage', { aliases: ['kielbasa', 'polish sausage'], packages: [{ label: '14 oz rope', qty: oz(14) }], shelfLife: { fridge: 14, freezer: 60 } }),
   meat('bacon', 'Bacon', { unitAliases: { slice: 28 }, packages: [{ label: '12 oz pack', qty: oz(12) }], shelfLife: { fridge: 7, freezer: 90 } }),
   meat('deli-turkey', 'Deli turkey', { aliases: ['sliced turkey', 'turkey lunch meat'], packages: [{ label: '8 oz pack', qty: oz(8) }], shelfLife: { fridge: 5 } }),
+  meat('chicken-drumsticks', 'Chicken drumsticks / bone-in thighs', { aliases: ['drumsticks', 'bone-in chicken thighs', 'chicken legs', 'bone-in skin-on chicken thighs'], gramsPerEach: 150, packages: [{ label: 'family pack (~3 lb)', qty: lb(3) }] }),
+  meat('pork-tenderloin', 'Pork tenderloin', { aliases: ['pork loin'], packages: [{ label: '1.25 lb tenderloin', qty: lb(1.25) }] }),
+  meat('ground-pork', 'Ground pork', { aliases: ['pork mince'], packages: [{ label: '1 lb pack', qty: lb(1) }] }),
+  meat('italian-sausage', 'Italian sausage', { aliases: ['sweet italian sausage', 'hot italian sausage', 'chicken sausage', 'turkey sausage'], gramsPerEach: 100, unitAliases: { link: 1 }, packages: [{ label: '1 lb pack', qty: lb(1) }] }),
+  meat('rotisserie-chicken', 'Cooked chicken (rotisserie)', { aliases: ['rotisserie chicken', 'cooked chicken', 'shredded chicken'], density: 0.55, unitAliases: { chicken: 900 }, packages: [{ label: 'whole rotisserie (~2 lb meat)', qty: 900 }], shelfLife: { fridge: 4, freezer: 90 } }),
+  I('cod', 'White fish fillets (cod)', 'seafood', 'g', { aliases: ['cod', 'tilapia', 'white fish', 'cod fillets', 'haddock', 'pollock'], gramsPerEach: 170, valueWeight: 3, packages: [{ label: '1 lb pack', qty: lb(1) }], shelfLife: { fridge: 2, freezer: 180 } }),
   I('salmon', 'Salmon fillets', 'seafood', 'g', { aliases: ['salmon', 'salmon fillet'], gramsPerEach: 170, valueWeight: 3, shelfLife: { fridge: 2, freezer: 90 } }),
   I('shrimp', 'Shrimp (raw, peeled)', 'seafood', 'g', { aliases: ['shrimp', 'large shrimp', 'raw shrimp', 'prawns'], valueWeight: 3, packages: [{ label: '1 lb bag', qty: lb(1) }], defaultLocation: 'freezer', shelfLife: { freezer: 180, fridge: 2 } }),
 
@@ -107,6 +128,12 @@ export const INGREDIENTS: Ingredient[] = [
   I('feta', 'Feta', 'dairy', 'g', { aliases: ['feta cheese', 'crumbled feta'], density: 0.64, packages: [{ label: '6 oz crumbles', qty: oz(6) }], shelfLife: { fridge: 14 }, valueWeight: 2 }),
   I('ricotta', 'Ricotta', 'dairy', 'g', { aliases: ['ricotta cheese', 'whole milk ricotta'], density: 1.04, packages: [{ label: '15 oz tub', qty: oz(15) }], shelfLife: { fridge: 10 }, valueWeight: 2 }),
   I('cheese-slices', 'Cheese slices', 'dairy', 'ea', { aliases: ['american cheese', 'american cheese slices', 'sliced cheddar'], gramsPerEach: 21, unitAliases: { slice: 1 }, packages: [{ label: '16-slice pack', qty: 16 }], shelfLife: { fridge: 30 }, valueWeight: 2 }),
+  I('tofu', 'Extra-firm tofu', 'dairy', 'g', { aliases: ['tofu', 'firm tofu'], density: 1, unitAliases: { block: 397 }, packages: [{ label: '14 oz block', qty: oz(14) }], shelfLife: { fridge: 30 } }),
+  I('goat-cheese', 'Goat cheese', 'dairy', 'g', { aliases: ['chevre'], density: 0.64, packages: [{ label: '4 oz log', qty: oz(4) }], shelfLife: { fridge: 14 }, valueWeight: 2 }),
+  I('half-and-half', 'Half-and-half', 'dairy', 'ml', { aliases: ['half and half'], density: 1.02, packages: [{ label: '1 pint', qty: 473 }], shelfLife: { fridge: 10 } }),
+  I('cottage-cheese', 'Cottage cheese', 'dairy', 'g', { density: 0.95, packages: [{ label: '16 oz tub', qty: oz(16) }], shelfLife: { fridge: 10 } }),
+  I('refrigerated-tortellini', 'Cheese tortellini', 'dairy', 'g', { aliases: ['tortellini', 'cheese tortellini', 'ravioli'], packages: [{ label: '20 oz pack', qty: oz(20) }], shelfLife: { fridge: 21, freezer: 90 } }),
+  I('pesto', 'Basil pesto', 'dairy', 'g', { aliases: ['pesto'], density: 1, packages: [{ label: '6 oz jar', qty: oz(6) }], shelfLife: { fridge: 7 } }),
   I('orange-juice', 'Orange juice', 'beverages', 'ml', { aliases: ['oj'], density: 1.04, packages: [{ label: '52 oz bottle', qty: floz(52) }], defaultLocation: 'fridge', shelfLife: { fridge: 10 } }),
 
   // ---------- Bakery ----------
@@ -116,10 +143,21 @@ export const INGREDIENTS: Ingredient[] = [
   I('baguette', 'Baguette', 'bakery', 'ea', { aliases: ['french bread', 'crusty bread'], gramsPerEach: 250, shelfLife: { pantry: 2 } }),
   I('sandwich-bread', 'Sandwich bread', 'bakery', 'ea', { aliases: ['bread', 'white bread', 'wheat bread'], gramsPerEach: 28, unitAliases: { slice: 1, loaf: 20 }, packages: [{ label: 'loaf', qty: 20 }], shelfLife: { pantry: 7 } }),
   I('bagels', 'Bagels', 'bakery', 'ea', { aliases: ['bagel'], gramsPerEach: 100, packages: [{ label: '6-pack', qty: 6 }], shelfLife: { pantry: 5 } }),
+  I('pita', 'Pita / naan', 'bakery', 'ea', { aliases: ['pita bread', 'naan', 'flatbread', 'pitas'], gramsPerEach: 60, packages: [{ label: '6-pack', qty: 6 }], shelfLife: { pantry: 5 } }),
 
   // ---------- Pasta, rice & grains ----------
   I('spaghetti', 'Spaghetti', 'pasta-grains', 'g', { packages: [{ label: '1 lb box', qty: lb(1) }] }),
-  I('linguine', 'Linguine', 'pasta-grains', 'g', { aliases: ['fettuccine'], packages: [{ label: '1 lb box', qty: lb(1) }] }),
+  I('linguine', 'Linguine', 'pasta-grains', 'g', { aliases: ['angel hair'], packages: [{ label: '1 lb box', qty: lb(1) }] }),
+  I('fettuccine', 'Fettuccine', 'pasta-grains', 'g', { aliases: ['tagliatelle'], packages: [{ label: '1 lb box', qty: lb(1) }] }),
+  I('small-pasta', 'Small pasta (ditalini/elbows/shells)', 'pasta-grains', 'g', { aliases: ['ditalini', 'elbow macaroni', 'small shells', 'macaroni', 'orecchiette'], density: 0.45, packages: [{ label: '1 lb box', qty: lb(1) }] }),
+  I('orzo', 'Orzo', 'pasta-grains', 'g', { aliases: ['risoni'], density: 0.75, packages: [{ label: '1 lb box', qty: lb(1) }] }),
+  I('brown-rice', 'Brown rice', 'pasta-grains', 'g', { aliases: ['long-grain brown rice'], density: 0.8, packages: [{ label: '2 lb bag', qty: lb(2) }] }),
+  I('couscous', 'Couscous', 'pasta-grains', 'g', { aliases: ['pearl couscous'], density: 0.7, packages: [{ label: '10 oz box', qty: oz(10) }] }),
+  I('lo-mein-noodles', 'Lo mein / ramen noodles', 'international', 'g', { aliases: ['chow mein noodles', 'ramen noodles', 'lo mein noodles', 'udon', 'soba noodles'], packages: [{ label: '8 oz pack', qty: oz(8) }], shelfLife: { pantry: 365 } }),
+  I('gnocchi', 'Potato gnocchi', 'pasta-grains', 'g', { aliases: ['gnocchi'], packages: [{ label: '1 lb pack', qty: lb(1) }], shelfLife: { pantry: 180 } }),
+  I('brown-lentils', 'Brown/green lentils (dry)', 'pasta-grains', 'g', { aliases: ['lentils', 'green lentils', 'brown lentils', 'french lentils'], density: 0.8, packages: [{ label: '1 lb bag', qty: lb(1) }] }),
+  I('red-lentils', 'Red lentils (dry)', 'pasta-grains', 'g', { aliases: ['red lentils', 'split red lentils', 'yellow lentils'], density: 0.82, packages: [{ label: '1 lb bag', qty: lb(1) }] }),
+
   I('penne', 'Penne', 'pasta-grains', 'g', { aliases: ['ziti', 'rigatoni', 'penne pasta'], packages: [{ label: '1 lb box', qty: lb(1) }] }),
   I('egg-noodles', 'Egg noodles', 'pasta-grains', 'g', { aliases: ['wide egg noodles'], density: 0.16, packages: [{ label: '12 oz bag', qty: oz(12) }] }),
   I('rice-noodles', 'Rice noodles', 'international', 'g', { aliases: ['pad thai noodles', 'rice stick noodles'], packages: [{ label: '14 oz pack', qty: oz(14) }], shelfLife: { pantry: 365 } }),
@@ -135,11 +173,30 @@ export const INGREDIENTS: Ingredient[] = [
   can('crushed-tomatoes', 'Crushed tomatoes (28 oz)', 794, { aliases: ['crushed tomatoes', 'canned crushed tomatoes'], density: 1.07 }),
   can('diced-tomatoes', 'Diced tomatoes (14.5 oz)', 411, { aliases: ['diced tomatoes', 'canned diced tomatoes'], density: 1.03 }),
   can('tuna', 'Tuna', 142, { aliases: ['canned tuna'] }),
+  can('pinto-beans', 'Pinto beans', 425, { aliases: ['canned pinto beans'] }),
+  can('cannellini-beans', 'White beans (cannellini)', 425, { aliases: ['cannellini beans', 'great northern beans', 'white beans', 'navy beans'] }),
+  can('refried-beans', 'Refried beans', 454, { aliases: ['canned refried beans'], density: 1.1 }),
+  can('corn-can', 'Canned corn', 432, { aliases: ['canned corn', 'corn kernels'], density: 0.72 }),
+  can('green-chiles', 'Diced green chiles (4 oz)', 113, { aliases: ['green chiles', 'diced green chiles', 'chopped green chiles'], density: 1 }),
+  can('tomato-sauce', 'Tomato sauce (15 oz)', 425, { aliases: ['tomato sauce', 'passata', 'tomato puree', 'canned tomato sauce'], density: 1.03 }),
+  can('chipotle-adobo', 'Chipotles in adobo (7 oz)', 198, { aliases: ['chipotle peppers in adobo', 'chipotle in adobo', 'chipotle pepper'], unitAliases: { can: 1, pepper: 0.07 } }),
+  I('capers', 'Capers', 'canned', 'g', { density: 0.6, trackMode: 'loose', packages: [{ label: '3.5 oz jar', qty: 100 }], defaultLocation: 'fridge', shelfLife: { fridge: 365 } }),
+  I('roasted-red-peppers', 'Roasted red peppers', 'canned', 'g', { aliases: ['jarred roasted red peppers'], density: 0.7, packages: [{ label: '12 oz jar', qty: oz(12) }], shelfLife: { pantry: 365 } }),
+  I('artichoke-hearts', 'Artichoke hearts', 'canned', 'g', { aliases: ['artichokes', 'marinated artichoke hearts'], density: 0.6, unitAliases: { can: 240 }, packages: [{ label: '14 oz can', qty: 240 }], shelfLife: { pantry: 730 } }),
+  I('water-chestnuts', 'Water chestnuts', 'international', 'ea', { aliases: ['sliced water chestnuts'], gramsPerEach: 227, density: 0.6, unitAliases: { can: 1 }, displayUnit: 'can', shelfLife: { pantry: 730 } }),
+  looseLiquid('oyster-sauce', 'Oyster sauce', 'international', 1.2, '9 oz bottle', 255, { aliases: ['vegetarian oyster sauce'] }),
+  looseLiquid('hoisin', 'Hoisin sauce', 'international', 1.2, '8.5 oz jar', 240, { aliases: ['hoisin sauce'] }),
+  looseLiquid('mirin', 'Mirin', 'international', 1.1, '10 oz bottle', floz(10), { aliases: ['chinese cooking wine', 'shaoxing wine', 'dry sherry', 'cooking wine'] }),
+  I('red-curry-paste', 'Thai red curry paste', 'international', 'g', { aliases: ['red curry paste', 'thai curry paste', 'green curry paste'], density: 1.1, trackMode: 'loose', packages: [{ label: '4 oz jar', qty: oz(4) }], defaultLocation: 'fridge', shelfLife: { fridge: 180 } }),
+  I('almonds', 'Almonds', 'snacks', 'g', { aliases: ['sliced almonds', 'slivered almonds', 'cashews', 'walnuts', 'pecans', 'nuts'], density: 0.45, packages: [{ label: '6 oz bag', qty: oz(6) }], shelfLife: { pantry: 180 } }),
+  I('sesame-seeds', 'Sesame seeds', 'spices', 'g', { density: 0.6, trackMode: 'loose', packages: [{ label: 'jar', qty: 60 }], shelfLife: { pantry: 365 } }),
+  I('raisins', 'Raisins / dried fruit', 'snacks', 'g', { aliases: ['raisins', 'dried cranberries', 'craisins'], density: 0.65, packages: [{ label: '6 oz box', qty: oz(6) }], shelfLife: { pantry: 180 } }),
+  I('pepitas', 'Pepitas / seeds', 'snacks', 'g', { aliases: ['pumpkin seeds', 'sunflower seeds', 'hemp seeds'], density: 0.55, packages: [{ label: '8 oz bag', qty: oz(8) }], shelfLife: { pantry: 180 } }),
+
   I('tomato-paste', 'Tomato paste', 'canned', 'g', { density: 1.1, unitAliases: { can: 170 }, packages: [{ label: '6 oz can', qty: 170 }], shelfLife: { pantry: 730 } }),
   I('marinara', 'Marinara sauce', 'canned', 'g', { aliases: ['marinara', 'pasta sauce', 'spaghetti sauce'], density: 1.05, unitAliases: { jar: 680 }, packages: [{ label: '24 oz jar', qty: 680 }], shelfLife: { pantry: 365 } }),
   I('coconut-milk', 'Coconut milk', 'international', 'ea', { aliases: ['canned coconut milk', 'full-fat coconut milk'], gramsPerEach: 400, density: 0.97, unitAliases: { can: 1 }, displayUnit: 'can', shelfLife: { pantry: 730 } }),
   I('chicken-broth', 'Chicken broth', 'canned', 'ml', { aliases: ['chicken stock', 'low-sodium chicken broth'], density: 1, packages: [{ label: '32 oz carton', qty: 946 }], shelfLife: { pantry: 365 } }),
-  I('beef-broth', 'Beef broth', 'canned', 'ml', { aliases: ['beef stock'], density: 1, packages: [{ label: '32 oz carton', qty: 946 }], shelfLife: { pantry: 365 } }),
   I('vegetable-broth', 'Vegetable broth', 'canned', 'ml', { aliases: ['vegetable stock', 'veggie broth'], density: 1, packages: [{ label: '32 oz carton', qty: 946 }], shelfLife: { pantry: 365 } }),
   I('enchilada-sauce', 'Red enchilada sauce (10 oz)', 'international', 'ea', { aliases: ['enchilada sauce'], gramsPerEach: 283, density: 1.05, unitAliases: { can: 1 }, displayUnit: 'can', shelfLife: { pantry: 730 } }),
   I('salsa', 'Salsa', 'international', 'g', { aliases: ['jarred salsa'], density: 1.05, packages: [{ label: '16 oz jar', qty: oz(16) }], shelfLife: { pantry: 365 } }),
@@ -152,6 +209,10 @@ export const INGREDIENTS: Ingredient[] = [
   // ---------- Frozen ----------
   I('frozen-peas', 'Frozen peas', 'frozen', 'g', { aliases: ['peas', 'green peas'], density: 0.6, packages: [{ label: '12 oz bag', qty: oz(12) }], shelfLife: { freezer: 240 } }),
   I('frozen-broccoli', 'Frozen broccoli', 'frozen', 'g', { density: 0.38, packages: [{ label: '12 oz bag', qty: oz(12) }], shelfLife: { freezer: 240 } }),
+  I('frozen-corn', 'Frozen corn', 'frozen', 'g', { aliases: ['corn', 'frozen corn kernels', 'sweet corn'], density: 0.6, packages: [{ label: '12 oz bag', qty: oz(12) }], shelfLife: { freezer: 240 } }),
+  I('frozen-mixed-veg', 'Frozen mixed vegetables', 'frozen', 'g', { aliases: ['mixed vegetables', 'frozen stir fry vegetables', 'frozen peas and carrots'], density: 0.55, packages: [{ label: '12 oz bag', qty: oz(12) }], shelfLife: { freezer: 240 } }),
+  I('frozen-spinach', 'Frozen spinach', 'frozen', 'g', { aliases: ['frozen chopped spinach'], density: 0.6, packages: [{ label: '10 oz box', qty: oz(10) }], shelfLife: { freezer: 240 } }),
+  I('frozen-berries', 'Frozen berries', 'frozen', 'g', { aliases: ['frozen mixed berries', 'frozen fruit', 'frozen strawberries'], density: 0.6, packages: [{ label: '16 oz bag', qty: lb(1) }], shelfLife: { freezer: 240 } }),
 
   // ---------- Baking ----------
   I('all-purpose-flour', 'All-purpose flour', 'baking', 'g', { aliases: ['flour', 'ap flour'], density: 0.53, trackMode: 'loose', keepStocked: true, packages: [{ label: '5 lb bag', qty: lb(5) }] }),
@@ -163,6 +224,11 @@ export const INGREDIENTS: Ingredient[] = [
   looseLiquid('vanilla-extract', 'Vanilla extract', 'baking', 0.88, '2 oz bottle', floz(2), { aliases: ['vanilla', 'pure vanilla extract'] }),
   I('panko', 'Panko breadcrumbs', 'baking', 'g', { aliases: ['panko', 'breadcrumbs', 'bread crumbs'], density: 0.25, packages: [{ label: '8 oz box', qty: oz(8) }], shelfLife: { pantry: 180 } }),
   I('chia-seeds', 'Chia seeds', 'baking', 'g', { aliases: ['chia'], density: 0.65, trackMode: 'loose', packages: [{ label: '12 oz bag', qty: oz(12) }] }),
+  I('cornmeal', 'Cornmeal', 'baking', 'g', { aliases: ['polenta'], density: 0.6, trackMode: 'loose', packages: [{ label: '24 oz canister', qty: oz(24) }] }),
+  I('cocoa-powder', 'Cocoa powder', 'baking', 'g', { aliases: ['unsweetened cocoa powder'], density: 0.36, trackMode: 'loose', packages: [{ label: '8 oz can', qty: oz(8) }] }),
+  I('chocolate-chips', 'Chocolate chips', 'baking', 'g', { aliases: ['semi-sweet chocolate chips', 'dark chocolate chips'], density: 0.72, packages: [{ label: '12 oz bag', qty: oz(12) }] }),
+  I('whole-wheat-flour', 'Whole wheat flour', 'baking', 'g', { aliases: ['white whole wheat flour', 'whole wheat pastry flour'], density: 0.51, trackMode: 'loose', packages: [{ label: '5 lb bag', qty: lb(5) }], shelfLife: { pantry: 180 } }),
+  looseLiquid('water', 'Water', 'other', 1, 'tap', 1000, { aliases: ['cold water', 'warm water', 'hot water', 'boiling water'], alwaysOnHand: true, shelfLife: { pantry: 9999 } }),
   looseLiquid('honey', 'Honey', 'oils-condiments', 1.42, '12 oz bottle', 240),
   looseLiquid('maple-syrup', 'Maple syrup', 'oils-condiments', 1.32, '12 oz bottle', floz(12), { aliases: ['pure maple syrup', 'syrup'] }),
 
@@ -174,6 +240,14 @@ export const INGREDIENTS: Ingredient[] = [
   looseLiquid('fish-sauce', 'Fish sauce', 'international', 1.2, '6.7 oz bottle', 200),
   looseLiquid('rice-vinegar', 'Rice vinegar', 'international', 1.01, '12 oz bottle', floz(12), { aliases: ['rice wine vinegar', 'seasoned rice vinegar'] }),
   looseLiquid('red-wine-vinegar', 'Red wine vinegar', 'oils-condiments', 1.01, '16 oz bottle', floz(16)),
+  looseLiquid('apple-cider-vinegar', 'Apple cider vinegar', 'oils-condiments', 1.01, '16 oz bottle', floz(16), { aliases: ['cider vinegar', 'white vinegar', 'distilled white vinegar'] }),
+  looseLiquid('balsamic-vinegar', 'Balsamic vinegar', 'oils-condiments', 1.06, '8.5 oz bottle', 250, { aliases: ['balsamic'] }),
+  I('tahini', 'Tahini', 'international', 'g', { density: 1.0, trackMode: 'loose', packages: [{ label: '16 oz jar', qty: lb(1) }], shelfLife: { pantry: 180 } }),
+  I('miso', 'White miso', 'international', 'g', { aliases: ['miso paste', 'white miso paste'], density: 1.15, trackMode: 'loose', packages: [{ label: '14 oz tub', qty: oz(14) }], defaultLocation: 'fridge', shelfLife: { fridge: 270 } }),
+  I('bbq-sauce', 'BBQ sauce', 'oils-condiments', 'g', { aliases: ['barbecue sauce'], density: 1.1, trackMode: 'loose', packages: [{ label: '18 oz bottle', qty: oz(18) }], shelfLife: { pantry: 365 } }),
+  I('whole-grain-mustard', 'Yellow / whole-grain mustard', 'oils-condiments', 'g', { aliases: ['yellow mustard', 'whole grain mustard', 'stone ground mustard'], density: 1.05, trackMode: 'loose', packages: [{ label: '8 oz bottle', qty: oz(8) }], defaultLocation: 'fridge', shelfLife: { fridge: 365 } }),
+  I('ghee', 'Ghee', 'oils-condiments', 'g', { aliases: ['clarified butter'], density: 0.9, trackMode: 'loose', packages: [{ label: '7.5 oz jar', qty: 212 }], shelfLife: { pantry: 180 } }),
+  looseLiquid('marsala-wine', 'Marsala wine', 'beverages', 1.02, '750 ml bottle', 750, { aliases: ['marsala', 'dry marsala'] }),
   looseLiquid('worcestershire', 'Worcestershire sauce', 'oils-condiments', 1.1, '10 oz bottle', floz(10), { aliases: ['worcestershire'] }),
   looseLiquid('sriracha', 'Sriracha', 'international', 1.1, '17 oz bottle', 500, { aliases: ['hot sauce', 'chili garlic sauce'] }),
   I('dijon-mustard', 'Dijon mustard', 'oils-condiments', 'g', { aliases: ['dijon', 'mustard'], density: 1, trackMode: 'loose', packages: [{ label: '8 oz jar', qty: oz(8) }], defaultLocation: 'fridge', shelfLife: { fridge: 180 } }),
@@ -201,5 +275,23 @@ export const INGREDIENTS: Ingredient[] = [
   spice('curry-powder', 'Curry powder', 0.42, ['yellow curry powder']),
   spice('cayenne', 'Cayenne pepper', 0.36, ['cayenne', 'ground cayenne']),
   spice('dried-thyme', 'Dried thyme', 0.28, ['thyme']),
+  spice('ground-ginger', 'Ground ginger', 0.36),
+  spice('ground-nutmeg', 'Ground nutmeg', 0.47, ['nutmeg']),
+  spice('ground-cloves', 'Ground cloves', 0.45),
+  spice('dried-dill', 'Dried dill', 0.2, ['dill weed']),
+  spice('dried-basil', 'Dried basil', 0.15),
+  spice('dried-rosemary', 'Dried rosemary', 0.25),
+  spice('cumin-seeds', 'Cumin seeds', 0.44, ['whole cumin']),
+  spice('ground-cardamom', 'Ground cardamom', 0.4, ['cardamom']),
+  spice('cajun-seasoning', 'Cajun seasoning', 0.5, ['creole seasoning']),
+  spice('taco-seasoning', 'Taco seasoning', 0.5, ['fajita seasoning']),
+  spice('ancho-chili-powder', 'Ancho / chipotle chili powder', 0.5, ['ancho chili powder', 'chipotle powder', 'chipotle chili powder']),
+  spice('mustard-powder', 'Dry mustard', 0.5, ['mustard powder', 'ground mustard']),
+  spice('herbes-de-provence', 'Herbes de Provence', 0.25),
+  spice('white-pepper', 'White pepper', 0.46),
+  spice('five-spice', 'Chinese five spice', 0.45, ['five spice powder']),
+  spice('everything-seasoning', 'Everything bagel seasoning', 0.55),
   spice('bay-leaves', 'Bay leaves', 0.05, ['bay leaf'], { unitAliases: { leaf: 0.2 }, packages: [{ label: 'jar', qty: 5 }] }),
 ];
+
+export const INGREDIENTS: Ingredient[] = withStorage(CATALOG);

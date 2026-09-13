@@ -1,5 +1,5 @@
 // Compact authoring format for built-in recipes.
-import type { Recipe, RecipeIngredient, Slot } from '../../domain/types';
+import type { Recipe, RecipeCredit, RecipeIngredient, Slot } from '../../domain/types';
 
 /** [qty, unit, ingredientId, prep?, optional?] — or a string to start an ingredient group ("For the sauce"). */
 export type IngTuple = [number, string, string, string?, 'optional'?] | string;
@@ -19,6 +19,8 @@ export interface RecipeDef {
   ingredients: IngTuple[];
   steps: string[];
   notes?: string;
+  /** Required for built-ins: the human source this recipe is adapted from. Steps are rewritten, not copied. */
+  credit: RecipeCredit;
 }
 
 export function defineRecipe(d: RecipeDef): Recipe {
@@ -47,6 +49,7 @@ export function defineRecipe(d: RecipeDef): Recipe {
     ingredients,
     steps: d.steps,
     notes: d.notes,
+    credit: d.credit,
     favorite: false,
     archived: false,
     source: 'builtin',

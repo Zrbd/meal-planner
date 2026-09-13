@@ -27,7 +27,7 @@ export function recipeCoverage(
   const missing: string[] = [];
   for (const [id, qty] of needs) {
     const ing = ingById.get(id);
-    if (!ing) continue;
+    if (!ing || ing.alwaysOnHand) continue;
     const w = ing.valueWeight;
     total += w;
     if (ing.trackMode === 'loose') {

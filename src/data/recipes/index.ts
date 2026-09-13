@@ -1,9 +1,10 @@
 import type { Recipe } from '../../domain/types';
-import { BREAKFAST_LUNCH } from './breakfastLunch';
-import { DINNERS_1 } from './dinners1';
-import { DINNERS_2 } from './dinners2';
+import { BUDGET_BYTES } from './budgetBytes';
+import { COOKIE_AND_KATE } from './cookieAndKate';
+import { RECIPETIN_EATS } from './recipeTinEats';
 
-export const RECIPES: Recipe[] = [...DINNERS_1, ...DINNERS_2, ...BREAKFAST_LUNCH];
+/** Built-in recipes, each adapted from (and crediting) a human recipe developer. No beef by user preference. */
+export const RECIPES: Recipe[] = [...BUDGET_BYTES, ...RECIPETIN_EATS, ...COOKIE_AND_KATE];
 
 /** Bump when built-in ingredients/recipes change so seeding upserts them (user-edited recipes are kept). */
-export const SEED_VERSION = 1;
+export const SEED_VERSION = 3;

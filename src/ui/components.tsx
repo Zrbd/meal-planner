@@ -351,7 +351,7 @@ const TITLE_EMOJI: [RegExp, string][] = [
   [/cake|cookie|brownie|muffin|pie\b/i, '🧁'], [/steak/i, '🥩'], [/shakshuka|egg/i, '🍳'],
 ];
 const PROTEIN_EMOJI: Record<string, string> = {
-  beef: '🥩', chicken: '🍗', pork: '🥓', fish: '🐟', shrimp: '🍤', turkey: '🦃', egg: '🍳', beans: '🫘', vegetarian: '🥦',
+  chicken: '🍗', pork: '🥓', fish: '🐟', shrimp: '🍤', turkey: '🦃', egg: '🍳', beans: '🫘', vegetarian: '🥦',
 };
 export function recipeEmoji(r: Recipe): string {
   for (const [re, e] of TITLE_EMOJI) if (re.test(r.title)) return e;

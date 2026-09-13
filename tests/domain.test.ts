@@ -9,9 +9,9 @@ import { buildShoppingList } from '../src/domain/shopping';
 import { buildDemands, planDeduction, simulate } from '../src/domain/stock';
 import { formatNumber, formatQty, toBase } from '../src/domain/units';
 import { INGREDIENTS } from '../src/data/ingredients';
-import { RECIPES } from '../src/data/recipes';
+
 import { DEFAULT_AISLE_ORDER } from '../src/data/aisles';
-import { ing, ingById, lot, meal, recipesById } from './helpers';
+import { ing, ingById, lot, meal, recipesById, TEST_RECIPES } from './helpers';
 
 describe('dates', () => {
   it('handles local ISO dates', () => {
@@ -26,7 +26,7 @@ describe('units', () => {
   it('converts via aliases, volume, and density', () => {
     expect(toBase(2, 'clove', ing('garlic'))).toBe(10);
     expect(toBase(1, 'cup', ing('milk'))).toBeCloseTo(236.6, 1);
-    expect(toBase(1, 'lb', ing('ground-beef'))).toBeCloseTo(453.6, 1);
+    expect(toBase(1, 'lb', ing('ground-turkey'))).toBeCloseTo(453.6, 1);
     expect(toBase(1, 'can', ing('black-beans'))).toBe(1);
     expect(toBase(2, 'cups', ing('parmesan'))).toBeCloseTo(198.7, 0);
     expect(() => toBase(1, 'cup', ing('eggs'))).toThrow();
@@ -35,7 +35,7 @@ describe('units', () => {
     expect(formatNumber(1.5)).toBe('1½');
     expect(formatNumber(0.33)).toBe('⅓');
     expect(formatQty(15, ing('garlic'))).toBe('3 cloves');
-    expect(formatQty(680, ing('ground-beef'))).toBe('1½ lb');
+    expect(formatQty(680, ing('ground-turkey'))).toBe('1½ lb');
   });
 });
 
@@ -78,12 +78,12 @@ describe('shopping list', () => {
     aisleOrder: DEFAULT_AISLE_ORDER, bufferDays: 3,
   };
   it('buys shortfalls in whole packages, net of pantry', () => {
-    const meals = [meal('ground-beef-tacos', '2026-09-13'), meal('spaghetti-bolognese', '2026-09-14')];
-    const res = buildShoppingList({ ...base, from: '2026-09-13', to: '2026-09-14', meals, lots: [lot('ground-beef', 200)] });
-    const beef = res.lines.find((l) => l.ingredientId === 'ground-beef')!;
-    expect(beef.need).toBeCloseTo(2 * 453.592 - 200, 0);
-    expect(beef.buy).toBeGreaterThanOrEqual(beef.need);
-    expect(beef.reasons).toHaveLength(2);
+    const meals = [meal('test-tacos', '2026-09-13'), meal('test-pasta', '2026-09-14')];
+    const res = buildShoppingList({ ...base, from: '2026-09-13', to: '2026-09-14', meals, lots: [lot('ground-turkey', 200)] });
+    const turkey = res.lines.find((l) => l.ingredientId === 'ground-turkey')!;
+    expect(turkey.need).toBeCloseTo(2 * 453.592 - 200, 0);
+    expect(turkey.buy).toBeGreaterThanOrEqual(turkey.need);
+    expect(turkey.reasons).toHaveLength(2);
     expect(res.errors).toEqual([]);
     const tortillas = res.lines.find((l) => l.ingredientId === 'corn-tortillas')!;
     expect(tortillas.buy).toBe(30);
@@ -91,17 +91,17 @@ describe('shopping list', () => {
     expect(res.lines.find((l) => l.ingredientId === 'chili-powder')!.section).toBe('check');
   });
   it('consumes stock for earlier meals outside the range first', () => {
-    const meals = [meal('ground-beef-tacos', '2026-09-12'), meal('ground-beef-tacos', '2026-09-15', { recipeId: 'spaghetti-bolognese' })];
-    const res = buildShoppingList({ ...base, from: '2026-09-15', to: '2026-09-15', meals, lots: [lot('ground-beef', 453.592)] });
-    expect(res.lines.find((l) => l.ingredientId === 'ground-beef')!.need).toBeCloseTo(453.592, 0);
+    const meals = [meal('test-tacos', '2026-09-12'), meal('test-tacos', '2026-09-15', { recipeId: 'test-pasta' })];
+    const res = buildShoppingList({ ...base, from: '2026-09-15', to: '2026-09-15', meals, lots: [lot('ground-turkey', 453.592)] });
+    expect(res.lines.find((l) => l.ingredientId === 'ground-turkey')!.need).toBeCloseTo(453.592, 0);
   });
   it('respects have-it and manual items', () => {
-    const meals = [meal('ground-beef-tacos', '2026-09-13')];
+    const meals = [meal('test-tacos', '2026-09-13')];
     const res = buildShoppingList({
       ...base, from: '2026-09-13', to: '2026-09-13', meals, lots: [],
-      state: [{ key: 'ground-beef', checked: false, haveIt: true }, { key: 'manual:1', checked: false, manualName: 'Paper towels' }],
+      state: [{ key: 'ground-turkey', checked: false, haveIt: true }, { key: 'manual:1', checked: false, manualName: 'Paper towels' }],
     });
-    expect(res.lines.find((l) => l.ingredientId === 'ground-beef')!.section).toBe('skipped');
+    expect(res.lines.find((l) => l.ingredientId === 'ground-turkey')!.section).toBe('skipped');
     expect(res.lines.some((l) => l.name === 'Paper towels')).toBe(true);
   });
 });
@@ -121,7 +121,7 @@ describe('forecast', () => {
     const alerts = computeAlerts({
       ingredients: ingById, recipes: recipesById, loose: [], txns: [], today: '2026-09-12', now, bufferDays: 3, shoppingDay: 6,
       lots: [lot('spinach', 100, { expiresOn: '2026-09-13' }), lot('eggs', 0.01)],
-      meals: [meal('shakshuka', '2026-09-13')],
+      meals: [meal('test-shakshuka', '2026-09-13')],
     });
     const kinds = alerts.map((a) => a.kind);
     expect(kinds).toContain('short'); // shakshuka needs 6 eggs
@@ -131,7 +131,7 @@ describe('forecast', () => {
 
 describe('coverage & autoplan', () => {
   it('scores recipes the pantry covers higher', () => {
-    const r = recipesById.get('chickpea-coconut-curry')!;
+    const r = recipesById.get('test-curry')!;
     const lots = [lot('chickpeas', 2), lot('diced-tomatoes', 1), lot('coconut-milk', 1), lot('yellow-onion', 2)];
     const cov = recipeCoverage(r, 4, availableByIngredient(lots, '2026-09-12'), new Map(), ingById);
     expect(cov.ratio).toBeGreaterThan(0.4);
@@ -140,21 +140,21 @@ describe('coverage & autoplan', () => {
   it('fills slots with distinct eligible recipes, deterministically', () => {
     const slots = [0, 1, 2, 3, 4].map((i) => ({ date: addDaysISO('2026-09-13', i), slot: 'dinner' as const }));
     const input = {
-      slots, existing: [], recipes: RECIPES, ingById, lots: [lot('salmon', 680, { expiresOn: '2026-09-14' })], loose: [],
+      slots, existing: [], recipes: TEST_RECIPES, ingById, lots: [lot('salmon', 680, { expiresOn: '2026-09-14' })], loose: [],
       recentCooks: [], settings: { dietFilters: [], dislikedIngredients: [], weeknightMaxMin: 45 }, servings: 4,
       today: '2026-09-12', now: 0, seed: 42,
     };
     const picks = autoPlan(input);
     expect(picks).toHaveLength(5);
     expect(new Set(picks.map((p) => p.recipeId)).size).toBe(5);
-    expect(picks[0].recipeId).toBe('lemon-garlic-salmon'); // rescues expiring salmon
+    expect(picks[0].recipeId).toBe('test-salmon'); // rescues expiring salmon
     expect(autoPlan(input).map((p) => p.recipeId)).toEqual(picks.map((p) => p.recipeId));
     const veg = autoPlan({ ...input, settings: { ...input.settings, dietFilters: ['vegetarian'] } });
     for (const p of veg) expect(recipesById.get(p.recipeId)!.diet).toContain('vegetarian');
   });
   it('buildDemands skips leftovers and cooked meals', () => {
     const { demands } = buildDemands(
-      [meal('shakshuka', '2026-09-13', { status: 'cooked' }), meal('shakshuka', '2026-09-14', { leftoverOf: 'x' })],
+      [meal('test-shakshuka', '2026-09-13', { status: 'cooked' }), meal('test-shakshuka', '2026-09-14', { leftoverOf: 'x' })],
       recipesById, ingById,
     );
     expect(demands).toHaveLength(0);
@@ -182,14 +182,14 @@ describe('parsing', () => {
     expect(parseIngredientLine('1 (15 oz) can black beans, drained', match).ingredientId).toBe('black-beans');
   });
   it('parses a pasted recipe', () => {
-    const text = `Grandma's Chili\nServes 6\nPrep time: 15 minutes\nCook time: 1 hour\n\nIngredients\n1 lb ground beef\n2 tbsp chili powder\n\nInstructions\n1. Brown the beef.\n2. Add everything and simmer 45 minutes.`;
+    const text = `Grandma's Chili\nServes 6\nPrep time: 15 minutes\nCook time: 1 hour\n\nIngredients\n1 lb ground turkey\n2 tbsp chili powder\n\nInstructions\n1. Brown the turkey.\n2. Add everything and simmer 45 minutes.`;
     const r = parseRecipeText(text, match);
     expect(r.title).toBe("Grandma's Chili");
     expect(r.servings).toBe(6);
     expect(r.prepMin).toBe(15);
     expect(r.cookMin).toBe(60);
-    expect(r.ingredients.map((i) => i.ingredientId)).toEqual(['ground-beef', 'chili-powder']);
-    expect(r.steps).toEqual(['Brown the beef.', 'Add everything and simmer 45 minutes.']);
+    expect(r.ingredients.map((i) => i.ingredientId)).toEqual(['ground-turkey', 'chili-powder']);
+    expect(r.steps).toEqual(['Brown the turkey.', 'Add everything and simmer 45 minutes.']);
     expect(detectTimerSec(r.steps[1])).toBe(2700);
   });
 });

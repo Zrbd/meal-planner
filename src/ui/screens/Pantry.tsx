@@ -55,7 +55,7 @@ export function Pantry() {
   const looseItems = useMemo(() => {
     const usedInRecipes = new Set(d.recipes.filter((r) => !r.archived).flatMap((r) => r.ingredients.map((i) => i.ingredientId)));
     return ingredients
-      .filter((i) => i.trackMode === 'loose' && (looseById.has(i.id) || usedInRecipes.has(i.id)) && (!matchIds || matchIds.has(i.id)))
+      .filter((i) => i.trackMode === 'loose' && !i.alwaysOnHand && (looseById.has(i.id) || usedInRecipes.has(i.id)) && (!matchIds || matchIds.has(i.id)))
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [ingredients, looseById, d.recipes, matchIds]);
 

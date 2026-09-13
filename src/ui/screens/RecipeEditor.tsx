@@ -35,7 +35,7 @@ function rowFromParsed(p: ParsedLine): Row {
 }
 
 const CUISINES = ['American', 'Italian', 'Mexican', 'Chinese', 'Japanese', 'Indian', 'Thai', 'Greek', 'Middle Eastern', 'French', 'Korean', 'Russian', 'Other'];
-const PROTEINS = ['', 'chicken', 'beef', 'pork', 'turkey', 'fish', 'shrimp', 'egg', 'beans', 'vegetarian'];
+const PROTEINS = ['', 'chicken', 'pork', 'turkey', 'fish', 'shrimp', 'egg', 'beans', 'vegetarian'];
 const DIETS = ['vegetarian', 'vegan', 'gluten-free', 'dairy-free'];
 
 interface Form {

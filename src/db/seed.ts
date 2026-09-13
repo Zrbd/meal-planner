@@ -7,7 +7,8 @@ export async function seedIfNeeded(database: MealDB = db): Promise<boolean> {
   const row = await database.kv.get('seedVersion');
   if (row && (row.value as number) >= SEED_VERSION) return false;
 
-  await database.transaction('rw', [database.ingredients, database.recipes, database.kv], async () => {
+  const tables = [database.ingredients, database.recipes, database.lots, database.meals, database.cookLogs, database.kv];
+  await database.transaction('rw', tables, async () => {
     const existingIngs = new Map((await database.ingredients.toArray()).map((i) => [i.id, i]));
     await database.ingredients.bulkPut(
       INGREDIENTS.map((seed) => {
@@ -38,6 +39,31 @@ export async function seedIfNeeded(database: MealDB = db): Promise<boolean> {
         };
       }),
     );
+
+    // Built-ins dropped from the catalog: delete them, unless history still points at them.
+    const seedRecipeIds = new Set(RECIPES.map((r) => r.id));
+    const meals = await database.meals.toArray();
+    const logs = await database.cookLogs.toArray();
+    const referenced = new Set([...meals.map((m) => m.recipeId), ...logs.map((l) => l.recipeId)]);
+    for (const r of existingRecipes.values()) {
+      if (r.source !== 'builtin' || r.userEdited || seedRecipeIds.has(r.id)) continue;
+      // planned (not yet cooked) meals for a removed recipe are dropped; cooked history is kept
+      const planned = meals.filter((m) => m.recipeId === r.id && m.status === 'planned');
+      await database.meals.bulkDelete(planned.map((m) => m.id));
+      const stillUsed = meals.some((m) => m.recipeId === r.id && m.status !== 'planned') || logs.some((l) => l.recipeId === r.id);
+      if (stillUsed || (referenced.has(r.id) && !planned.length)) await database.recipes.update(r.id, { archived: true });
+      else await database.recipes.delete(r.id);
+    }
+
+    const seedIngIds = new Set(INGREDIENTS.map((i) => i.id));
+    const recipesNow = await database.recipes.toArray();
+    const usedIngs = new Set(recipesNow.flatMap((r) => r.ingredients.map((i) => i.ingredientId)));
+    const lotIngs = new Set((await database.lots.toArray()).map((l) => l.ingredientId));
+    for (const ing of existingIngs.values()) {
+      if (ing.source !== 'builtin' || seedIngIds.has(ing.id)) continue;
+      if (!usedIngs.has(ing.id) && !lotIngs.has(ing.id)) await database.ingredients.delete(ing.id);
+    }
+
     await database.kv.put({ key: 'seedVersion', value: SEED_VERSION });
   });
   return true;

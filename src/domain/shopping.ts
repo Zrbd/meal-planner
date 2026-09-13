@@ -83,6 +83,7 @@ export function buildShoppingList(input: ShoppingInput): ShoppingResult {
     const ing = ingredients.get(d.ingredientId);
     const meal = mealById.get(d.mealId)!;
     const reason: ShoppingReason = { kind: 'meal', mealId: meal.id, recipeId: meal.recipeId, date: d.date, qty: d.qty };
+    if (ing?.alwaysOnHand) continue;
     if (ing?.trackMode === 'loose') {
       addReason(looseUsed, d.ingredientId, reason);
       continue;

@@ -18,6 +18,18 @@ describe('seed data', () => {
     for (const i of INGREDIENTS) if (i.displayUnit) expect(i.unitAliases?.[i.displayUnit], i.id).toBeGreaterThan(0);
   });
 
+  it('contains no beef (user preference)', () => {
+    for (const i of INGREDIENTS) expect(`${i.id} ${i.name} ${(i.aliases ?? []).join(' ')}`.toLowerCase(), i.id).not.toMatch(/beef|steak|veal|brisket|bouillon/);
+    for (const r of RECIPES) expect(`${r.title} ${r.description}`.toLowerCase(), r.id).not.toMatch(/beef|steak|veal/);
+  });
+
+  it('every built-in recipe credits a human source with a link', () => {
+    for (const r of RECIPES) {
+      expect(r.credit?.url, r.id).toMatch(/^https:\/\//);
+      expect(r.credit?.name, r.id).toBeTruthy();
+    }
+  });
+
   for (const r of RECIPES) {
     it(`${r.id}: every ingredient exists and converts`, () => {
       expect(r.steps.length).toBeGreaterThan(0);

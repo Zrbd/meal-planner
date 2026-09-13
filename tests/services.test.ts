@@ -14,6 +14,7 @@ import { deleteRecipe, duplicateRecipe, saveRecipe } from '../src/services/recip
 import { addManualItem, toggleChecked } from '../src/services/shopping';
 import { finishTrip, undoTrip } from '../src/services/trip';
 
+const ingById0 = new Map(INGREDIENTS.map((i) => [i.id, i]));
 const exactIng = INGREDIENTS.find((i) => i.trackMode === 'exact' && i.shelfLife.fridge && i.baseUnit === 'g')!;
 const looseIng = INGREDIENTS.find((i) => i.trackMode === 'loose')!;
 const total = async (id: string) =>
@@ -81,7 +82,7 @@ describe('pantry', () => {
 
 describe('cooking', () => {
   it('deducts needs and undo restores stock and meal status', async () => {
-    const recipe = RECIPES.find((r) => r.id === 'spaghetti-bolognese')!;
+    const recipe = RECIPES.find((r) => r.ingredients.some((i) => ingById0.get(i.ingredientId)?.trackMode === 'exact'))!;
     const ingById = new Map(INGREDIENTS.map((i) => [i.id, i]));
     const { needs } = recipeNeeds(recipe, 4, ingById);
     const exactNeeds = [...needs].filter(([id]) => ingById.get(id)!.trackMode === 'exact');

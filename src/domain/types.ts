@@ -51,7 +51,21 @@ export interface Ingredient {
   keepStocked: boolean;
   lowThreshold?: number; // baseUnit
   valueWeight: 1 | 2 | 3;
+  /** How to store it so it lasts longer, e.g. green onions upright in a jar of water. */
+  storageTip?: string;
+  /** Shelf life (days) when the storage tip is followed; shown next to the tip. */
+  tipShelfLife?: Partial<Record<Location, number>>;
+  /** Freeze/thaw guidance for items that are often frozen. */
+  thawTip?: string;
+  /** Always available (tap water): never shopped for, tracked, or counted as missing. */
+  alwaysOnHand?: boolean;
   source: 'builtin' | 'user';
+}
+
+export interface RecipeCredit {
+  name: string; // site or book, e.g. "Budget Bytes"
+  url: string;
+  author?: string;
 }
 
 export interface RecipeIngredient {
@@ -78,6 +92,8 @@ export interface Recipe {
   ingredients: RecipeIngredient[];
   steps: string[]; // timers are detected from text in cook mode
   notes?: string;
+  /** Where the recipe comes from. Built-in recipes are adapted from these and link back. */
+  credit?: RecipeCredit;
   favorite: boolean;
   rating?: number;
   archived: boolean;
