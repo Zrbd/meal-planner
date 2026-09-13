@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#15803d"/>
+  <!-- bowl -->
+  <path d="M96 250h320c0 96-72 164-160 164S96 346 96 250z" fill="#fff"/>
+  <rect x="176" y="414" width="160" height="26" rx="13" fill="#fff"/>
+  <!-- leaves / steam -->
+  <path d="M200 226c-30-40-12-96 36-116 10 50-2 92-36 116z" fill="#bbf7d0"/>
+  <path d="M268 226c10-58 56-92 112-86-12 52-56 84-112 86z" fill="#86efac"/></svg>
