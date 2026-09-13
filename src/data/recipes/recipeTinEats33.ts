@@ -1,0 +1,92 @@
+// More recipes adapted from RecipeTin Eats (Nagi Maehashi). Ingredient amounts follow the original
+// (mapped to our catalog); steps are rewritten in our own words. See each credit link for the full post and notes.
+import { defineRecipe } from './define';
+
+const rte = (slug: string) => ({ name: 'RecipeTin Eats', author: 'Nagi Maehashi', url: `https://www.recipetineats.com/${slug}/` });
+
+export const RECIPETIN_EATS_33 = [
+  defineRecipe({
+    id: 'roasted-sweet-potato-stacks-rosemary-butter', title: 'Roasted Sweet Potato Stacks', credit: rte('roasted-sweet-potato-stacks'),
+    description: 'Thin sweet potato slices tossed in rosemary butter, stacked in a muffin tin, and roasted until tender inside with golden, crispy edges.',
+    servings: 6, prep: 15, cook: 45, cuisine: 'Australian', protein: 'vegetarian', diet: [], slots: ['dinner'], difficulty: 2,
+    ingredients: [
+      [2.4, 'lb', 'sweet-potato', 'unpeeled weight, about 2–2¾ inches wide'],
+      [3, 'tbsp', 'butter', 'unsalted, melted'],
+      [1.5, 'tbsp', 'olive-oil'],
+      [2, 'tbsp', 'fresh-rosemary', 'finely chopped (or 1 tbsp dried, or other herbs)'],
+      [1.25, 'tsp', 'salt'],
+      [0.5, 'tsp', 'black-pepper'],
+    ],
+    steps: [
+      'Heat the oven to 375°F (350°F fan) and have a 12-cup muffin tin ready.',
+      'Peel the sweet potatoes and slice them very thin, about 2 mm. A mandoline makes this quick.',
+      'Toss the slices in a large bowl with the butter, oil, rosemary, salt, and pepper using your hands.',
+      'Pile slices into each muffin cup. They can rise above the rim, as they shrink about 25%.',
+      'Spoon about ½ tsp of the leftover butter mixture over each stack.',
+      'Bake 45 minutes, until the top edges brown and a skewer slides through easily.',
+      'Lift out with a fork and knife, brush with any butter left in the tin, and serve right away.',
+    ],
+    notes: 'Makes 12 stacks, about 2 per person. Best fresh; leftovers keep 3 days and re-crisp in a hot oven or air fryer. Store sweet potatoes somewhere cool, dark, and airy (not the fridge, which makes them hard in the center); they last 3–5 weeks. Rosemary lasts 2 weeks wrapped in a slightly damp paper towel in a bag in the fridge, or freeze sprigs whole and strip the leaves off frozen.',
+  }),
+  defineRecipe({
+    id: 'vegetarian-tofu-cabbage-chow-mein', title: 'Vegetarian Chow Mein', credit: rte('vegetarian-chow-mein'),
+    description: 'A fast wok-tossed noodle stir fry with marinated tofu, cabbage, carrot, crunchy bean sprouts, and scallions in a savory soy sauce.',
+    servings: 2, prep: 10, cook: 5, cuisine: 'Chinese', protein: 'tofu', diet: [], difficulty: 1,
+    ingredients: [
+      [6, 'oz', 'lo-mein-noodles', 'fresh chow mein noodles'],
+      [2, 'tbsp', 'vegetable-oil'],
+      [2, 'clove', 'garlic', 'minced'],
+      [2, 'cup', 'cabbage', 'shredded, ideally Chinese (napa) cabbage'],
+      [0.5, 'cup', 'carrot', 'julienned'],
+      [2, 'ea', 'green-onion', 'cut into 2-inch pieces'],
+      [1, 'cup', 'bean-sprouts'],
+      [5, 'oz', 'tofu', 'firm, sliced'],
+      'Tofu marinade',
+      [0.5, 'tbsp', 'soy-sauce'],
+      [1, 'tbsp', 'dry-white-wine', 'the original uses Chinese cooking wine (Shaoxing)'],
+      'Sauce',
+      [1.5, 'tbsp', 'soy-sauce'],
+      [0.5, 'tbsp', 'oyster-sauce', 'the original uses hoisin, which is vegetarian'],
+      [2, 'tsp', 'sugar'],
+      [0.5, 'tsp', 'sesame-oil'],
+      [0.25, 'cup', 'water'],
+      [0.125, 'tsp', 'white-pepper'],
+      [0.5, 'tsp', 'red-pepper-flakes', 'the original uses chili garlic sauce or sriracha', 'optional'],
+    ],
+    steps: [
+      'Prepare the noodles per the package (usually a soak in boiling water) and drain.',
+      'Toss the tofu with the marinade and let it sit 5 minutes. Stir the sauce ingredients together.',
+      'Heat the oil in a wok over high. Stir-fry the garlic for 10 seconds.',
+      'Add the tofu and stir-fry gently about 1 minute, until it starts to caramelize.',
+      'Add the cabbage and carrot and stir-fry until the cabbage begins to wilt.',
+      'Add the noodles, green onions, bean sprouts, and sauce and toss for about 1 minute, just until hot and coated. The sprouts should stay crisp. Serve right away.',
+    ],
+    notes: 'Best eaten fresh; leftovers keep 2 days. Bean sprouts are the most perishable thing here (2–3 days), so plan this early in the week or keep them submerged in cold water in a sealed container and change the water daily to stretch them to about 5 days. Wrap napa cabbage loosely in a bag and use within a week. Stand green onions roots-down in a jar with an inch of water in the fridge, loosely bagged, so they don\'t wilt after day one.',
+  }),
+  defineRecipe({
+    id: 'herb-roasted-vegetables-potato-carrot-onion', title: 'Roasted Vegetables', credit: rte('roasted-vegetables'),
+    description: 'Potatoes, carrots, and red onion slow-roasted with smashed garlic, thyme, and sage until caramelized and golden, finished with parsley.',
+    servings: 5, prep: 10, cook: 90, cuisine: 'Australian', protein: 'vegetarian', diet: [], slots: ['dinner'], difficulty: 1,
+    ingredients: [
+      [14, 'oz', 'potato', 'small potatoes, skin on (about 10)'],
+      [3, 'ea', 'carrot', 'medium-large, peeled; the original uses 2 carrots plus 1 large parsnip'],
+      [1, 'ea', 'red-onion', 'large'],
+      [5, 'clove', 'garlic', 'unpeeled, smashed'],
+      [1, 'tbsp', 'fresh-thyme', 'about 5 sprigs'],
+      [4, 'tbsp', 'olive-oil', 'extra virgin'],
+      [1, 'tsp', 'salt', 'cooking or kosher'],
+      [0.25, 'tsp', 'black-pepper'],
+      [2, 'tbsp', 'parsley', 'finely chopped'],
+    ],
+    steps: [
+      'Halve the potatoes (cut big ones in 3–4). Cut the carrots on the diagonal into 1¼-inch chunks. Cut the onion into wedges, then into roughly ¾-inch squares.',
+      'Smash each garlic clove with the flat of a knife so it bursts but mostly holds together.',
+      'Heat the oven to 390°F (350°F fan).',
+      'Toss the onion in a small bowl with 1 tbsp oil and a pinch of salt and pepper. Set aside, since it goes in later.',
+      'Toss everything else except the parsley with the remaining oil, salt, and pepper and spread on a large tray.',
+      'Roast 30 minutes. Add the onion, toss, and roast about 1 hour more, tossing halfway, until golden at the edges.',
+      'Sprinkle with parsley and serve right away.',
+    ],
+    notes: 'The ideal end-of-week dish for any potatoes, carrots, or root vegetables that need using: swap in parsnip, sweet potato, or butternut squash cut to a similar size. Leftovers keep 4 days and reheat best in the oven or air fryer. Keep onions and potatoes apart in a cool dark place (together they spoil each other faster). Fresh thyme lasts 2 weeks wrapped in a damp paper towel in a bag, or freeze the sprigs.',
+  }),
+];
