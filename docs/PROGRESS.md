@@ -8,7 +8,7 @@ Living handoff log. Newest notes at the top of each section.
 - [x] Domain: types, dates, units, packages, stock simulator
 - [x] Domain: shopping, forecast, coverage, autoplan, parse
 - [x] Seed ingredient catalog (`src/data/ingredients.ts`)
-- [x] Seed recipes (`src/data/recipes/`, 527 credited, beef-free recipes)
+- [x] Seed recipes (`src/data/recipes/`, 538 credited, beef-free recipes)
 - [x] Domain + service tests (`tests/`, 64 passing)
 - [x] DB schema, seed, backup (`src/db/`)
 - [x] Services (plan, cook, trip, pantry, recipes, shopping)
