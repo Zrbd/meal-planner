@@ -1,5 +1,6 @@
 // Low-stock detection, usage-rate forecasts, and expiry alerts.
 import { addDaysISO, daysBetween, nextShoppingDay, relativeDayLabel } from './dates';
+import { thawNeeds, useUpCandidates } from './freshness';
 import { buildDemands, negligible, onHand, simulate } from './stock';
 import type { Ingredient, InventoryTxn, ISODate, LooseStock, PlannedMeal, Recipe, StockLot } from './types';
 
@@ -29,8 +30,8 @@ export function effectiveThreshold(ing: Ingredient, dailyRate: number, bufferDay
   return Math.max(smallest * 0.25, dailyRate * bufferDays);
 }
 
-export type AlertKind = 'expired' | 'short' | 'out' | 'expiring' | 'low';
-const SEVERITY: Record<AlertKind, number> = { expired: 0, short: 1, out: 2, expiring: 3, low: 4 };
+export type AlertKind = 'expired' | 'thaw' | 'short' | 'out' | 'expiring' | 'old' | 'low';
+const SEVERITY: Record<AlertKind, number> = { expired: 0, thaw: 1, short: 2, out: 3, expiring: 4, old: 5, low: 6 };
 
 export interface Alert {
   id: string;
@@ -156,6 +157,34 @@ export function computeAlerts(input: AlertInput): Alert[] {
     } else if (days <= 2) {
       alerts.push({ id: `expiring:${lot.id}`, kind: 'expiring', ingredientId: ing.id, lotId: lot.id, title: `Use your ${ing.name.toLowerCase()} soon`, detail: days === 0 ? 'Expires today' : `Expires in ${days} day${days === 1 ? '' : 's'}` });
     }
+  }
+
+  // Frozen food a meal in the next 2 days will use.
+  const freshIn = { lots, loose, ingById: ingredients, meals, recipesById: recipes, today };
+  for (const t of thawNeeds(freshIn)) {
+    const recipe = recipes.get(t.recipeId);
+    const cookingToday = t.date === today;
+    alerts.push({
+      id: `thaw:${t.lot.id}`,
+      kind: 'thaw',
+      ingredientId: t.ing.id,
+      lotId: t.lot.id,
+      title: cookingToday ? `Thaw the ${t.ing.name.toLowerCase()} now` : t.thawBy === today ? `Move the ${t.ing.name.toLowerCase()} to the fridge tonight` : `Thaw ${t.ing.name.toLowerCase()} ${relativeDayLabel(t.thawBy, today).toLowerCase()}`,
+      detail: `For ${recipe?.title ?? 'a planned meal'} (${relativeDayLabel(t.date, today)})${cookingToday ? ' — use the cold-water method' : ''}`,
+    });
+  }
+
+  // Leftover perishables that have been around a while and aren't part of any plan.
+  for (const u of useUpCandidates(freshIn)) {
+    if (u.reason !== 'old' || shortIds.has(u.ing.id)) continue;
+    alerts.push({
+      id: `old:${u.lot.id}`,
+      kind: 'old',
+      ingredientId: u.ing.id,
+      lotId: u.lot.id,
+      title: `Use up your ${u.ing.name.toLowerCase()}?`,
+      detail: `Bought ${u.ageDays} days ago and no meal planned for it${u.ing.shelfLife.freezer ? ' — or freeze it' : ''}`,
+    });
   }
 
   return alerts.sort((a, b) => SEVERITY[a.kind] - SEVERITY[b.kind]);

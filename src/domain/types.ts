@@ -181,5 +181,7 @@ export interface Settings {
   dislikedIngredients: string[];
   aisleOrder: AisleId[];
   bufferDays: number;
+  /** Show alerts as phone notifications + app badge when the app opens. */
+  notifications: boolean;
   lastBackupAt?: number;
 }

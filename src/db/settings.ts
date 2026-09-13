@@ -14,6 +14,7 @@ export const DEFAULT_SETTINGS: Settings = {
   dislikedIngredients: [],
   aisleOrder: DEFAULT_AISLE_ORDER,
   bufferDays: 3,
+  notifications: false,
 };
 
 export function withDefaults(s: Partial<Settings> | undefined): Settings {

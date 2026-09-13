@@ -223,6 +223,73 @@ function volumeUS(ml: number): { qty: number; unit: string } {
   return { qty: ml / UNITS.gallon.factor, unit: 'gallon' };
 }
 
+// ---------- per-ingredient unit flipping ----------
+
+export type AmountSystem = UnitSystem | 'any';
+
+export interface AmountOption {
+  qty: number;
+  unit: string;
+  system: AmountSystem;
+  dim: Dimension;
+  text: string;
+}
+
+const US_UNITS = new Set(['oz', 'lb', 'tsp', 'tbsp', 'fl oz', 'cup', 'pint', 'quart', 'gallon', 'pinch', 'dash']);
+
+function systemOf(unit: string): AmountSystem {
+  const u = normalizeUnit(unit);
+  return METRIC_UNITS.has(u) ? 'metric' : US_UNITS.has(u) ? 'us' : 'any';
+}
+
+const option = (qty: number, unit: string, dim: Dimension, system = systemOf(unit)): AmountOption => ({
+  qty, unit, system, dim, text: formatAmount(qty, unit),
+});
+
+/**
+ * Every sensible way to show a recipe amount: as written, US volume/weight, metric weight/volume.
+ * Mass↔volume uses the ingredient's density; the first option is always the recipe's own wording.
+ */
+export function amountOptions(qty: number, unit: string, ing: Ingredient): AmountOption[] {
+  const u = normalizeUnit(unit);
+  const own = option(qty, u, UNITS[u]?.dim ?? dimOf(ing.baseUnit));
+  let base: number;
+  try {
+    base = toBase(qty, u, ing);
+  } catch {
+    return [own];
+  }
+  const out = [own];
+  const add = (o: AmountOption) => {
+    if (!out.some((x) => x.unit === o.unit)) out.push(o);
+  };
+  const as = (target: string) => fromBase(base, target, ing);
+  const pinchy = own.dim === 'volume' && ['pinch', 'dash'].includes(u);
+  if (canConvert('g', ing)) {
+    const g = as('g');
+    add(g >= 1000 ? option(g / 1000, 'kg', 'mass') : option(g, 'g', 'mass'));
+  }
+  if (canConvert('ml', ing)) {
+    const ml = as('ml');
+    const v = volumeUS(ml);
+    if (!pinchy) add(option(v.qty, v.unit, 'volume'));
+    add(ml >= 1000 ? option(ml / 1000, 'l', 'volume') : option(ml, 'ml', 'volume'));
+  }
+  if (canConvert('oz', ing)) {
+    const oz = as('oz');
+    add(oz < 16 ? option(oz, 'oz', 'mass') : option(oz / 16, 'lb', 'mass'));
+  }
+  // Keep an alias (can, clove) or count in the list, but don't show silly "0.1 g" for a pinch.
+  return out.filter((o, i) => i === 0 || o.qty * (UNITS[o.unit]?.factor ?? 1) >= 0.5);
+}
+
+/** Default option for a unit system: the recipe's own wording if it already fits, else the same kind of measure. */
+export function defaultOption(options: AmountOption[], system: UnitSystem): AmountOption {
+  const [own] = options;
+  if (own.system === system || own.system === 'any') return own;
+  return options.find((o) => o.system === system && o.dim === own.dim) ?? options.find((o) => o.system === system) ?? own;
+}
+
 /** Format a base quantity for an ingredient, e.g. "1½ lb", "3 cloves", "2". */
 export function formatQty(base: number, ing: Ingredient, system: UnitSystem = 'us'): string {
   const { qty, unit } = displayQty(base, ing, system);

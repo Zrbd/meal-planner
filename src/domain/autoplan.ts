@@ -16,6 +16,7 @@ export const PLAN_WEIGHTS = {
   sameProtein: 2,
   sameCuisine: 1,
   jitter: 0.3,
+  useUp: 5,
 };
 
 export interface PlanSlot {
@@ -43,6 +44,8 @@ export interface AutoPlanInput {
   now: number;
   seed: number;
   avoid?: Map<string, string[]>; // `${date}:${slot}` -> recipeIds not to pick (for "swap")
+  /** Ingredient ids the user asked to use up (old or leftover food). Strongly preferred until used. */
+  useUp?: string[];
 }
 
 export function mulberry32(seed: number) {
@@ -143,6 +146,8 @@ export function autoPlan(input: AutoPlanInput): AutoPick[] {
         .filter((l) => l.expiresOn && l.expiresOn >= s.date && l.expiresOn <= addDaysISO(s.date, 3))
         .map((l) => l.ingredientId),
     );
+    // "Use it up" items stop counting once earlier picks have eaten through them.
+    const useUp = new Set((input.useUp ?? []).filter((id) => (available.get(id) ?? 0) > EPS));
     const neighbors = placed.filter(
       (p) => p.slot === s.slot && (p.date === addDaysISO(s.date, -1) || p.date === addDaysISO(s.date, 1)),
     );
@@ -151,9 +156,11 @@ export function autoPlan(input: AutoPlanInput): AutoPick[] {
     for (const r of candidates) {
       const { needs } = recipeNeeds(r, servings, ingById);
       let wTot = 0, wHave = 0, expUse = 0, perishTot = 0, perishShared = 0;
+      const usesUp: string[] = [];
       for (const [id, qty] of needs) {
         const ing = ingById.get(id);
         if (!ing) continue;
+        if (useUp.has(id)) usesUp.push(ing.name.toLowerCase());
         wTot += ing.valueWeight;
         if (ing.trackMode === 'loose') {
           if (looseLevel.get(id) !== 'out') wHave += ing.valueWeight;
@@ -175,13 +182,16 @@ export function autoPlan(input: AutoPlanInput): AutoPick[] {
       const sameProtein = r.protein && neighbors.some((n) => n.recipe.protein === r.protein) ? 1 : 0;
       const sameCuisine = neighbors.some((n) => n.recipe.cuisine === r.cuisine) ? 1 : 0;
       const W = PLAN_WEIGHTS;
+      const useUpScore = useUp.size ? Math.min(1, usesUp.length / Math.min(2, useUp.size)) : 0;
       const score =
+        W.useUp * useUpScore +
         W.coverage * coverage + W.expiring * expScore + W.overlap * overlap +
         W.favorite * (r.favorite ? 1 : 0) + W.rating * ((r.rating ?? 3) - 3) -
         W.recency * recency - W.sameProtein * sameProtein - W.sameCuisine * sameCuisine +
         W.jitter * rng();
       if (!best || score > best.score) {
         const reasons: string[] = [];
+        if (usesUp.length) reasons.push(`Uses up your ${usesUp.slice(0, 2).join(' & ')}`);
         if (expScore > 0) reasons.push('Uses food expiring soon');
         if (coverage >= 0.6) reasons.push('You have most ingredients');
         if (overlap >= 0.3) reasons.push('Shares ingredients with other meals');

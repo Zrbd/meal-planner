@@ -1,4 +1,4 @@
-import { AlertTriangle, BookPlus, CalendarDays, ChevronRight, CircleOff, Clock, Settings, ShoppingCart, Trash2, TrendingDown } from 'lucide-react';
+import { AlertTriangle, BookPlus, CalendarDays, ChevronRight, CircleOff, Clock, Hourglass, Settings, ShoppingCart, Snowflake, Trash2, TrendingDown } from 'lucide-react';
 import { Link } from 'react-router';
 import { addDaysISO, formatDay, nextShoppingDay, relativeDayLabel } from '../../domain/dates';
 import type { AlertKind } from '../../domain/forecast';
@@ -12,6 +12,8 @@ const DAY = 86_400_000;
 
 const ALERT_STYLE: Record<AlertKind, { icon: typeof Clock; tone: string }> = {
   expired: { icon: Trash2, tone: 'text-red-600 bg-red-50' },
+  thaw: { icon: Snowflake, tone: 'text-sky-600 bg-sky-50' },
+  old: { icon: Hourglass, tone: 'text-emerald-700 bg-emerald-50' },
   short: { icon: ShoppingCart, tone: 'text-orange-600 bg-orange-50' },
   out: { icon: CircleOff, tone: 'text-red-600 bg-red-50' },
   expiring: { icon: Clock, tone: 'text-amber-600 bg-amber-50' },
