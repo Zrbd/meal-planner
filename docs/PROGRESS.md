@@ -15,7 +15,10 @@ Living handoff log. Newest notes at the top of each section.
 - [x] UI shell + screens (`src/ui/`): Today, Recipes, Recipe detail, Cook mode, Recipe editor (type or paste), Plan, Shopping, Pantry, Pantry item, Settings
 - [x] PWA icons (`public/favicon.svg` → `npm run icons`), production build passes
 - [x] Mobile preview smoke test (375×812): Home, Plan auto-fill, Shopping list, paste-import — no console errors
-- [ ] Deploy / install on iPhone (deferred — user will set up hosting later)
+- [x] Deploy: GitHub Pages at https://zrbd.github.io/meal-planner/ (repo https://github.com/Zrbd/meal-planner, public)
+  - `.github/workflows/deploy.yml` runs tests + build and publishes `dist/` on every push to `main`.
+  - Pages source = "GitHub Actions" (enabled via API). gh CLI installed on the dev PC, logged in as Zrbd.
+- [ ] User installs on iPhone (Safari → Share → Add to Home Screen)
 
 ## Deviations from TECHNICAL_PLAN.md
 - `Recipe.steps` is `string[]`; cook-mode timers are detected from step text (`detectTimerSec`).
