@@ -38,6 +38,12 @@ Living handoff log. Newest notes at the top of each section.
 - Plan auto-fill: per enabled slot, `mealsPerWeek − already planned`, spread evenly over free days ≥ today; user previews, shuffles, or removes picks before applying.
 - Shopping "Done shopping" → `finishTrip` adds checked items to pantry with default expiry; undo via toast or the "last trip" link.
 
+- No beef anywhere (user doesn't eat beef/beef broth). `tests/seed.test.ts` guards it. Every built-in recipe has `credit` (human source + link); steps are rewritten, not copied.
+- Freshness (`domain/freshness.ts`): lots older than ~half their shelf life (3–7 days) with no planned meal → "Use it up?" alert and a pre-auto-fill "Use these up?" sheet (`autoPlan({ useUp })` boosts recipes that use them). Frozen lots allocated to meals in the next 2 days → thaw alerts.
+- Storage tips (`data/storage.ts`: `storageTip`, `tipShelfLife`, `thawTip`) show on the recipe page ("Keep it fresh"), inline on the cook-mode step that first mentions the ingredient, on the pantry item page, and when adding stock ("I stored it this way" uses the longer shelf life).
+- Units: recipe page has a per-recipe US/Metric toggle; tapping an amount cycles that one line through its options (`amountOptions`). Stored in localStorage `units:{recipeId}`; base recipe unchanged.
+- Notifications: iOS web apps can't schedule local notifications. When enabled, `NotificationBridge` badges the icon and shows a digest of new alerts (deduped 2 days) each time the app opens; Settings → "Add this week's reminders to Calendar" shares an .ics with thaw/cook/use-by/shopping alarms (`domain/ics.ts`).
+
 ## Known gaps / ideas for next session
 - JS bundle is ~700 kB (216 kB gzip) — could code-split screens with `React.lazy`.
 - Auto-fill can put similar proteins on back-to-back days; consider a variety penalty for same protein on adjacent days in `autoplan.ts`.
