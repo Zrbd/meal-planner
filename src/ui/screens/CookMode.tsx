@@ -5,7 +5,9 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { detectTimerSec } from '../../domain/parse';
 import type { LooseLevel } from '../../domain/types';
-import { formatAmount, formatQty } from '../../domain/units';
+import { formatQty } from '../../domain/units';
+import { tipsByStep } from '../../domain/freshness';
+import { FlipAmount, StorageTip, useRecipeUnits } from '../amounts';
 import { cookRecipe, previewCook, undoCook } from '../../services/cook';
 import { setLooseLevel } from '../../services/pantry';
 import { AmountInput, EmptyState, PageHeader, Segmented, Sheet } from '../components';
@@ -59,6 +61,7 @@ export function CookMode() {
   const [timers, setTimers] = useState<RunningTimer[]>([]);
   const [, setTick] = useState(0);
   const fired = useRef(new Set<number>());
+  const units = useRecipeUnits(id, settings.units);
 
   // keep the screen on
   useEffect(() => {
@@ -108,6 +111,7 @@ export function CookMode() {
   const text = recipe.steps[step] ?? '';
   const timerSec = detectTimerSec(text);
   const last = step === recipe.steps.length - 1;
+  const stepTips = tipsByStep(recipe, ingById).get(step) ?? [];
 
   return (
     <div className="pt-safe flex min-h-dvh flex-col bg-white">
@@ -138,6 +142,11 @@ export function CookMode() {
           >
             <Timer size={18} /> Start {mmss(timerSec * 1000)} timer
           </button>
+        )}
+        {stepTips.length > 0 && (
+          <div className="mt-6 space-y-2">
+            {stepTips.map((ing) => <StorageTip key={ing.id} ing={ing} />)}
+          </div>
         )}
       </div>
 
@@ -179,7 +188,7 @@ export function CookMode() {
         <ul className="divide-y divide-stone-100">
           {recipe.ingredients.map((ri, i) => (
             <li key={i} className="py-2.5">
-              <b>{ri.qty > 0 ? formatAmount(ri.qty * scale, ri.unit) : ''}</b> {ingById.get(ri.ingredientId)?.name.toLowerCase()}
+              <FlipAmount amount={units.line(ri, i, scale, ingById.get(ri.ingredientId))} /> {ingById.get(ri.ingredientId)?.name.toLowerCase()}
               {ri.prep && <span className="text-stone-500">, {ri.prep}</span>}
             </li>
           ))}
@@ -242,6 +251,10 @@ function ReviewSheet(props: {
         </button>
       }
     >
+      <p className="mb-2 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-950">
+        🥡 <b>Leftovers:</b> cool them and get them into a sealed container in the fridge within 2 hours. They keep 3–4 days — or freeze
+        portions for up to 3 months.
+      </p>
       <p className="mb-2 text-sm text-stone-500">We'll take these amounts out of your pantry. Tap one to change it.</p>
       <ul className="divide-y divide-stone-100">
         {sorted.map((l) => {

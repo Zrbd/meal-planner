@@ -1,4 +1,5 @@
-import { Download, RotateCcw, Upload, X } from 'lucide-react';
+import { CalendarPlus, Download, RotateCcw, Upload, X } from 'lucide-react';
+import { isInstalled, requestNotifications, shareReminders } from '../../services/notify';
 import { useRef, useState, type ReactNode } from 'react';
 import { importBackup, resetEverything, shareBackup } from '../../db/backup';
 import { updateSettings } from '../../db/settings';
@@ -34,7 +35,7 @@ function Row({ title, hint, children }: { title: string; hint?: string; children
 }
 
 export function SettingsScreen() {
-  const { settings: s, ingById, lastBackupAt } = useAppData();
+  const { settings: s, ingById, lastBackupAt, meals, recipeById, lots, loose, today } = useAppData();
   const toast = useToast();
   const fileRef = useRef<HTMLInputElement>(null);
   const [dislikeOpen, setDislikeOpen] = useState(false);
@@ -120,6 +121,42 @@ export function SettingsScreen() {
               <Segmented value={s.units} options={[{ value: 'us', label: 'US' }, { value: 'metric', label: 'Metric' }]} onChange={(v) => set({ units: v })} />
             </div>
           </Row>
+        </div>
+
+        <h2 className="section-title">Reminders</h2>
+        <div className="card space-y-3 p-3">
+          <Row title="Phone notifications" hint="Thawing, food to use up, expiring and running-out items">
+            <input
+              type="checkbox"
+              role="switch"
+              className="h-6 w-6 accent-[var(--color-brand)]"
+              checked={s.notifications}
+              onChange={async (e) => {
+                if (!e.target.checked) return set({ notifications: false });
+                const perm = await requestNotifications();
+                if (perm === 'granted') {
+                  set({ notifications: true });
+                  toast('Notifications on');
+                } else if (perm === 'unsupported') {
+                  toast(isInstalled() ? 'This phone doesn’t support web notifications' : 'Add the app to your Home Screen first');
+                } else toast('Notifications are blocked — allow them in iPhone Settings › Notifications');
+              }}
+            />
+          </Row>
+          <p className="text-xs leading-relaxed text-stone-500">
+            iPhone only lets web apps notify you while they're open, so you'll get a summary (and a red badge on the app icon) each time you
+            open it. For reminders at a set time — like “thaw the chicken tonight” — add them to your calendar:
+          </p>
+          <button
+            className="btn btn-secondary w-full"
+            onClick={async () => {
+              const r = await shareReminders({ meals, recipesById: recipeById, ingById, lots, loose, today, shoppingDay: s.shoppingDay });
+              if (r === 'empty') toast('Nothing to remind you about this week');
+              else if (r !== 'cancelled') toast('Open the file and tap “Add All” in Calendar');
+            }}
+          >
+            <CalendarPlus size={18} /> Add this week's reminders to Calendar
+          </button>
         </div>
 
         <h2 className="section-title">Your data</h2>

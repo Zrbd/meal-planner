@@ -11,6 +11,7 @@ import { AmountInput, EmptyState, PageHeader, Segmented, Sheet } from '../compon
 import { useAppData } from '../data';
 import { useToast } from '../toast';
 import { AddStockSheet, expiryLabel } from './Pantry';
+import { StorageTip } from '../amounts';
 
 const REASON: Record<string, string> = { purchase: 'Bought', cook: 'Cooked with', adjust: 'Adjusted', waste: 'Tossed' };
 
@@ -82,6 +83,8 @@ export function PantryItem() {
             )}
           </div>
         )}
+
+        {(ing.storageTip || ing.thawTip) && <StorageTip ing={ing} open />}
 
         {myLots.length > 0 && (
           <section>

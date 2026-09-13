@@ -11,12 +11,14 @@ import { useAppData, type AppData } from '../data';
 import { useCoverage } from '../hooks';
 import { useToast } from '../toast';
 import Fuse from 'fuse.js';
+import { useUpCandidates, type UseUpItem } from '../../domain/freshness';
+import { formatQty } from '../../domain/units';
 
-function planInput(d: AppData, slots: PlanSlot[], seed: number, avoid?: Map<string, string[]>) {
+function planInput(d: AppData, slots: PlanSlot[], seed: number, avoid?: Map<string, string[]>, useUp?: string[]) {
   return {
     slots, existing: d.meals, recipes: d.recipes, ingById: d.ingById, lots: d.lots, loose: d.loose,
     recentCooks: d.cookLogs.map((c) => ({ recipeId: c.recipeId, at: c.at })),
-    settings: d.settings, servings: d.settings.householdSize, today: d.today, now: d.now, seed, avoid,
+    settings: d.settings, servings: d.settings.householdSize, today: d.today, now: d.now, seed, avoid, useUp,
   };
 }
 
@@ -40,6 +42,8 @@ export function Plan() {
   const [menuMeal, setMenuMeal] = useState<PlannedMeal | null>(null);
   const [picks, setPicks] = useState<AutoPick[] | null>(null);
   const [seed, setSeed] = useState(1);
+  const [useUpAsk, setUseUpAsk] = useState<UseUpItem[] | null>(null);
+  const [useUpIds, setUseUpIds] = useState<string[]>([]);
 
   const weekMeals = meals.filter((m) => m.date >= weekStart && m.date <= weekEnd);
   const plannedCount = weekMeals.filter((m) => m.status === 'planned' && !m.leftoverOf).length;
@@ -55,14 +59,22 @@ export function Plan() {
     return out;
   };
 
-  const runAuto = (s: number) => {
+  const runAuto = (s: number, useUp = useUpIds) => {
     const slots = openSlotsForAutofill();
     if (!slots.length) {
       toast(weekEnd < today ? "That week's already past" : 'This week is already full');
       return;
     }
     setSeed(s);
-    setPicks(autoPlan(planInput(d, slots, s)));
+    setPicks(autoPlan(planInput(d, slots, s, undefined, useUp)));
+  };
+
+  /** Ask about food that's been sitting around before filling the week. */
+  const startAuto = () => {
+    if (!openSlotsForAutofill().length) return runAuto(0);
+    const items = useUpCandidates({ lots: d.lots, loose: d.loose, ingById: d.ingById, meals: d.meals, recipesById: recipeById, today });
+    if (items.length) setUseUpAsk(items);
+    else runAuto(Date.now() % 100000, []);
   };
 
   return (
@@ -71,7 +83,7 @@ export function Plan() {
         title="Meal plan"
         subtitle={`${plannedCount} meal${plannedCount === 1 ? '' : 's'} planned`}
         right={
-          <button className="btn btn-ghost px-3" onClick={() => runAuto(Date.now() % 100000)}>
+          <button className="btn btn-ghost px-3" onClick={startAuto}>
             <Sparkles size={18} /> Auto-fill
           </button>
         }
@@ -197,6 +209,19 @@ export function Plan() {
         />
       )}
 
+      {useUpAsk && (
+        <UseUpSheet
+          items={useUpAsk}
+          today={today}
+          onClose={() => setUseUpAsk(null)}
+          onGo={(ids) => {
+            setUseUpAsk(null);
+            setUseUpIds(ids);
+            runAuto(Date.now() % 100000, ids);
+          }}
+        />
+      )}
+
       <Sheet
         open={!!picks}
         onClose={() => setPicks(null)}
@@ -211,7 +236,15 @@ export function Plan() {
                 if (!picks) return;
                 await applyAutoPlan(picks, settings.householdSize);
                 setPicks(null);
-                toast(`Added ${picks.length} meals`);
+                const frozen = new Set(
+                  picks.flatMap((p) => recipeById.get(p.recipeId)?.ingredients.map((ri) => ri.ingredientId) ?? [])
+                    .filter((ingId) => d.lots.some((l) => l.ingredientId === ingId && l.location === 'freezer')),
+                );
+                toast(
+                  frozen.size
+                    ? `Added ${picks.length} meals · some use frozen ${[...frozen].map((x) => d.ingById.get(x)?.name.toLowerCase()).slice(0, 2).join(' & ')} — we'll remind you to thaw`
+                    : `Added ${picks.length} meals`,
+                );
               }}
             >
               Add {picks?.length ?? 0} meals
@@ -248,6 +281,50 @@ export function Plan() {
         </div>
       </Sheet>
     </>
+  );
+}
+
+function UseUpSheet(props: { items: UseUpItem[]; today: string; onClose: () => void; onGo: (ingredientIds: string[]) => void }) {
+  const { settings } = useAppData();
+  const [picked, setPicked] = useState(() => new Set(props.items.map((i) => i.ing.id)));
+  const byIng = [...new Map(props.items.map((i) => [i.ing.id, i])).values()];
+  return (
+    <Sheet
+      open
+      onClose={props.onClose}
+      title="Use these up?"
+      footer={
+        <div className="flex gap-2">
+          <button className="btn btn-secondary flex-1" onClick={() => props.onGo([])}>Skip</button>
+          <button className="btn btn-primary flex-[2]" onClick={() => props.onGo([...picked])}>
+            {picked.size ? `Plan around ${picked.size} item${picked.size === 1 ? '' : 's'}` : 'Plan meals'}
+          </button>
+        </div>
+      }
+    >
+      <p className="mb-3 text-sm text-stone-500">These have been sitting a while and no meal is planned for them yet. We'll favor recipes that use the ones you check.</p>
+      <ul className="card divide-y divide-stone-100">
+        {byIng.map((it) => (
+          <li key={it.ing.id}>
+            <label className="flex items-center gap-3 p-3">
+              <input
+                type="checkbox"
+                className="h-5 w-5 accent-[var(--color-brand)]"
+                checked={picked.has(it.ing.id)}
+                onChange={() => setPicked((s) => { const n = new Set(s); if (n.has(it.ing.id)) n.delete(it.ing.id); else n.add(it.ing.id); return n; })}
+              />
+              <div className="min-w-0 flex-1">
+                <div className="font-medium">{it.ing.name}</div>
+                <div className="text-xs text-stone-500">
+                  {formatQty(it.spare, it.ing, settings.units)} left · bought {it.ageDays === 0 ? 'today' : `${it.ageDays} day${it.ageDays === 1 ? '' : 's'} ago`}
+                  {it.daysLeft !== undefined && it.daysLeft !== null && ` · ${it.daysLeft <= 0 ? 'use today' : `good ~${it.daysLeft} more day${it.daysLeft === 1 ? '' : 's'}`}`}
+                </div>
+              </div>
+            </label>
+          </li>
+        ))}
+      </ul>
+    </Sheet>
   );
 }
 

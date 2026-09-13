@@ -1,7 +1,10 @@
 import { BookOpen, CalendarDays, House, Refrigerator, ShoppingCart } from 'lucide-react';
 import { HashRouter, NavLink, Route, Routes, useLocation } from 'react-router';
 import { useRegisterSW } from 'virtual:pwa-register/react';
-import { AppDataProvider } from './data';
+import { useEffect } from 'react';
+import { pushNewAlerts, setBadge } from '../services/notify';
+import { AppDataProvider, useAppData } from './data';
+import { useAlerts } from './hooks';
 import { CookMode } from './screens/CookMode';
 import { Home } from './screens/Home';
 import { Pantry } from './screens/Pantry';
@@ -46,6 +49,29 @@ function TabBar() {
   );
 }
 
+/** Badge the app icon and send a notification digest for new alerts whenever the app is open. */
+function NotificationBridge() {
+  const { settings } = useAppData();
+  const alerts = useAlerts();
+  const key = alerts.map((a) => a.id).join('|');
+  useEffect(() => {
+    if (!settings.notifications) {
+      void setBadge(0);
+      return;
+    }
+    const run = () => {
+      if (document.visibilityState !== 'visible') return;
+      void setBadge(alerts.filter((a) => a.kind !== 'low').length);
+      void pushNewAlerts(alerts).catch(() => {});
+    };
+    run();
+    document.addEventListener('visibilitychange', run);
+    return () => document.removeEventListener('visibilitychange', run);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key, settings.notifications]);
+  return null;
+}
+
 function UpdateBanner() {
   const {
     needRefresh: [needRefresh, setNeedRefresh],
@@ -87,6 +113,7 @@ export function App() {
           </main>
           <TabBar />
           <UpdateBanner />
+          <NotificationBridge />
         </ToastProvider>
       </AppDataProvider>
     </HashRouter>

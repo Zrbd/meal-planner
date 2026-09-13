@@ -4,7 +4,9 @@ import { useNavigate, useParams } from 'react-router';
 import { recipeCoverage } from '../../domain/coverage';
 import { addDaysISO, relativeDayLabel } from '../../domain/dates';
 import { SLOTS, type Slot } from '../../domain/types';
-import { formatAmount } from '../../domain/units';
+import { tipIngredients, tipsByStep } from '../../domain/freshness';
+import { ExternalLink, Lightbulb, RotateCcw } from 'lucide-react';
+import { FlipAmount, StorageTip, useRecipeUnits } from '../amounts';
 import { addMeal, removeMeal } from '../../services/plan';
 import { deleteRecipe, duplicateRecipe, setArchived, setRating, toggleFavorite } from '../../services/recipes';
 import { EmptyState, PageHeader, RecipeThumb, Segmented, Sheet, totalTime } from '../components';
@@ -22,6 +24,7 @@ export function RecipeDetail() {
   const [servings, setServings] = useState(settings.householdSize);
   const [menuOpen, setMenuOpen] = useState(false);
   const [planOpen, setPlanOpen] = useState(false);
+  const units = useRecipeUnits(id, settings.units);
 
   const coverage = useMemo(
     () => recipe && recipeCoverage(recipe, servings, available, looseLevel, ingById),
@@ -38,6 +41,8 @@ export function RecipeDetail() {
   }
   const scale = servings / (recipe.baseServings || 1);
   const missing = new Set(coverage?.missing ?? []);
+  const tips = tipIngredients(recipe, ingById);
+  const stepTips = tipsByStep(recipe, ingById);
 
   return (
     <>
@@ -75,6 +80,11 @@ export function RecipeDetail() {
           </div>
         </div>
         {recipe.description && <p className="mt-3 text-stone-600">{recipe.description}</p>}
+        {recipe.credit && (
+          <a href={recipe.credit.url} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1 text-sm text-brand">
+            Adapted from {recipe.credit.author ? `${recipe.credit.author}, ` : ''}{recipe.credit.name} <ExternalLink size={13} />
+          </a>
+        )}
         {(recipe.diet.length > 0 || recipe.source === 'user') && (
           <div className="mt-3 flex flex-wrap gap-1.5">
             {recipe.source === 'user' && <span className="rounded-full bg-sky-100 px-2 py-0.5 text-xs font-medium text-sky-800">My recipe</span>}
@@ -102,6 +112,16 @@ export function RecipeDetail() {
             {coverage.canMake ? '✅ You have everything you need.' : `You're missing ${coverage.missing.length} ingredient${coverage.missing.length === 1 ? '' : 's'}.`}
           </p>
         )}
+        <div className="mt-3 flex items-center gap-2">
+          <div className="w-40">
+            <Segmented value={units.system} options={[{ value: 'us', label: 'US' }, { value: 'metric', label: 'Metric' }]} onChange={units.setSystem} />
+          </div>
+          {units.hasFlips ? (
+            <button className="btn btn-ghost px-2 py-1 text-xs" onClick={units.resetFlips}><RotateCcw size={13} /> Reset switched units</button>
+          ) : (
+            <span className="text-xs text-stone-400">Tap an amount to switch just that one</span>
+          )}
+        </div>
         <ul className="card mt-3 divide-y divide-stone-100">
           {recipe.ingredients.map((ri, idx) => {
             const ing = ingById.get(ri.ingredientId);
@@ -115,7 +135,7 @@ export function RecipeDetail() {
                     {have && <Check size={13} strokeWidth={3} />}
                   </span>
                   <div className="flex-1">
-                    <span className="font-semibold">{ri.qty > 0 ? formatAmount(ri.qty * scale, ri.unit) : ''}</span>{' '}
+                    <FlipAmount amount={units.line(ri, idx, scale, ing)} />{' '}
                     {ing?.name.toLowerCase() ?? ri.ingredientId}
                     {ri.prep && <span className="text-stone-500">, {ri.prep}</span>}
                     {ri.optional && <span className="text-stone-400"> (optional)</span>}
@@ -131,10 +151,22 @@ export function RecipeDetail() {
           {recipe.steps.map((s, i) => (
             <li key={i} className="flex gap-3">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-white">{i + 1}</span>
-              <p className="pt-0.5 leading-relaxed">{s}</p>
+              <div className="min-w-0 flex-1 space-y-2">
+                <p className="pt-0.5 leading-relaxed">{s}</p>
+                {stepTips.get(i)?.map((ing) => <StorageTip key={ing.id} ing={ing} compact />)}
+              </div>
             </li>
           ))}
         </ol>
+        {tips.length > 0 && (
+          <>
+            <h2 className="mt-6 flex items-center gap-1.5 text-lg font-bold"><Lightbulb size={18} className="text-emerald-600" /> Keep it fresh</h2>
+            <p className="mt-1 text-sm text-stone-500">How to make the leftover ingredients from this recipe last longer.</p>
+            <div className="mt-2 space-y-2">
+              {tips.map((ing) => <StorageTip key={ing.id} ing={ing} />)}
+            </div>
+          </>
+        )}
         {recipe.notes && (
           <div className="card mt-5 bg-amber-50 p-3 text-sm">
             <b>Notes:</b> {recipe.notes}

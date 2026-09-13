@@ -9,6 +9,8 @@ import { forecastItem } from '../../domain/forecast';
 import type { Ingredient, ISODate, Location, LooseLevel } from '../../domain/types';
 import { formatQty } from '../../domain/units';
 import { addStock, defaultExpiry, setLooseLevel } from '../../services/pantry';
+import { addDaysISO as plusDays } from '../../domain/dates';
+import { Lightbulb } from 'lucide-react';
 import { AmountInput, EmptyState, IngredientPicker, PageHeader, SearchInput, Segmented, Sheet } from '../components';
 import { useAppData } from '../data';
 import { useToast } from '../toast';
@@ -162,6 +164,12 @@ export function AddStockSheet({ ing, onClose }: { ing: Ingredient; onClose: () =
   const [qty, setQty] = useState(0);
   const [location, setLocation] = useState<Location>(ing.defaultLocation);
   const [expires, setExpires] = useState<string>(defaultExpiry(ing, ing.defaultLocation, today) ?? '');
+  const [smart, setSmart] = useState(false);
+  const smartDays = (loc: Location) => ing.tipShelfLife?.[loc];
+  const expiryFor = (loc: Location, useTip: boolean) => {
+    const days = useTip ? smartDays(loc) : undefined;
+    return days ? plusDays(today, days) : (defaultExpiry(ing, loc, today) ?? '');
+  };
 
   if (ing.trackMode === 'loose') {
     return (
@@ -214,10 +222,32 @@ export function AddStockSheet({ ing, onClose }: { ing: Ingredient; onClose: () =
             options={[{ value: 'fridge', label: 'Fridge' }, { value: 'freezer', label: 'Freezer' }, { value: 'pantry', label: 'Pantry' }]}
             onChange={(v) => {
               setLocation(v);
-              setExpires(defaultExpiry(ing, v, today) ?? '');
+              setExpires(expiryFor(v, smart));
             }}
           />
         </div>
+        {ing.storageTip && (
+          <div className="rounded-xl bg-emerald-50 p-3 text-sm text-emerald-950">
+            <div className="flex gap-2">
+              <Lightbulb size={16} className="mt-0.5 shrink-0 text-emerald-600" />
+              <p className="leading-relaxed">{ing.storageTip}</p>
+            </div>
+            {smartDays(location) && (
+              <label className="mt-2 flex items-center gap-2 font-medium">
+                <input
+                  type="checkbox"
+                  className="h-5 w-5 accent-[var(--color-brand)]"
+                  checked={smart}
+                  onChange={(e) => {
+                    setSmart(e.target.checked);
+                    setExpires(expiryFor(location, e.target.checked));
+                  }}
+                />
+                I stored it this way (lasts ~{smartDays(location)} days)
+              </label>
+            )}
+          </div>
+        )}
         <div>
           <label className="label" htmlFor="exp">Use by <span className="text-stone-400">(estimated — change if the package says otherwise)</span></label>
           <input id="exp" type="date" className="input" value={expires} onChange={(e) => setExpires(e.target.value)} />
