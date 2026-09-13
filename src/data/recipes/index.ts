@@ -14,6 +14,7 @@ import { BUDGET_BYTES_12 } from './budgetBytes12';
 import { BUDGET_BYTES_13 } from './budgetBytes13';
 import { BUDGET_BYTES_14 } from './budgetBytes14';
 import { BUDGET_BYTES_15 } from './budgetBytes15';
+import { BUDGET_BYTES_16 } from './budgetBytes16';
 import { COOKIE_AND_KATE } from './cookieAndKate';
 import { RECIPETIN_EATS } from './recipeTinEats';
 import { RECIPETIN_EATS_2 } from './recipeTinEats2';
@@ -23,13 +24,14 @@ import { RECIPETIN_EATS_5 } from './recipeTinEats5';
 import { RECIPETIN_EATS_6 } from './recipeTinEats6';
 import { RECIPETIN_EATS_7 } from './recipeTinEats7';
 import { RECIPETIN_EATS_8 } from './recipeTinEats8';
+import { RECIPETIN_EATS_9 } from './recipeTinEats9';
 
 /** Built-in recipes, each adapted from (and crediting) a human recipe developer. No beef by user preference. */
 export const RECIPES: Recipe[] = [
   ...BUDGET_BYTES, ...BUDGET_BYTES_2, ...BUDGET_BYTES_3, ...BUDGET_BYTES_4, ...BUDGET_BYTES_5, ...BUDGET_BYTES_6,
-  ...BUDGET_BYTES_7, ...BUDGET_BYTES_8, ...BUDGET_BYTES_9, ...BUDGET_BYTES_10, ...BUDGET_BYTES_11, ...BUDGET_BYTES_12, ...BUDGET_BYTES_13, ...BUDGET_BYTES_14, ...BUDGET_BYTES_15,
-  ...RECIPETIN_EATS, ...RECIPETIN_EATS_2, ...RECIPETIN_EATS_3, ...RECIPETIN_EATS_4, ...RECIPETIN_EATS_5, ...RECIPETIN_EATS_6, ...RECIPETIN_EATS_7, ...RECIPETIN_EATS_8, ...COOKIE_AND_KATE,
+  ...BUDGET_BYTES_7, ...BUDGET_BYTES_8, ...BUDGET_BYTES_9, ...BUDGET_BYTES_10, ...BUDGET_BYTES_11, ...BUDGET_BYTES_12, ...BUDGET_BYTES_13, ...BUDGET_BYTES_14, ...BUDGET_BYTES_15, ...BUDGET_BYTES_16,
+  ...RECIPETIN_EATS, ...RECIPETIN_EATS_2, ...RECIPETIN_EATS_3, ...RECIPETIN_EATS_4, ...RECIPETIN_EATS_5, ...RECIPETIN_EATS_6, ...RECIPETIN_EATS_7, ...RECIPETIN_EATS_8, ...RECIPETIN_EATS_9, ...COOKIE_AND_KATE,
 ];
 
 /** Bump when built-in ingredients/recipes change so seeding upserts them (user-edited recipes are kept). */
-export const SEED_VERSION = 17;
+export const SEED_VERSION = 18;
