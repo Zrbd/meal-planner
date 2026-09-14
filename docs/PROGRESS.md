@@ -8,7 +8,7 @@ Living handoff log. Newest notes at the top of each section.
 - [x] Domain: types, dates, units, packages, stock simulator
 - [x] Domain: shopping, forecast, coverage, autoplan, parse
 - [x] Seed ingredient catalog (`src/data/ingredients.ts`)
-- [x] Seed recipes (`src/data/recipes/`, 637 credited, beef-free recipes)
+- [x] Seed recipes (`src/data/recipes/`, 640 credited, beef-free recipes incl. 3 desserts in `desserts.ts`)
 - [x] Domain + service tests (`tests/`, 64 passing)
 - [x] DB schema, seed, backup (`src/db/`)
 - [x] Services (plan, cook, trip, pantry, recipes, shopping)
@@ -32,6 +32,10 @@ Living handoff log. Newest notes at the top of each section.
 - Settings and `lastBackupAt` live in the `kv` table.
 
 ## Decisions
+- Containers and units are data, not code: `Ingredient.unitAliases` + `packages` are user-editable (Pantry item → Units & sizes, `saveUnits` sets `unitsEdited` so reseeds keep them). Lots carry `packSize`/`opened`; using part of a sealed pack splits the rest into an opened lot with its own location/expiry (`domain/containers.ts`, `services/pantry.takeFromLot`), recorded as a delta-0 `moved` txn so undo folds it back and usage rates ignore it. Canned goods default to 4 days fridge once opened (`openedShelfLife` overrides).
+- Substitutions rewrite the recipe line (`RecipeIngredient.swappedFrom` keeps the original); steps show the new name via `displayStep`, so plan, shopping, pantry and cook mode all follow.
+- Prep list (`/prep`, `domain/prepweek.ts`): knife prep from `ri.prep` grouped by ingredient; a portion goes to the fridge if its cut-life covers the day it is cooked, otherwise the freezer with a thaw-the-night-before note. Checks live in kv `prepChecks`.
+- Backup file name is fixed (`meal-planner-backup.json`) so the phone keeps one file.
 - Data access: a single `AppDataProvider` with one `useLiveQuery` loading all tables (txns limited to 60 days). Data is small; simpler than per-screen queries.
 - Package rounding uses 3% tolerance so float noise doesn't buy an extra pack.
 - Recipe editor: every ingredient line must be matched to a catalog ingredient (or a new one created from the picker) so pantry/shopping math works. Units that don't convert prompt "1 {unit} = N {base}" and save to `Ingredient.unitAliases`.

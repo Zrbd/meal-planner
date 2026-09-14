@@ -62,6 +62,10 @@ export interface Ingredient {
   alwaysOnHand?: boolean;
   /** Food category chosen by the user; otherwise derived by `categoryOf`. */
   category?: CategoryId;
+  /** Days a package keeps once opened (e.g. a can of broth moved to the fridge). Defaults by aisle. */
+  openedShelfLife?: Partial<Record<Location, number>>;
+  /** The user changed units/sizes; catalog updates keep their version. */
+  unitsEdited?: boolean;
   source: 'builtin' | 'user';
 }
 
@@ -78,6 +82,8 @@ export interface RecipeIngredient {
   prep?: string;
   optional?: boolean;
   group?: string;
+  /** Set when the user swapped this ingredient in; holds what the recipe originally called for. */
+  swappedFrom?: { ingredientId: string; qty: number; unit: string };
 }
 
 export interface Recipe {
@@ -113,6 +119,10 @@ export interface StockLot {
   location: Location;
   addedAt: number;
   expiresOn?: ISODate;
+  /** Size of each sealed package in this lot (baseUnit), e.g. one can. */
+  packSize?: number;
+  /** An opened package or leftovers: keeps for less time than sealed stock. */
+  opened?: boolean;
 }
 
 export interface LooseStock {
@@ -127,7 +137,9 @@ export interface InventoryTxn {
   delta: number;
   reason: 'purchase' | 'cook' | 'adjust' | 'waste';
   refId?: string;
-  lotSnapshot?: { lotId: string; expiresOn?: ISODate; location: Location; addedAt: number };
+  lotSnapshot?: { lotId: string; expiresOn?: ISODate; location: Location; addedAt: number; packSize?: number; opened?: boolean };
+  /** The rest of a package moved into a new opened lot (lotSnapshot) from another lot. */
+  moved?: { fromLotId: string; qty: number };
   note?: string;
   at: number;
 }

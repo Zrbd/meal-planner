@@ -33,6 +33,8 @@ export interface AppData {
   autoBackupAt?: number;
   /** When data was last brought back from that copy. */
   autoRestoredAt?: number;
+  /** Checked-off prep checklist task ids. */
+  prepChecks: Set<string>;
   dailyRates: Map<string, number>;
 }
 
@@ -52,7 +54,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
 
   const raw = useLiveQuery(async () => {
     const since = Date.now() - 60 * DAY;
-    const [ingredients, recipes, lots, loose, txns, meals, cookLogs, shopping, trips, settingsRow, backupRow, autoRow, restoredRow] =
+    const [ingredients, recipes, lots, loose, txns, meals, cookLogs, shopping, trips, settingsRow, backupRow, autoRow, restoredRow, checksRow] =
       await Promise.all([
         db.ingredients.toArray(),
         db.recipes.toArray(),
@@ -67,6 +69,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         db.kv.get('lastBackupAt'),
         db.kv.get('autoBackupAt'),
         db.kv.get('autoRestoredAt'),
+        db.kv.get('prepChecks'),
       ]);
     return {
       ingredients, recipes, lots, loose, txns, meals, cookLogs, shopping, trips,
@@ -74,6 +77,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       lastBackupAt: backupRow?.value as number | undefined,
       autoBackupAt: autoRow?.value as number | undefined,
       autoRestoredAt: restoredRow?.value as number | undefined,
+      prepChecks: new Set((checksRow?.value as string[] | undefined) ?? []),
       loadedAt: Date.now(),
     };
   }, []);

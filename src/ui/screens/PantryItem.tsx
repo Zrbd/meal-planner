@@ -1,4 +1,6 @@
-import { Snowflake, Trash2 } from 'lucide-react';
+import { PackageOpen, Snowflake, Trash2 } from 'lucide-react';
+import { describeStock, packName, packSizeOf, splitPacks } from '../../domain/containers';
+import { UnitsEditor, unitsSummary } from './UnitsEditor';
 import { useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { aisleLabel } from '../../data/aisles';
@@ -7,7 +9,7 @@ import { formatDay, relativeDayLabel } from '../../domain/dates';
 import { forecastItem } from '../../domain/forecast';
 import { LOCATIONS, type Location, type LooseLevel } from '../../domain/types';
 import { formatQty } from '../../domain/units';
-import { moveLot, ranOut, setAmount, setLooseLevel, tossLot, updateIngredient, updateLot, useSome } from '../../services/pantry';
+import { moveLot, openPackage, ranOut, setAmount, setLooseLevel, tossLot, updateIngredient, updateLot, useSome } from '../../services/pantry';
 import { AmountInput, EmptyState, PageHeader, Segmented, Sheet } from '../components';
 import { useAppData } from '../data';
 import { useToast } from '../toast';
@@ -22,7 +24,7 @@ export function PantryItem() {
   const { ingById, lots, txns, today, now, settings, looseById, recipes } = d;
   const toast = useToast();
   const ing = ingById.get(id);
-  const [sheet, setSheet] = useState<null | 'add' | 'used' | 'set' | 'threshold'>(null);
+  const [sheet, setSheet] = useState<null | 'add' | 'used' | 'set' | 'threshold' | 'units'>(null);
   const [amt, setAmt] = useState(0);
 
   if (!ing) {
@@ -37,7 +39,7 @@ export function PantryItem() {
   const myLots = lots.filter((l) => l.ingredientId === id).sort((a, b) => (a.expiresOn ?? '9999').localeCompare(b.expiresOn ?? '9999'));
   const f = forecastItem(ing, lots, txns, looseById.get(id), today, now, settings.bufferDays);
   const q = (n: number) => formatQty(n, ing, settings.units);
-  const history = txns.filter((t) => t.ingredientId === id).sort((a, b) => b.at - a.at).slice(0, 8);
+  const history = txns.filter((t) => t.ingredientId === id && t.delta !== 0).sort((a, b) => b.at - a.at).slice(0, 8);
   const usedIn = recipes.filter((r) => !r.archived && r.ingredients.some((i) => i.ingredientId === id));
 
   return (
@@ -58,7 +60,10 @@ export function PantryItem() {
             <div className="flex items-end justify-between">
               <div>
                 <div className="text-sm text-stone-500">On hand</div>
-                <div className="text-3xl font-bold">{f.onHand > 0 ? q(f.onHand) : 'None'}</div>
+                <div className="text-3xl font-bold">{f.onHand > 0 ? describeStock(myLots, ing, settings.units) : 'None'}</div>
+                {f.onHand > 0 && describeStock(myLots, ing, settings.units) !== q(f.onHand) && (
+                  <div className="text-sm text-stone-500">{q(f.onHand)} in all</div>
+                )}
               </div>
               {f.status !== 'ok' && (
                 <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${f.status === 'out' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-800'}`}>
@@ -93,10 +98,19 @@ export function PantryItem() {
             <ul className="card divide-y divide-stone-100">
               {myLots.map((l) => {
                 const exp = expiryLabel(l.expiresOn, today);
+                const size = packSizeOf(l, ing);
+                const packs = size ? splitPacks(l.qty, size) : undefined;
                 return (
                   <li key={l.id} className="space-y-2 p-3">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold">{q(l.qty)}</span>
+                      <span className="font-semibold">
+                        {size && packs?.packs && packs.rest <= 0.5 ? `${packs.packs} ${packName(ing, size, packs.packs)}` : q(l.qty)}
+                      </span>
+                      {l.opened ? (
+                        <span className="rounded-full bg-amber-100 px-1.5 text-[11px] font-semibold text-amber-800">Opened</span>
+                      ) : size ? (
+                        <span className="rounded-full bg-stone-100 px-1.5 text-[11px] font-semibold text-stone-600">Sealed</span>
+                      ) : null}
                       {exp && <span className={`text-xs ${exp.tone}`}>· {exp.text}</span>}
                       <span className="ml-auto text-xs text-stone-400">bought {formatDay(new Date(l.addedAt).toLocaleDateString('en-CA'), 'MMM d')}</span>
                     </div>
@@ -105,6 +119,15 @@ export function PantryItem() {
                         {LOCATIONS.map((loc) => <option key={loc} value={loc}>{loc}</option>)}
                       </select>
                       <input type="date" className="input min-w-0 flex-1 px-2 py-1.5 text-sm" aria-label="Use by" value={l.expiresOn ?? ''} onChange={(e) => void updateLot(l.id, { expiresOn: e.target.value || undefined })} />
+                      {!l.opened && size && (
+                        <button
+                          className="icon-btn h-9 w-9 shrink-0 text-amber-700"
+                          aria-label={`Open one ${packName(ing, size)}`}
+                          onClick={() => void openPackage(l.id, today).then(() => toast(`Opened one ${packName(ing, size)}`))}
+                        >
+                          <PackageOpen size={18} />
+                        </button>
+                      )}
                       {l.location !== 'freezer' && ing.shelfLife.freezer && (
                         <button className="icon-btn h-9 w-9 shrink-0 text-sky-600" aria-label="Freeze" onClick={() => void moveLot(l.id, 'freezer').then(() => toast('Moved to freezer'))}>
                           <Snowflake size={18} />
@@ -140,6 +163,13 @@ export function PantryItem() {
                 <span className="text-sm font-semibold">{f.threshold > 0 ? q(f.threshold) : '—'}</span>
               </button>
             )}
+            <button className="flex w-full items-center gap-3 p-3 text-left" onClick={() => setSheet('units')}>
+              <div className="min-w-0 flex-1">
+                <div className="font-medium">Units & sizes</div>
+                <div className="truncate text-xs text-stone-500">{unitsSummary(ing, settings.units)}</div>
+              </div>
+              <span className="text-sm font-semibold text-brand">Edit</span>
+            </button>
             <div className="flex items-center gap-3 p-3">
               <div className="flex-1 font-medium">Category</div>
               <select className="input w-auto px-2 py-1.5" value={categoryOf(ing)} onChange={(e) => void updateIngredient(id, { category: e.target.value as CategoryId })}>
@@ -187,6 +217,7 @@ export function PantryItem() {
       </div>
 
       {sheet === 'add' && <AddStockSheet ing={ing} onClose={() => setSheet(null)} />}
+      {sheet === 'units' && <UnitsEditor ing={ing} onClose={() => setSheet(null)} />}
       {(sheet === 'used' || sheet === 'set' || sheet === 'threshold') && (
         <Sheet
           open

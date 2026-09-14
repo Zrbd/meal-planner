@@ -8,6 +8,7 @@ import { daysBetween, formatDay } from '../../domain/dates';
 import { forecastItem } from '../../domain/forecast';
 import type { Ingredient, ISODate, Location, LooseLevel, StockLot } from '../../domain/types';
 import { formatQty } from '../../domain/units';
+import { describeStock, openedStorage } from '../../domain/containers';
 import { addStock, defaultExpiry, setLooseLevel } from '../../services/pantry';
 import { addDaysISO as plusDays } from '../../domain/dates';
 import { Lightbulb } from 'lucide-react';
@@ -194,7 +195,7 @@ export function Pantry() {
                             {boughtDays !== null && `bought ${boughtDays <= 0 ? 'today' : `${boughtDays}d ago`}`}
                           </div>
                         </div>
-                        <span className="shrink-0 text-sm font-semibold text-stone-700">{total > 0 ? formatQty(total, ing, settings.units) : '—'}</span>
+                        <span className="max-w-[45%] shrink-0 text-right text-sm font-semibold text-stone-700">{total > 0 ? describeStock(ls, ing, settings.units) : '—'}</span>
                         <ChevronRight size={18} className="shrink-0 text-stone-300" />
                       </Link>
                     </li>
@@ -233,6 +234,7 @@ export function AddStockSheet({ ing, onClose }: { ing: Ingredient; onClose: () =
   const [location, setLocation] = useState<Location>(ing.defaultLocation);
   const [expires, setExpires] = useState<string>(defaultExpiry(ing, ing.defaultLocation, today) ?? '');
   const [smart, setSmart] = useState(false);
+  const [openedPkg, setOpenedPkg] = useState(false);
   const smartDays = (loc: Location) => ing.tipShelfLife?.[loc];
   const expiryFor = (loc: Location, useTip: boolean) => {
     const days = useTip ? smartDays(loc) : undefined;
@@ -260,7 +262,7 @@ export function AddStockSheet({ ing, onClose }: { ing: Ingredient; onClose: () =
           className="btn btn-primary w-full"
           disabled={qty <= 0}
           onClick={async () => {
-            await addStock(ing.id, qty, { location, expiresOn: expires || null, reason: 'adjust' });
+            await addStock(ing.id, qty, { location, expiresOn: expires || null, reason: 'adjust', opened: openedPkg });
             onClose();
             toast(`Added ${formatQty(qty, ing, settings.units)} ${ing.name.toLowerCase()}`);
           }}
@@ -316,6 +318,22 @@ export function AddStockSheet({ ing, onClose }: { ing: Ingredient; onClose: () =
             )}
           </div>
         )}
+        <label className="flex items-center gap-2 text-sm font-medium">
+          <input
+            type="checkbox"
+            className="h-5 w-5 accent-[var(--color-brand)]"
+            checked={openedPkg}
+            onChange={(e) => {
+              const on = e.target.checked;
+              setOpenedPkg(on);
+              if (!on) return setExpires(expiryFor(location, smart));
+              const s = openedStorage(ing, { location, expiresOn: undefined }, today);
+              setLocation(s.location);
+              setExpires(s.expiresOn ?? expiryFor(s.location, smart));
+            }}
+          />
+          It's already open (leftovers or a started package)
+        </label>
         <div>
           <label className="label" htmlFor="exp">Use by <span className="text-stone-400">(estimated — change if the package says otherwise)</span></label>
           <input id="exp" type="date" className="input" value={expires} onChange={(e) => setExpires(e.target.value)} />

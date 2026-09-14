@@ -85,7 +85,7 @@ const has = (title: string, re: RegExp) => re.test(title.toLowerCase());
 export function dishTypeOf(recipe: Recipe, ingById: Map<string, Ingredient>): DishType {
   const t = recipe.title;
   const onlyBreakfast = recipe.slots.length > 0 && recipe.slots.every((s) => s === 'breakfast');
-  if (has(t, /\b(cookies?|brownies?|cake|cupcakes?|pudding|crumble|cobbler|crisp|pie|bars|fudge|ice cream|sorbet|truffles|bark)\b/) && !has(t, /pot pie|shepherd|cottage/)) return 'dessert';
+  if (has(t, /\b(cookies?|brownies?|cake|cupcakes?|pudding|mousse|crumble|cobbler|crisp|pie|bars|fudge|ice cream|sorbet|truffles|bark)\b/) && !has(t, /pot pie|shepherd|cottage/)) return 'dessert';
   if (has(t, /\b(sauce|dressing|vinaigrette|salsa|dip|hummus|guacamole|gravy|pesto|aioli|chutney|relish|glaze|marinade|seasoning|spice (mix|blend)|pickled)\b/) && !has(t, /\b(with|in|chicken|pork|shrimp|salmon|pasta|noodles|tofu|meatballs)\b/)) return 'sauce';
   if (onlyBreakfast) return 'breakfast';
   const protein = hasProtein(recipe, ingById);

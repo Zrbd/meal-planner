@@ -42,7 +42,7 @@ const looseLiquid = (id: string, name: string, aisle: AisleId, density: number, 
   I(id, name, aisle, 'ml', { density, trackMode: 'loose', packages: [{ label: pkg, qty: ml }], shelfLife: { pantry: 365 }, ...o });
 
 const can = (id: string, name: string, grams: number, o: Opts = {}) =>
-  I(id, name, 'canned', 'ea', { gramsPerEach: grams, unitAliases: { can: 1 }, displayUnit: 'can', shelfLife: { pantry: 730 }, ...o });
+  I(id, name, 'canned', 'ea', { gramsPerEach: grams, unitAliases: { can: 1 }, displayUnit: 'can', packages: [{ label: 'can', qty: 1 }], shelfLife: { pantry: 730 }, ...o });
 
 const CATALOG: Ingredient[] = [
   // ---------- Produce ----------
@@ -227,6 +227,7 @@ const CATALOG: Ingredient[] = [
   I('cornmeal', 'Cornmeal', 'baking', 'g', { aliases: ['polenta'], density: 0.6, trackMode: 'loose', packages: [{ label: '24 oz canister', qty: oz(24) }] }),
   I('cocoa-powder', 'Cocoa powder', 'baking', 'g', { aliases: ['unsweetened cocoa powder'], density: 0.36, trackMode: 'loose', packages: [{ label: '8 oz can', qty: oz(8) }] }),
   I('chocolate-chips', 'Chocolate chips', 'baking', 'g', { aliases: ['semi-sweet chocolate chips', 'dark chocolate chips'], density: 0.72, packages: [{ label: '12 oz bag', qty: oz(12) }] }),
+  I('dark-chocolate', 'Dark chocolate', 'baking', 'g', { aliases: ['bittersweet chocolate', '70% dark chocolate', 'dark chocolate bar', 'semi-sweet chocolate'], packages: [{ label: '3.5 oz bar', qty: 100 }], shelfLife: { pantry: 365 } }),
   I('whole-wheat-flour', 'Whole wheat flour', 'baking', 'g', { aliases: ['white whole wheat flour', 'whole wheat pastry flour'], density: 0.51, trackMode: 'loose', packages: [{ label: '5 lb bag', qty: lb(5) }], shelfLife: { pantry: 180 } }),
   looseLiquid('water', 'Water', 'other', 1, 'tap', 1000, { aliases: ['cold water', 'warm water', 'hot water', 'boiling water'], alwaysOnHand: true, shelfLife: { pantry: 9999 } }),
   looseLiquid('honey', 'Honey', 'oils-condiments', 1.42, '12 oz bottle', 240),

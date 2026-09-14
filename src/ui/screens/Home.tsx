@@ -1,4 +1,4 @@
-import { AlertTriangle, BookPlus, CalendarDays, ChefHat, ChevronRight, CircleOff, Clock, Hourglass, Settings, ShoppingCart, Snowflake, Timer, Trash2, TrendingDown } from 'lucide-react';
+import { AlertTriangle, BookPlus, CalendarDays, ChefHat, ChevronRight, CircleOff, Clock, Hourglass, ListChecks, Settings, ShoppingCart, Snowflake, Timer, Trash2, TrendingDown } from 'lucide-react';
 import { Link } from 'react-router';
 import { addDaysISO, formatDay, nextShoppingDay, relativeDayLabel, toISODate } from '../../domain/dates';
 import type { AlertKind } from '../../domain/forecast';
@@ -179,9 +179,12 @@ export function Home() {
           })}
         </div>
 
-        <div className="grid grid-cols-3 gap-2 pt-4">
+        <div className="grid grid-cols-4 gap-2 pt-4">
           <Link to="/plan" className="card flex flex-col items-center gap-1 p-3 text-center text-xs font-semibold">
             <CalendarDays className="text-brand" /> Plan week
+          </Link>
+          <Link to="/prep" className="card flex flex-col items-center gap-1 p-3 text-center text-xs font-semibold">
+            <ListChecks className="text-brand" /> Prep list
           </Link>
           <Link to="/shop" className="card flex flex-col items-center gap-1 p-3 text-center text-xs font-semibold">
             <ShoppingCart className="text-brand" /> Shopping list

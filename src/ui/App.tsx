@@ -10,6 +10,7 @@ import { Home } from './screens/Home';
 import { Pantry } from './screens/Pantry';
 import { PantryItem } from './screens/PantryItem';
 import { Plan } from './screens/Plan';
+import { Prep } from './screens/Prep';
 import { RecipeDetail } from './screens/RecipeDetail';
 import { RecipeEditor } from './screens/RecipeEditor';
 import { Recipes } from './screens/Recipes';
@@ -144,6 +145,7 @@ export function App() {
               <Route path="/shop" element={<Shopping />} />
               <Route path="/pantry" element={<Pantry />} />
               <Route path="/pantry/:id" element={<PantryItem />} />
+              <Route path="/prep" element={<Prep />} />
               <Route path="/settings" element={<SettingsScreen />} />
               <Route path="*" element={<Home />} />
             </Routes>

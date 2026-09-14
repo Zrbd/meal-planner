@@ -13,13 +13,19 @@ import { EmptyState, PageHeader, RecipeThumb, Segmented, Sheet, totalTime } from
 import { useAppData } from '../data';
 import { useAvailability, usePrices } from '../hooks';
 import { money, recipeCost } from '../../domain/prices';
+import { displayStep, swapSuggestions } from '../../domain/substitute';
+import { substituteIngredient } from '../../services/recipes';
+import { IngredientPicker } from '../components';
+import { ArrowLeftRight } from 'lucide-react';
 import { useToast } from '../toast';
 
 export function RecipeDetail() {
   const { id = '' } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
-  const { recipeById, ingById, settings, today } = useAppData();
+  const { recipeById, ingById, ingredients, settings, today } = useAppData();
+  const [swapIdx, setSwapIdx] = useState<number | null>(null);
+  const [swapSearch, setSwapSearch] = useState(false);
   const { available, looseLevel } = useAvailability();
   const recipe = recipeById.get(id);
   const [servings, setServings] = useState(settings.householdSize);
@@ -145,9 +151,22 @@ export function RecipeDetail() {
                   </span>
                   <div className="flex-1">
                     <FlipAmount amount={units.line(ri, idx, scale, ing)} />{' '}
-                    {ing?.name.toLowerCase() ?? ri.ingredientId}
+                    <button className="text-left underline decoration-stone-300 decoration-dotted underline-offset-4" onClick={() => setSwapIdx(idx)}>
+                      {ing?.name.toLowerCase() ?? ri.ingredientId}
+                    </button>
                     {ri.prep && <span className="text-stone-500">, {ri.prep}</span>}
                     {ri.optional && <span className="text-stone-400"> (optional)</span>}
+                    {ri.swappedFrom && (
+                      <div className="mt-0.5 flex items-center gap-1 text-xs text-sky-700">
+                        <ArrowLeftRight size={12} /> Swapped in for {ingById.get(ri.swappedFrom.ingredientId)?.name.toLowerCase() ?? 'the original'}
+                        <button
+                          className="ml-1 font-semibold underline"
+                          onClick={() => void substituteIngredient(recipe.id, idx, ri.swappedFrom!.ingredientId).then(() => toast('Back to the original'))}
+                        >
+                          Undo
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </li>
@@ -161,7 +180,7 @@ export function RecipeDetail() {
             <li key={i} className="flex gap-3">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-white">{i + 1}</span>
               <div className="min-w-0 flex-1 space-y-2">
-                <p className="pt-0.5 leading-relaxed">{s}</p>
+                <p className="pt-0.5 leading-relaxed">{displayStep(s, recipe, ingById)}</p>
                 {stepTips.get(i)?.map((ing) => <StorageTip key={ing.id} ing={ing} compact />)}
               </div>
             </li>
@@ -235,6 +254,49 @@ export function RecipeDetail() {
           )}
         </div>
       </Sheet>
+
+      {swapIdx !== null && recipe.ingredients[swapIdx] && (() => {
+        const ri = recipe.ingredients[swapIdx];
+        const cur = ingById.get(ri.ingredientId);
+        const original = ri.swappedFrom ? ingById.get(ri.swappedFrom.ingredientId) : undefined;
+        const doSwap = async (newId: string) => {
+          const name = ingById.get(newId)?.name.toLowerCase() ?? 'it';
+          await substituteIngredient(recipe.id, swapIdx, newId);
+          setSwapIdx(null);
+          setSwapSearch(false);
+          toast(original?.id === newId ? 'Back to the original' : `Using ${name} — your plan and shopping list will follow`);
+        };
+        return (
+          <>
+            <Sheet open={!swapSearch} onClose={() => setSwapIdx(null)} title={`Swap ${cur?.name.toLowerCase() ?? 'ingredient'}`}>
+              <p className="mb-3 text-sm text-stone-500">
+                Pick what you'll actually use. The recipe, steps, shopping list and pantry all update — no need to remember at cook time.
+              </p>
+              {original && (
+                <button className="btn btn-secondary mb-3 w-full justify-start" onClick={() => void doSwap(original.id)}>
+                  <RotateCcw size={16} /> Back to {original.name.toLowerCase()}
+                </button>
+              )}
+              {cur && (
+                <div className="flex flex-wrap gap-2">
+                  {swapSuggestions(original ?? cur, ingredients)
+                    .filter((x) => x.id !== cur.id)
+                    .map((x) => (
+                      <button key={x.id} className="chip" onClick={() => void doSwap(x.id)}>{x.name}</button>
+                    ))}
+                </div>
+              )}
+              <button className="btn btn-primary mt-4 w-full" onClick={() => setSwapSearch(true)}>Search all ingredients</button>
+            </Sheet>
+            <IngredientPicker
+              open={swapSearch}
+              onClose={() => setSwapSearch(false)}
+              title="Swap for…"
+              onPick={(newId) => void doSwap(newId)}
+            />
+          </>
+        );
+      })()}
 
       <AddToPlanSheet
         open={planOpen}

@@ -7,6 +7,7 @@ import { detectTimerSec } from '../../domain/parse';
 import type { LooseLevel } from '../../domain/types';
 import { formatQty } from '../../domain/units';
 import { tipsByStep } from '../../domain/freshness';
+import { displayStep } from '../../domain/substitute';
 import { FlipAmount, StorageTip, useRecipeUnits } from '../amounts';
 import { cookRecipe, previewCook, undoCook } from '../../services/cook';
 import { setLooseLevel } from '../../services/pantry';
@@ -108,7 +109,7 @@ export function CookMode() {
   }
 
   const scale = servings / (recipe.baseServings || 1);
-  const text = recipe.steps[step] ?? '';
+  const text = displayStep(recipe.steps[step] ?? '', recipe, ingById);
   const timerSec = detectTimerSec(text);
   const last = step === recipe.steps.length - 1;
   const stepTips = tipsByStep(recipe, ingById).get(step) ?? [];

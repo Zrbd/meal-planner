@@ -15,8 +15,13 @@ export async function seedIfNeeded(database: MealDB = db): Promise<boolean> {
         const cur = existingIngs.get(seed.id);
         if (!cur) return seed;
         // keep the user's personal tracking preferences
+        // Units and sizes the user set up (a "can" of broth, how long it keeps opened) win over the catalog.
+        const units = cur.unitsEdited
+          ? { unitAliases: cur.unitAliases, packages: cur.packages, displayUnit: cur.displayUnit, openedShelfLife: cur.openedShelfLife, unitsEdited: true }
+          : { unitAliases: cur.unitAliases ? { ...seed.unitAliases, ...cur.unitAliases } : seed.unitAliases };
         return {
           ...seed,
+          ...units,
           keepStocked: cur.keepStocked,
           lowThreshold: cur.lowThreshold,
           defaultLocation: cur.defaultLocation,

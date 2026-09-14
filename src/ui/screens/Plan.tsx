@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, MoreHorizontal, Plus, ShoppingCart, Sparkles, Zap } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ListChecks, MoreHorizontal, Plus, ShoppingCart, Sparkles, Zap } from 'lucide-react';
 import { equipmentForRecipes } from '../../domain/dishes';
 import { cookableRecipes, type Cookable } from '../../domain/quickadd';
 import { useMemo, useState } from 'react';
@@ -117,9 +117,14 @@ export function Plan() {
         title="Meal plan"
         subtitle={`${plannedCount} meal${plannedCount === 1 ? '' : 's'} planned${weekCost > 0 ? ` · about ${money(weekCost)} in ingredients` : ''}`}
         right={
-          <button className="btn btn-ghost px-3" onClick={startAuto}>
-            <Sparkles size={18} /> Auto-fill
-          </button>
+          <div className="flex">
+            <Link to="/prep" className="btn btn-ghost px-3" aria-label="Prep list">
+              <ListChecks size={18} /> Prep
+            </Link>
+            <button className="btn btn-ghost px-3" onClick={startAuto}>
+              <Sparkles size={18} /> Auto-fill
+            </button>
+          </div>
         }
       />
       <div className="px-4">
@@ -407,11 +412,17 @@ function ChooseRecipeSheet(props: {
   const [slot, setSlot] = useState(props.slot);
   const [q, setQ] = useState('');
   const [suggested, setSuggested] = useState<string | undefined>(() => props.onSuggest());
+  const dish = useDishInfo();
+  const [kind, setKind] = useState<'meal' | 'side' | 'dessert'>('meal');
 
   const pool = useMemo(() => {
+    if (kind !== 'meal') {
+      const want = kind === 'side' ? ['side', 'salad', 'sauce'] : ['dessert'];
+      return d.recipes.filter((r) => !r.archived && want.includes(dish.get(r.id)?.dishType ?? ''));
+    }
     const eligible = eligibleRecipes(d.recipes, slot, props.date, { ...d.settings, weeknightMaxMin: 0 }, d.ingById);
     return eligible.length ? eligible : d.recipes.filter((r) => !r.archived);
-  }, [d.recipes, d.settings, slot, props.date]);
+  }, [d.recipes, d.settings, slot, props.date, kind, dish]);
   const fuse = useMemo(() => new Fuse(pool, { keys: ['title', 'cuisine', 'protein'], threshold: 0.35, ignoreLocation: true }), [pool]);
   const list = q.trim()
     ? fuse.search(q.trim()).map((x) => x.item)
@@ -421,7 +432,16 @@ function ChooseRecipeSheet(props: {
   return (
     <Sheet open onClose={props.onClose} title={`${props.swapping ? 'Swap' : 'Add'} · ${relativeDayLabel(props.date, d.today)}`}>
       <Segmented value={slot} options={SLOTS.map((s) => ({ value: s, label: <span className="capitalize">{s}</span> }))} onChange={setSlot} />
-      {sug && !q && (
+      {!props.swapping && (
+        <div className="mt-2">
+          <Segmented
+            value={kind}
+            options={[{ value: 'meal', label: 'Meals' }, { value: 'side', label: 'Sides' }, { value: 'dessert', label: 'Desserts' }]}
+            onChange={setKind}
+          />
+        </div>
+      )}
+      {sug && !q && kind === 'meal' && (
         <div className="mt-3">
           <div className="section-title flex items-center justify-between pt-0">
             <span className="flex items-center gap-1"><Sparkles size={12} /> Suggestion</span>

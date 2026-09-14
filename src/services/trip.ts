@@ -1,4 +1,5 @@
 // Finishing a shopping trip turns checked items into pantry stock.
+import { inferPackSize } from '../domain/containers';
 import { todayISO } from '../domain/dates';
 import type { ISODate, Location } from '../domain/types';
 import { db } from '../db/schema';
@@ -32,10 +33,11 @@ export async function finishTrip(range: [ISODate, ISODate], items: TripItem[]): 
       const location = item.location ?? ing.defaultLocation;
       const lotId = newId();
       const expiresOn = item.expiresOn ?? defaultExpiry(ing, location, today);
-      await db.lots.add({ id: lotId, ingredientId: ing.id, qty: item.qty, location, addedAt: now, expiresOn });
+      const packSize = inferPackSize(item.qty, ing);
+      await db.lots.add({ id: lotId, ingredientId: ing.id, qty: item.qty, location, addedAt: now, expiresOn, ...(packSize ? { packSize } : {}) });
       await db.txns.add({
         id: newId(), ingredientId: ing.id, delta: item.qty, reason: 'purchase', refId: tripId, at: now,
-        lotSnapshot: { lotId, expiresOn, location, addedAt: now },
+        lotSnapshot: { lotId, expiresOn, location, addedAt: now, packSize },
       });
     }
     await db.shopping.bulkDelete(items.map((i) => i.key));

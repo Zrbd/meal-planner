@@ -7,7 +7,7 @@ import { money, spending } from '../../domain/prices';
 import { buildShoppingList, describeBuy, shoppingListText, type ShoppingLine } from '../../domain/shopping';
 import type { Ingredient, UnitSystem } from '../../domain/types';
 import { formatQty } from '../../domain/units';
-import { defaultExpiry } from '../../services/pantry';
+import { addPackageSize, defaultExpiry } from '../../services/pantry';
 import { addManualItem, clearChecked, patchShoppingState, removeShoppingState, toggleChecked } from '../../services/shopping';
 import { finishTrip, undoTrip } from '../../services/trip';
 import { AmountInput, EmptyState, PageHeader, Sheet } from '../components';
@@ -47,6 +47,9 @@ export function Shopping() {
   const [finishOpen, setFinishOpen] = useState(false);
   /** Prices typed in the put-away sheet, by line key. */
   const [paid, setPaid] = useState<Record<string, string>>({});
+  /** Amount actually bought (base units), when it differs from the suggested package. */
+  const [bought, setBought] = useState<Record<string, number>>({});
+  const [editingBought, setEditingBought] = useState<string | null>(null);
 
   const result = useMemo(
     () =>
@@ -144,6 +147,8 @@ export function Shopping() {
 
   const openFinish = () => {
     setPaid(Object.fromEntries(checkedLines.map((l) => [l.key, priceByKey.get(l.key)?.toFixed(2) ?? ''])));
+    setBought({});
+    setEditingBought(null);
     setFinishOpen(true);
   };
   const paidTotal = checkedLines.reduce((s, l) => s + (parsePrice(paid[l.key]) ?? 0), 0);
@@ -302,7 +307,7 @@ export function Shopping() {
               className="btn btn-primary w-full"
               onClick={async () => {
                 const items = checkedLines.map((l) => ({
-                  key: l.key, ingredientId: l.ingredientId, name: l.name, qty: l.manual ? 0 : l.buy, price: parsePrice(paid[l.key]),
+                  key: l.key, ingredientId: l.ingredientId, name: l.name, qty: l.manual ? 0 : (bought[l.key] ?? l.buy), price: parsePrice(paid[l.key]),
                 }));
                 const tripId = await finishTrip([from, to], items);
                 setFinishOpen(false);
@@ -325,10 +330,36 @@ export function Shopping() {
                 <li key={l.key} className="flex items-center gap-2 py-2 text-sm">
                   <div className="min-w-0 flex-1">
                     <div className="truncate">{l.name}</div>
-                    <div className="truncate text-xs text-stone-500">
-                      {ing ? (ing.trackMode === 'loose' ? 'restocked' : `${formatQty(l.buy, ing, settings.units)} · ${ing.defaultLocation}`) : '—'}
-                      {useBy && ` · use by ${formatDay(useBy, 'MMM d')}`}
-                    </div>
+                    {ing && ing.trackMode === 'exact' ? (
+                      <button
+                        className="block max-w-full truncate text-left text-xs text-stone-500"
+                        onClick={() => setEditingBought(editingBought === l.key ? null : l.key)}
+                      >
+                        <span className="font-medium text-brand underline decoration-dotted underline-offset-2">{formatQty(bought[l.key] ?? l.buy, ing, settings.units)}</span>
+                        {` · ${ing.defaultLocation}`}
+                        {useBy && ` · use by ${formatDay(useBy, 'MMM d')}`}
+                      </button>
+                    ) : (
+                      <div className="truncate text-xs text-stone-500">{ing ? 'restocked' : '—'}</div>
+                    )}
+                    {ing && editingBought === l.key && (
+                      <div className="mt-2">
+                        <AmountInput ing={ing} value={bought[l.key] ?? l.buy} onChange={(v) => setBought({ ...bought, [l.key]: v })} autoFocus />
+                        <p className="mt-1 text-xs text-stone-500">What was actually in the package you bought.</p>
+                        {bought[l.key] !== undefined && bought[l.key] > 0 && !ing.packages.some((pk) => Math.abs(pk.qty - bought[l.key]) < 0.5) && (
+                          <button
+                            className="mt-1 text-xs font-semibold text-brand underline"
+                            onClick={async () => {
+                              const label = formatQty(bought[l.key], ing, settings.units);
+                              await addPackageSize(ing.id, bought[l.key], label);
+                              toast(`${label} added as a size you buy`);
+                            }}
+                          >
+                            This is the size I usually buy — suggest it next time
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </div>
                   <label className="flex shrink-0 items-center gap-1 text-stone-400">
                     $

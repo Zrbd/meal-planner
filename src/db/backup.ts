@@ -39,7 +39,8 @@ export async function importBackup(json: string, database: MealDB = db): Promise
 /** Share the backup file (iOS share sheet) or fall back to a download. */
 export async function shareBackup(): Promise<'shared' | 'downloaded' | 'cancelled'> {
   const backup = await exportBackup();
-  const name = `meal-planner-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  // One fixed name so saving to Files replaces the previous backup instead of piling up copies.
+  const name = 'meal-planner-backup.json';
   const file = new File([JSON.stringify(backup)], name, { type: 'application/json' });
   let outcome: 'shared' | 'downloaded' | 'cancelled';
   if (navigator.canShare?.({ files: [file] })) {

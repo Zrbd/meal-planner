@@ -3,6 +3,7 @@ import { onHand, planDeduction, recipeNeeds, round3, EPS } from '../domain/stock
 import type { Ingredient, Recipe, StockLot } from '../domain/types';
 import { db } from '../db/schema';
 import { newId } from './ids';
+import { restoreLots, takeFromLot } from './pantry';
 
 export interface CookPreviewLine {
   ingredientId: string;
@@ -47,19 +48,8 @@ export async function cookRecipe(opts: {
       const lots = await db.lots.where('ingredientId').equals(ingredientId).toArray();
       const { takes } = planDeduction(lots, ingredientId, qty);
       let total = 0;
-      for (const { lot, take } of takes) {
-        const left = round3(lot.qty - take);
-        // Clear crumbs (<0.5 g/ml, <0.05 ea) instead of leaving ghost lots.
-        const tiny = left <= (ing.baseUnit === 'ea' ? 0.05 : 0.5);
-        const delta = tiny ? lot.qty : take;
-        if (tiny) await db.lots.delete(lot.id);
-        else await db.lots.update(lot.id, { qty: left });
-        await db.txns.add({
-          id: newId(), ingredientId, delta: -delta, reason: 'cook', refId: logId, at: now,
-          lotSnapshot: { lotId: lot.id, expiresOn: lot.expiresOn, location: lot.location, addedAt: lot.addedAt },
-        });
-        total += delta;
-      }
+      // Crumbs are cleared; the rest of an opened can/head splits into its own opened lot.
+      for (const { lot, take } of takes) total += await takeFromLot(lot, take, ing, { reason: 'cook', refId: logId, at: now });
       used.push({ ingredientId, qty: round3(total) });
     }
     await db.cookLogs.add({ id: logId, recipeId: recipe.id, plannedMealId: opts.plannedMealId, at: now, used });
@@ -71,17 +61,7 @@ export async function cookRecipe(opts: {
 export async function undoCook(logId: string): Promise<void> {
   await db.transaction('rw', [db.lots, db.txns, db.cookLogs, db.meals], async () => {
     const txns = await db.txns.where('refId').equals(logId).toArray();
-    for (const t of txns) {
-      const snap = t.lotSnapshot;
-      if (!snap) continue;
-      const existing = await db.lots.get(snap.lotId);
-      if (existing) await db.lots.update(existing.id, { qty: round3(existing.qty - t.delta) });
-      else
-        await db.lots.add({
-          id: snap.lotId, ingredientId: t.ingredientId, qty: round3(-t.delta),
-          location: snap.location, addedAt: snap.addedAt, expiresOn: snap.expiresOn,
-        });
-    }
+    await restoreLots(txns);
     await db.txns.bulkDelete(txns.map((t) => t.id));
     const log = await db.cookLogs.get(logId);
     await db.cookLogs.delete(logId);

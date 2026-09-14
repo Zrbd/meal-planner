@@ -1,3 +1,4 @@
+import { substitute } from '../domain/substitute';
 import type { Recipe } from '../domain/types';
 import { db } from '../db/schema';
 import { newId, slugify } from './ids';
@@ -24,6 +25,22 @@ export async function saveRecipe(draft: RecipeDraft): Promise<string> {
       source: 'user', userEdited: false, createdAt: now, updatedAt: now,
     });
     return id;
+  });
+}
+
+/** Swap one ingredient line for another (or back to the original); the plan and shopping list follow. */
+export async function substituteIngredient(recipeId: string, idx: number, newIngredientId: string): Promise<void> {
+  await db.transaction('rw', db.recipes, db.ingredients, async () => {
+    const recipe = await db.recipes.get(recipeId);
+    const newIng = await db.ingredients.get(newIngredientId);
+    if (!recipe || !newIng || !recipe.ingredients[idx]) return;
+    const ingById = new Map((await db.ingredients.toArray()).map((i) => [i.id, i]));
+    await db.recipes.put({
+      ...recipe,
+      ingredients: substitute(recipe, idx, newIng, ingById),
+      userEdited: recipe.source === 'builtin' ? true : recipe.userEdited,
+      updatedAt: Date.now(),
+    });
   });
 }
 
