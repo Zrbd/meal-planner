@@ -5,7 +5,8 @@ import { Link, useSearchParams } from 'react-router';
 import type { Recipe } from '../../domain/types';
 import { EmptyState, PageHeader, RecipeCard, SearchInput, Sheet, totalTime } from '../components';
 import { useAppData } from '../data';
-import { useCoverage } from '../hooks';
+import { useCoverage, useDishInfo } from '../hooks';
+import { DISH_TYPES, PROTEIN_TYPES } from '../../domain/dishes';
 
 const FILTERS: { id: string; label: string; test: (r: Recipe, canMake: boolean) => boolean }[] = [
   { id: 'all', label: 'All', test: () => true },
@@ -22,8 +23,24 @@ const FILTERS: { id: string; label: string; test: (r: Recipe, canMake: boolean) 
 export function Recipes() {
   const { recipes } = useAppData();
   const coverage = useCoverage();
+  const dish = useDishInfo();
   const [params, setParams] = useSearchParams();
   const filter = params.get('f') ?? 'all';
+  const cuisine = params.get('c') ?? '';
+  const protein = params.get('p') ?? '';
+  const dishType = params.get('t') ?? '';
+  /** Change one filter and keep the others (the URL remembers them for the back button). */
+  const setParam = (key: string, value: string) => {
+    const next = new URLSearchParams(params);
+    if (!value || value === 'all') next.delete(key);
+    else next.set(key, value);
+    setParams(next, { replace: true });
+  };
+  const cuisines = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const r of recipes) if (!r.archived && r.cuisine) counts.set(r.cuisine, (counts.get(r.cuisine) ?? 0) + 1);
+    return [...counts].sort((a, b) => a[0].localeCompare(b[0]));
+  }, [recipes]);
   const [q, setQ] = useState('');
   const [showHidden, setShowHidden] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
@@ -36,10 +53,17 @@ export function Recipes() {
   const list = useMemo(() => {
     const f = FILTERS.find((x) => x.id === filter) ?? FILTERS[0];
     const base = q.trim() ? fuse.search(q.trim()).map((r) => r.item) : [...recipes].sort((a, b) => a.title.localeCompare(b.title));
-    const out = base.filter((r) => r.archived === showHidden && f.test(r, !!coverage.get(r.id)?.canMake));
+    const out = base.filter((r) => {
+      if (r.archived !== showHidden || !f.test(r, !!coverage.get(r.id)?.canMake)) return false;
+      const info = dish.get(r.id);
+      if (cuisine && r.cuisine !== cuisine) return false;
+      if (protein && info?.protein !== protein) return false;
+      if (dishType && info?.dishType !== dishType) return false;
+      return true;
+    });
     if (!q.trim()) out.sort((a, b) => (coverage.get(b.id)?.ratio ?? 0) - (coverage.get(a.id)?.ratio ?? 0) || Number(b.favorite) - Number(a.favorite));
     return out;
-  }, [recipes, q, fuse, filter, showHidden, coverage]);
+  }, [recipes, q, fuse, filter, showHidden, coverage, dish, cuisine, protein, dishType]);
 
   const hiddenCount = recipes.filter((r) => r.archived).length;
 
@@ -61,12 +85,32 @@ export function Recipes() {
             <button
               key={f.id}
               className={`chip ${filter === f.id ? 'chip-on' : ''}`}
-              onClick={() => setParams(f.id === 'all' ? {} : { f: f.id }, { replace: true })}
+              onClick={() => setParam('f', f.id)}
             >
               {f.label}
             </button>
           ))}
         </div>
+        <div className="grid grid-cols-3 gap-2">
+          <select className={`input px-2 py-1.5 text-sm ${dishType ? 'border-brand text-brand' : ''}`} aria-label="Type of dish" value={dishType} onChange={(e) => setParam('t', e.target.value)}>
+            <option value="">Any dish</option>
+            {DISH_TYPES.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
+          </select>
+          <select className={`input px-2 py-1.5 text-sm ${protein ? 'border-brand text-brand' : ''}`} aria-label="Protein" value={protein} onChange={(e) => setParam('p', e.target.value)}>
+            <option value="">Any protein</option>
+            {PROTEIN_TYPES.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
+          </select>
+          <select className={`input px-2 py-1.5 text-sm ${cuisine ? 'border-brand text-brand' : ''}`} aria-label="Cuisine" value={cuisine} onChange={(e) => setParam('c', e.target.value)}>
+            <option value="">Any cuisine</option>
+            {cuisines.map(([c, n]) => <option key={c} value={c}>{c} ({n})</option>)}
+          </select>
+        </div>
+        {(cuisine || protein || dishType) && (
+          <div className="flex items-center justify-between px-1 text-sm text-stone-500">
+            <span>{list.length} recipe{list.length === 1 ? '' : 's'}</span>
+            <button className="text-brand font-medium" onClick={() => setParams(filter === 'all' ? {} : { f: filter }, { replace: true })}>Clear filters</button>
+          </div>
+        )}
         <div className="space-y-2">
           {list.map((r) => (
             <RecipeCard key={r.id} recipe={r} coverage={coverage.get(r.id)} />

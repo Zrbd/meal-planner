@@ -1,4 +1,6 @@
-import { ChevronLeft, ChevronRight, MoreHorizontal, Plus, ShoppingCart, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MoreHorizontal, Plus, ShoppingCart, Sparkles, Zap } from 'lucide-react';
+import { equipmentForRecipes } from '../../domain/dishes';
+import { cookableRecipes, type Cookable } from '../../domain/quickadd';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { autoPlan, eligibleRecipes, type AutoPick, type PlanSlot } from '../../domain/autoplan';
@@ -8,7 +10,7 @@ import { SLOTS, type PlannedMeal, type Slot } from '../../domain/types';
 import { addLeftovers, addMeal, applyAutoPlan, removeMeal, setSkipped, updateMeal } from '../../services/plan';
 import { PageHeader, RecipeCard, RecipeThumb, SearchInput, Segmented, Sheet } from '../components';
 import { useAppData, type AppData } from '../data';
-import { useCoverage } from '../hooks';
+import { useCoverage, useDishInfo } from '../hooks';
 import { useToast } from '../toast';
 import Fuse from 'fuse.js';
 import { useUpCandidates, type UseUpItem } from '../../domain/freshness';
@@ -30,20 +32,44 @@ function spread(days: string[], count: number): string[] {
   return Array.from({ length: count }, (_, i) => days[Math.floor(i * step)]);
 }
 
+/**
+ * useState that survives leaving the screen (e.g. opening a suggested recipe and coming back),
+ * so auto-fill picks aren't thrown away and regenerated. Session-only: a fresh app launch starts clean.
+ */
+function useSessionState<T>(key: string, init: () => T): [T, (v: T) => void] {
+  const [value, setValue] = useState<T>(() => {
+    try {
+      const raw = sessionStorage.getItem(key);
+      if (raw !== null) return JSON.parse(raw) as T;
+    } catch { /* storage blocked */ }
+    return init();
+  });
+  const set = (v: T) => {
+    setValue(v);
+    try {
+      sessionStorage.setItem(key, JSON.stringify(v));
+    } catch { /* storage blocked */ }
+  };
+  return [value, set];
+}
+
 export function Plan() {
   const d = useAppData();
   const { today, meals, recipeById, settings } = d;
   const toast = useToast();
   const navigate = useNavigate();
-  const [weekStart, setWeekStart] = useState(() => startOfWeekISO(today, settings.weekStartsOn));
+  const [weekStart, setWeekStart] = useSessionState('plan:week', () => startOfWeekISO(today, settings.weekStartsOn));
   const days = rangeDays(weekStart, addDaysISO(weekStart, 6));
   const weekEnd = days[6];
   const [adding, setAdding] = useState<{ date: string; slot: Slot; swap?: PlannedMeal } | null>(null);
   const [menuMeal, setMenuMeal] = useState<PlannedMeal | null>(null);
-  const [picks, setPicks] = useState<AutoPick[] | null>(null);
-  const [seed, setSeed] = useState(1);
+  const [storedPicks, setPicks] = useSessionState<AutoPick[] | null>('plan:picks', () => null);
+  // drop picks whose recipe has since been deleted
+  const picks = storedPicks?.filter((p) => recipeById.has(p.recipeId)) ?? null;
+  const [seed, setSeed] = useSessionState('plan:seed', () => 1);
   const [useUpAsk, setUseUpAsk] = useState<UseUpItem[] | null>(null);
-  const [useUpIds, setUseUpIds] = useState<string[]>([]);
+  const [useUpIds, setUseUpIds] = useSessionState<string[]>('plan:useUp', () => []);
+  const [quickDay, setQuickDay] = useState<{ date: string; slot: Slot } | null>(null);
 
   const weekMeals = meals.filter((m) => m.date >= weekStart && m.date <= weekEnd);
   const plannedCount = weekMeals.filter((m) => m.status === 'planned' && !m.leftoverOf).length;
@@ -110,6 +136,9 @@ export function Plan() {
             const dayMeals = weekMeals
               .filter((m) => m.date === day)
               .sort((a, b) => SLOT_ORDER[a.slot] - SLOT_ORDER[b.slot]);
+            const cookware = equipmentForRecipes(
+              dayMeals.filter((m) => m.status !== 'skipped' && !m.leftoverOf).map((m) => recipeById.get(m.recipeId)).filter((r) => !!r),
+            );
             return (
               <section key={day} className={past ? 'opacity-60' : ''}>
                 <div className="flex items-baseline justify-between px-1 pb-1.5">
@@ -118,6 +147,15 @@ export function Plan() {
                     <span className="ml-2 text-sm font-normal text-stone-400">{formatDay(day, 'MMM d')}</span>
                   </h2>
                 </div>
+                {cookware.length > 0 && !past && (
+                  <div className="no-scrollbar -mx-4 mb-1.5 flex gap-1.5 overflow-x-auto px-5" aria-label="Cookware needed">
+                    {cookware.map((e) => (
+                      <span key={e.id} className="shrink-0 rounded-full bg-stone-200/70 px-2 py-0.5 text-xs text-stone-700">
+                        {e.emoji} {e.label}{e.count > 1 ? ` ×${e.count}` : ''}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 <div className="card divide-y divide-stone-100">
                   {dayMeals.map((m) => {
                     const r = recipeById.get(m.recipeId);
@@ -156,6 +194,13 @@ export function Plan() {
                           <Plus size={16} /> Add another
                         </button>
                       )}
+                      <button
+                        className="btn btn-ghost shrink-0 px-2 py-1.5 text-sm"
+                        aria-label="Quick add from what you have"
+                        onClick={() => setQuickDay({ date: day, slot: slotsShown.find((s) => !dayMeals.some((m) => m.slot === s)) ?? 'dinner' })}
+                      >
+                        <Zap size={16} /> Have it
+                      </button>
                     </div>
                   )}
                 </div>
@@ -194,6 +239,19 @@ export function Plan() {
               toast(`Added ${recipeById.get(recipeId)?.title}`, { label: 'Undo', run: () => removeMeal(id) });
             }
             setAdding(null);
+          }}
+        />
+      )}
+
+      {quickDay && (
+        <QuickAddSheet
+          date={quickDay.date}
+          slot={quickDay.slot}
+          onClose={() => setQuickDay(null)}
+          onChoose={async (recipeId, slot) => {
+            const id = await addMeal(recipeId, quickDay.date, slot, settings.householdSize);
+            toast(`Added ${recipeById.get(recipeId)?.title}`, { label: 'Undo', run: () => removeMeal(id) });
+            setQuickDay(null);
           }}
         />
       )}
@@ -343,7 +401,7 @@ function ChooseRecipeSheet(props: {
   const [suggested, setSuggested] = useState<string | undefined>(() => props.onSuggest());
 
   const pool = useMemo(() => {
-    const eligible = eligibleRecipes(d.recipes, slot, props.date, { ...d.settings, weeknightMaxMin: 0 });
+    const eligible = eligibleRecipes(d.recipes, slot, props.date, { ...d.settings, weeknightMaxMin: 0 }, d.ingById);
     return eligible.length ? eligible : d.recipes.filter((r) => !r.archived);
   }, [d.recipes, d.settings, slot, props.date]);
   const fuse = useMemo(() => new Fuse(pool, { keys: ['title', 'cuisine', 'protein'], threshold: 0.35, ignoreLocation: true }), [pool]);
@@ -380,6 +438,61 @@ function ChooseRecipeSheet(props: {
           </button>
         ))}
       </div>
+    </Sheet>
+  );
+}
+
+/** Recipes you can make on this day with only what's already in the kitchen. */
+function QuickAddSheet(props: { date: string; slot: Slot; onClose: () => void; onChoose: (recipeId: string, slot: Slot) => void }) {
+  const d = useAppData();
+  const dish = useDishInfo();
+  const [slot, setSlot] = useState(props.slot);
+  const list = useMemo(() => {
+    const pool = eligibleRecipes(d.recipes, slot, props.date, { ...d.settings, weeknightMaxMin: 0 }, d.ingById);
+    return cookableRecipes({
+      recipes: pool, date: props.date, slot, servings: d.settings.householdSize,
+      meals: d.meals, lots: d.lots, loose: d.loose, ingById: d.ingById, today: d.today,
+    });
+  }, [d.recipes, d.settings, d.ingById, d.meals, d.lots, d.loose, d.today, slot, props.date]);
+  // Sides you could make alongside — only for dinner, where the main list is protein-only.
+  const sides = useMemo(() => {
+    if (slot !== 'dinner') return [];
+    const pool = d.recipes.filter((r) => !r.archived && dish.get(r.id)?.dishType === 'side');
+    return cookableRecipes({
+      recipes: pool, date: props.date, slot, servings: d.settings.householdSize,
+      meals: d.meals, lots: d.lots, loose: d.loose, ingById: d.ingById, today: d.today,
+    }).slice(0, 8);
+  }, [d.recipes, dish, d.settings.householdSize, d.meals, d.lots, d.loose, d.ingById, d.today, slot, props.date]);
+
+  const row = (c: Cookable) => (
+    <button key={c.recipe.id} className="w-full text-left" onClick={() => props.onChoose(c.recipe.id, slot)}>
+      <div className="pointer-events-none">
+        <RecipeCard
+          recipe={c.recipe}
+          to="#"
+          subtitle={<span className="truncate">{c.recipe.prepMin + c.recipe.cookMin} min · {c.recipe.cuisine}{c.expiring ? ` · uses ${c.expiring} expiring` : ''}</span>}
+        />
+      </div>
+    </button>
+  );
+
+  return (
+    <Sheet open onClose={props.onClose} title={`Make with what you have · ${relativeDayLabel(props.date, d.today)}`}>
+      <Segmented value={slot} options={SLOTS.map((s) => ({ value: s, label: <span className="capitalize">{s}</span> }))} onChange={setSlot} />
+      <p className="my-3 text-sm text-stone-500">
+        Everything these need is already in your kitchen, after setting aside what your other planned meals use. Nothing to buy.
+      </p>
+      {list.length === 0 ? (
+        <p className="card p-4 text-sm text-stone-600">Nothing fits with what's on hand right now. Add what you have in the Pantry tab, or pick a recipe and add it to the shopping list.</p>
+      ) : (
+        <div className="space-y-2">{list.map(row)}</div>
+      )}
+      {sides.length > 0 && (
+        <>
+          <h3 className="section-title">Sides you could make too</h3>
+          <div className="space-y-2">{sides.map(row)}</div>
+        </>
+      )}
     </Sheet>
   );
 }

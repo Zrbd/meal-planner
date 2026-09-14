@@ -1,7 +1,7 @@
 import { BookOpen, CalendarDays, House, Refrigerator, ShoppingCart } from 'lucide-react';
 import { HashRouter, NavLink, Route, Routes, useLocation } from 'react-router';
 import { useRegisterSW } from 'virtual:pwa-register/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { pushNewAlerts, setBadge } from '../services/notify';
 import { AppDataProvider, useAppData } from './data';
 import { useAlerts } from './hooks';
@@ -25,9 +25,46 @@ const TABS = [
   { to: '/pantry', label: 'Pantry', icon: Refrigerator },
 ];
 
+const isTextField = (el: Element | null) =>
+  !!el && ((el instanceof HTMLInputElement && !['checkbox', 'radio', 'button', 'submit', 'range', 'color', 'file'].includes(el.type)) ||
+    el instanceof HTMLTextAreaElement || el instanceof HTMLSelectElement || (el as HTMLElement).isContentEditable);
+
+/**
+ * True while the on-screen keyboard is up. iOS keeps fixed bars glued above the keyboard as you scroll,
+ * covering the content, so bottom bars hide while typing. Also sets `html[data-kb]` for CSS.
+ */
+function useKeyboardOpen() {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    let blurTimer = 0;
+    const vv = window.visualViewport;
+    const update = () => {
+      const shrunk = !!vv && vv.height < window.innerHeight * 0.8;
+      const next = isTextField(document.activeElement) || shrunk;
+      setOpen(next);
+      if (next) document.documentElement.dataset.kb = '1';
+      else delete document.documentElement.dataset.kb;
+    };
+    const onIn = () => { clearTimeout(blurTimer); update(); };
+    // focus hops between fields fire out → in; wait a beat so the bar doesn't flicker
+    const onOut = () => { blurTimer = window.setTimeout(update, 150); };
+    document.addEventListener('focusin', onIn);
+    document.addEventListener('focusout', onOut);
+    vv?.addEventListener('resize', update);
+    return () => {
+      clearTimeout(blurTimer);
+      document.removeEventListener('focusin', onIn);
+      document.removeEventListener('focusout', onOut);
+      vv?.removeEventListener('resize', update);
+    };
+  }, []);
+  return open;
+}
+
 function TabBar() {
   const { pathname } = useLocation();
-  if (/\/(cook|edit|new|import)$/.test(pathname)) return null;
+  const keyboard = useKeyboardOpen();
+  if (keyboard || /\/(cook|edit|new|import)$/.test(pathname)) return null;
   return (
     <nav className="pb-safe fixed inset-x-0 bottom-0 z-30 border-t border-stone-200 bg-white/90 backdrop-blur">
       <div className="mx-auto grid max-w-xl grid-cols-5">

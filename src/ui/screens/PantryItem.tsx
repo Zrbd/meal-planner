@@ -2,6 +2,7 @@ import { Snowflake, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { aisleLabel } from '../../data/aisles';
+import { CATEGORIES, categoryInfo, categoryOf, type CategoryId } from '../../domain/categories';
 import { formatDay, relativeDayLabel } from '../../domain/dates';
 import { forecastItem } from '../../domain/forecast';
 import { LOCATIONS, type Location, type LooseLevel } from '../../domain/types';
@@ -41,7 +42,7 @@ export function PantryItem() {
 
   return (
     <>
-      <PageHeader title={ing.name} subtitle={aisleLabel(ing.aisle)} back />
+      <PageHeader title={ing.name} subtitle={`${categoryInfo(categoryOf(ing)).emoji} ${categoryInfo(categoryOf(ing)).label} · ${aisleLabel(ing.aisle)} aisle`} back />
       <div className="space-y-4 px-4 pb-8">
         {ing.trackMode === 'loose' ? (
           <div className="card space-y-3 p-4">
@@ -97,7 +98,7 @@ export function PantryItem() {
                     <div className="flex items-center gap-2">
                       <span className="font-semibold">{q(l.qty)}</span>
                       {exp && <span className={`text-xs ${exp.tone}`}>· {exp.text}</span>}
-                      <span className="ml-auto text-xs text-stone-400">added {formatDay(new Date(l.addedAt).toISOString().slice(0, 10), 'MMM d')}</span>
+                      <span className="ml-auto text-xs text-stone-400">bought {formatDay(new Date(l.addedAt).toLocaleDateString('en-CA'), 'MMM d')}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <select className="input w-auto px-2 py-1.5 text-sm capitalize" value={l.location} aria-label="Location" onChange={(e) => void moveLot(l.id, e.target.value as Location)}>
@@ -139,6 +140,12 @@ export function PantryItem() {
                 <span className="text-sm font-semibold">{f.threshold > 0 ? q(f.threshold) : '—'}</span>
               </button>
             )}
+            <div className="flex items-center gap-3 p-3">
+              <div className="flex-1 font-medium">Category</div>
+              <select className="input w-auto px-2 py-1.5" value={categoryOf(ing)} onChange={(e) => void updateIngredient(id, { category: e.target.value as CategoryId })}>
+                {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+              </select>
+            </div>
             <div className="flex items-center gap-3 p-3">
               <div className="flex-1 font-medium">Usually kept in</div>
               <select className="input w-auto px-2 py-1.5 capitalize" value={ing.defaultLocation} onChange={(e) => void updateIngredient(id, { defaultLocation: e.target.value as Location })}>

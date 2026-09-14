@@ -2,6 +2,7 @@
 // rescuing expiring food, sharing perishables across meals, and variety.
 import { availableByIngredient } from './coverage';
 import { addDaysISO, isWeeknight } from './dates';
+import { isFullMeal } from './dishes';
 import { choosePackages } from './packages';
 import { EPS, SLOT_ORDER, isUsableOn, lotsInUseOrder, negligible, recipeNeeds } from './stock';
 import type { Ingredient, ISODate, LooseStock, PlannedMeal, Recipe, Settings, Slot, StockLot } from './types';
@@ -67,14 +68,20 @@ export function eligibleRecipes(
   slot: Slot,
   date: ISODate,
   settings: AutoPlanInput['settings'],
+  ingById?: Map<string, Ingredient>,
 ): Recipe[] {
-  const base = recipes.filter(
+  let base = recipes.filter(
     (r) =>
       !r.archived &&
       r.slots.includes(slot) &&
       settings.dietFilters.every((t) => r.diet.includes(t)) &&
       !r.ingredients.some((i) => !i.optional && settings.dislikedIngredients.includes(i.ingredientId)),
   );
+  // Dinner is a real meal: an entrée (or hearty soup/salad) with protein, never just rice or green beans.
+  if (slot === 'dinner' && ingById) {
+    const full = base.filter((r) => isFullMeal(r, ingById));
+    if (full.length) base = full;
+  }
   if (slot !== 'dinner' || !isWeeknight(date) || !settings.weeknightMaxMin) return base;
   const quick = base.filter((r) => r.prepMin + r.cookMin <= settings.weeknightMaxMin);
   return quick.length ? quick : base;
@@ -135,7 +142,7 @@ export function autoPlan(input: AutoPlanInput): AutoPick[] {
 
   for (const s of slots) {
     const avoid = new Set(input.avoid?.get(`${s.date}:${s.slot}`) ?? []);
-    const eligible = eligibleRecipes(input.recipes, s.slot, s.date, input.settings).filter((r) => !avoid.has(r.id));
+    const eligible = eligibleRecipes(input.recipes, s.slot, s.date, input.settings, ingById).filter((r) => !avoid.has(r.id));
     let candidates = eligible.filter((r) => !used.has(r.id));
     if (!candidates.length) candidates = eligible;
     if (!candidates.length) continue;

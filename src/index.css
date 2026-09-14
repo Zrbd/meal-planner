@@ -32,6 +32,8 @@ textarea {
 .pt-safe { padding-top: env(safe-area-inset-top); }
 .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
 .bottom-safe-tab { bottom: calc(env(safe-area-inset-bottom) + 4.5rem); }
+/* While typing, floating bottom buttons would ride up on top of the keyboard and cover the content. */
+html[data-kb] .bottom-safe-tab:not([role="status"]) { display: none; }
 
 @layer components {
   .card {

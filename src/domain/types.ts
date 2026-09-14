@@ -1,5 +1,6 @@
 // Core data types shared by domain logic, DB, and UI.
 // All quantities in stock/demand math are in the ingredient's baseUnit.
+import type { CategoryId } from './categories';
 
 export type BaseUnit = 'g' | 'ml' | 'ea';
 export type Dimension = 'mass' | 'volume' | 'count';
@@ -59,6 +60,8 @@ export interface Ingredient {
   thawTip?: string;
   /** Always available (tap water): never shopped for, tracked, or counted as missing. */
   alwaysOnHand?: boolean;
+  /** Food category chosen by the user; otherwise derived by `categoryOf`. */
+  category?: CategoryId;
   source: 'builtin' | 'user';
 }
 

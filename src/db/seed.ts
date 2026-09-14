@@ -20,6 +20,7 @@ export async function seedIfNeeded(database: MealDB = db): Promise<boolean> {
           keepStocked: cur.keepStocked,
           lowThreshold: cur.lowThreshold,
           defaultLocation: cur.defaultLocation,
+          category: cur.category ?? seed.category,
         };
       }),
     );

@@ -1,12 +1,12 @@
 import Fuse from 'fuse.js';
 import { ChevronRight, Plus } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router';
-import { aisleEmoji } from '../../data/aisles';
+import { Link, useSearchParams } from 'react-router';
 import { db } from '../../db/schema';
+import { CATEGORIES, categoryInfo, categoryOf, type CategoryId } from '../../domain/categories';
 import { daysBetween, formatDay } from '../../domain/dates';
 import { forecastItem } from '../../domain/forecast';
-import type { Ingredient, ISODate, Location, LooseLevel } from '../../domain/types';
+import type { Ingredient, ISODate, Location, LooseLevel, StockLot } from '../../domain/types';
 import { formatQty } from '../../domain/units';
 import { addStock, defaultExpiry, setLooseLevel } from '../../services/pantry';
 import { addDaysISO as plusDays } from '../../domain/dates';
@@ -15,7 +15,15 @@ import { AmountInput, EmptyState, IngredientPicker, PageHeader, SearchInput, Seg
 import { useAppData } from '../data';
 import { useToast } from '../toast';
 
-type Tab = 'all' | Location | 'spices';
+type Tab = 'all' | Location | 'spices' | 'staples';
+const TABS: { value: Tab; label: string }[] = [
+  { value: 'all', label: 'All' },
+  { value: 'fridge', label: 'Fridge' },
+  { value: 'freezer', label: 'Freezer' },
+  { value: 'pantry', label: 'Pantry' },
+  { value: 'spices', label: 'Spices' },
+  { value: 'staples', label: 'Staples' },
+];
 
 export function expiryLabel(expiresOn: ISODate | undefined, today: ISODate): { text: string; tone: string } | null {
   if (!expiresOn) return null;
@@ -27,10 +35,23 @@ export function expiryLabel(expiresOn: ISODate | undefined, today: ISODate): { t
   return { text: `Good until ${formatDay(expiresOn, 'MMM d')}`, tone: 'text-stone-400' };
 }
 
+/** Group items by food category, in catalog order. */
+function byCategory<T>(items: T[], ingOf: (t: T) => Ingredient): { id: CategoryId; items: T[] }[] {
+  const groups = new Map<CategoryId, T[]>();
+  for (const it of items) {
+    const c = categoryOf(ingOf(it));
+    groups.set(c, [...(groups.get(c) ?? []), it]);
+  }
+  return CATEGORIES.filter((c) => groups.has(c.id)).map((c) => ({ id: c.id, items: groups.get(c.id)! }));
+}
+
 export function Pantry() {
   const d = useAppData();
   const { ingredients, lots, today, settings, looseById } = d;
-  const [tab, setTab] = useState<Tab>('all');
+  const [params, setParams] = useSearchParams();
+  // Kept in the URL so coming back from an item lands on the same tab.
+  const tab = (TABS.some((t) => t.value === params.get('tab')) ? params.get('tab') : 'all') as Tab;
+  const setTab = (t: Tab) => setParams(t === 'all' ? {} : { tab: t }, { replace: true });
   const [q, setQ] = useState('');
   const [pickOpen, setPickOpen] = useState(false);
   const [adding, setAdding] = useState<Ingredient | null>(null);
@@ -38,11 +59,28 @@ export function Pantry() {
   const fuse = useMemo(() => new Fuse(ingredients, { keys: ['name', 'aliases'], threshold: 0.35, ignoreLocation: true }), [ingredients]);
   const matchIds = useMemo(() => (q.trim() ? new Set(fuse.search(q.trim()).map((r) => r.item.id)) : null), [q, fuse]);
 
+  /** ingredientId → how many of this week's planned meals use it. */
+  const weekUse = useMemo(() => {
+    const end = plusDays(today, 6);
+    const out = new Map<string, number>();
+    for (const m of d.meals) {
+      if (m.status !== 'planned' || m.leftoverOf || m.date < today || m.date > end) continue;
+      const r = d.recipeById.get(m.recipeId);
+      if (!r) continue;
+      for (const id of new Set(r.ingredients.filter((i) => !i.optional).map((i) => i.ingredientId))) out.set(id, (out.get(id) ?? 0) + 1);
+    }
+    return out;
+  }, [d.meals, d.recipeById, today]);
+
   const exactItems = useMemo(() => {
-    const byIng = new Map<string, typeof lots>();
+    const byIng = new Map<string, StockLot[]>();
     for (const l of lots) if (tab === 'all' || tab === l.location) byIng.set(l.ingredientId, [...(byIng.get(l.ingredientId) ?? []), l]);
-    // staples you keep stocked show up even when you're out
-    if (tab === 'all') for (const i of ingredients) if (i.keepStocked && i.trackMode === 'exact' && !byIng.has(i.id)) byIng.set(i.id, []);
+    for (const i of ingredients) {
+      if (i.trackMode !== 'exact' || i.alwaysOnHand || byIng.has(i.id)) continue;
+      const inTab = tab === 'all' || tab === i.defaultLocation;
+      // staples you keep stocked, and anything this week's meals call for, show up even when you're out
+      if (inTab && ((tab === 'all' && i.keepStocked) || weekUse.has(i.id))) byIng.set(i.id, []);
+    }
     return [...byIng]
       .map(([id, ls]) => ({ ing: d.ingById.get(id)!, lots: ls }))
       .filter((x) => x.ing && x.ing.trackMode === 'exact' && (!matchIds || matchIds.has(x.ing.id)))
@@ -52,22 +90,21 @@ export function Pantry() {
         return { ...x, forecast: f, soonest };
       })
       .sort((a, b) => (a.soonest ?? '9999').localeCompare(b.soonest ?? '9999') || a.ing.name.localeCompare(b.ing.name));
-  }, [lots, tab, ingredients, d.ingById, d.txns, d.now, matchIds, today, settings.bufferDays]);
+  }, [lots, tab, ingredients, d.ingById, d.txns, d.now, matchIds, today, settings.bufferDays, weekUse]);
 
   const looseItems = useMemo(() => {
+    if (tab !== 'spices' && tab !== 'staples') return [];
     const usedInRecipes = new Set(d.recipes.filter((r) => !r.archived).flatMap((r) => r.ingredients.map((i) => i.ingredientId)));
     return ingredients
-      .filter((i) => i.trackMode === 'loose' && !i.alwaysOnHand && (looseById.has(i.id) || usedInRecipes.has(i.id)) && (!matchIds || matchIds.has(i.id)))
-      .sort((a, b) => a.name.localeCompare(b.name));
-  }, [ingredients, looseById, d.recipes, matchIds]);
+      .filter((i) => i.trackMode === 'loose' && !i.alwaysOnHand && (tab === 'spices') === (i.aisle === 'spices'))
+      .filter((i) => (looseById.has(i.id) || usedInRecipes.has(i.id)) && (!matchIds || matchIds.has(i.id)))
+      .sort((a, b) => Number(weekUse.has(b.id)) - Number(weekUse.has(a.id)) || a.name.localeCompare(b.name));
+  }, [tab, ingredients, looseById, d.recipes, matchIds, weekUse]);
 
-  const tabs: { value: Tab; label: string }[] = [
-    { value: 'all', label: 'All' },
-    { value: 'fridge', label: 'Fridge' },
-    { value: 'freezer', label: 'Freezer' },
-    { value: 'pantry', label: 'Pantry' },
-    { value: 'spices', label: 'Spices' },
-  ];
+  const weekTag = (id: string) => {
+    const n = weekUse.get(id);
+    return n ? <span className="rounded-full bg-sky-100 px-1.5 text-[11px] font-semibold text-sky-800">{n} meal{n === 1 ? '' : 's'} this week</span> : null;
+  };
 
   return (
     <>
@@ -81,28 +118,43 @@ export function Pantry() {
         }
       />
       <div className="space-y-3 px-4">
-        <Segmented value={tab} options={tabs} onChange={setTab} />
+        <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4">
+          {TABS.map((t) => (
+            <button key={t.value} className={`chip ${tab === t.value ? 'chip-on' : ''}`} onClick={() => setTab(t.value)}>
+              {t.label}
+            </button>
+          ))}
+        </div>
         <SearchInput value={q} onChange={setQ} placeholder="Search your kitchen" />
 
-        {tab === 'spices' ? (
+        {tab === 'spices' || tab === 'staples' ? (
           <>
             <p className="px-1 text-sm text-stone-500">
-              Spices and staples aren't measured — just tell us when they're running low and they'll go on your list.
+              {tab === 'spices' ? 'Spices' : 'Oils, sauces, and other staples'} aren't measured — just tell us when they're running low and they'll go on your list.
             </p>
-            <ul className="card divide-y divide-stone-100">
-              {looseItems.map((ing) => (
-                <li key={ing.id} className="flex items-center gap-3 p-3">
-                  <Link to={`/pantry/${ing.id}`} className="min-w-0 flex-1 truncate">{ing.name}</Link>
-                  <div className="w-44 shrink-0">
-                    <Segmented<LooseLevel>
-                      value={looseById.get(ing.id)?.level ?? ('' as LooseLevel)}
-                      options={[{ value: 'plenty', label: 'Have' }, { value: 'low', label: 'Low' }, { value: 'out', label: 'Out' }]}
-                      onChange={(v) => void setLooseLevel(ing.id, v)}
-                    />
-                  </div>
-                </li>
-              ))}
-            </ul>
+            {looseItems.length === 0 && <EmptyState emoji="🧂" title="Nothing matches" />}
+            {byCategory(looseItems, (i) => i).map((g) => (
+              <section key={g.id}>
+                {tab === 'staples' && <h2 className="section-title pt-1">{categoryInfo(g.id).label}</h2>}
+                <ul className="card divide-y divide-stone-100">
+                  {g.items.map((ing) => (
+                    <li key={ing.id} className="flex items-center gap-3 p-3">
+                      <Link to={`/pantry/${ing.id}`} className="min-w-0 flex-1">
+                        <div className="truncate">{ing.name}</div>
+                        {weekTag(ing.id)}
+                      </Link>
+                      <div className="w-44 shrink-0">
+                        <Segmented<LooseLevel>
+                          value={looseById.get(ing.id)?.level ?? ('' as LooseLevel)}
+                          options={[{ value: 'plenty', label: 'Have' }, { value: 'low', label: 'Low' }, { value: 'out', label: 'Out' }]}
+                          onChange={(v) => void setLooseLevel(ing.id, v)}
+                        />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
           </>
         ) : exactItems.length === 0 ? (
           <EmptyState
@@ -112,29 +164,45 @@ export function Pantry() {
             action={<button className="btn btn-primary" onClick={() => setPickOpen(true)}><Plus size={18} /> Add items</button>}
           />
         ) : (
-          <ul className="card divide-y divide-stone-100">
-            {exactItems.map(({ ing, lots: ls, forecast, soonest }) => {
-              const total = ls.reduce((s, l) => s + l.qty, 0);
-              const exp = expiryLabel(soonest, today);
-              return (
-                <li key={ing.id}>
-                  <Link to={`/pantry/${ing.id}`} className="flex items-center gap-3 p-3">
-                    <span className="text-xl">{aisleEmoji(ing.aisle)}</span>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="truncate font-medium">{ing.name}</span>
-                        {forecast.status === 'out' && <span className="rounded-full bg-red-100 px-1.5 text-[11px] font-semibold text-red-700">Out</span>}
-                        {forecast.status === 'low' && <span className="rounded-full bg-amber-100 px-1.5 text-[11px] font-semibold text-amber-800">Low</span>}
-                      </div>
-                      {exp && <div className={`text-xs ${exp.tone}`}>{exp.text}</div>}
-                    </div>
-                    <span className="shrink-0 text-sm font-semibold text-stone-700">{total > 0 ? formatQty(total, ing, settings.units) : '—'}</span>
-                    <ChevronRight size={18} className="shrink-0 text-stone-300" />
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+          byCategory(exactItems, (x) => x.ing).map((g) => (
+            <section key={g.id}>
+              <h2 className="section-title pt-1">{categoryInfo(g.id).emoji} {categoryInfo(g.id).label}</h2>
+              <ul className="card divide-y divide-stone-100">
+                {g.items.map(({ ing, lots: ls, forecast, soonest }) => {
+                  const total = ls.reduce((s, l) => s + l.qty, 0);
+                  const exp = expiryLabel(soonest, today);
+                  const boughtDays = ls.length ? daysBetween(new Date(Math.min(...ls.map((l) => l.addedAt))).toLocaleDateString('en-CA'), today) : null;
+                  return (
+                    <li key={ing.id}>
+                      <Link to={`/pantry/${ing.id}`} className="flex items-center gap-3 p-3">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                            <span className="truncate font-medium">{ing.name}</span>
+                            {total <= 0 && weekUse.has(ing.id) ? (
+                              <span className="rounded-full bg-red-100 px-1.5 text-[11px] font-semibold text-red-700">Need for this week</span>
+                            ) : (
+                              <>
+                                {forecast.status === 'out' && <span className="rounded-full bg-red-100 px-1.5 text-[11px] font-semibold text-red-700">Out</span>}
+                                {forecast.status === 'low' && <span className="rounded-full bg-amber-100 px-1.5 text-[11px] font-semibold text-amber-800">Low</span>}
+                              </>
+                            )}
+                            {weekTag(ing.id)}
+                          </div>
+                          <div className="text-xs text-stone-500">
+                            {exp && <span className={exp.tone}>{exp.text}</span>}
+                            {exp && boughtDays !== null && ' · '}
+                            {boughtDays !== null && `bought ${boughtDays <= 0 ? 'today' : `${boughtDays}d ago`}`}
+                          </div>
+                        </div>
+                        <span className="shrink-0 text-sm font-semibold text-stone-700">{total > 0 ? formatQty(total, ing, settings.units) : '—'}</span>
+                        <ChevronRight size={18} className="shrink-0 text-stone-300" />
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          ))
         )}
       </div>
 
