@@ -29,6 +29,10 @@ export interface AppData {
   trips: Trip[];
   settings: Settings;
   lastBackupAt?: number;
+  /** Last automatic on-device backup copy. */
+  autoBackupAt?: number;
+  /** When data was last brought back from that copy. */
+  autoRestoredAt?: number;
   dailyRates: Map<string, number>;
 }
 
@@ -48,7 +52,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
 
   const raw = useLiveQuery(async () => {
     const since = Date.now() - 60 * DAY;
-    const [ingredients, recipes, lots, loose, txns, meals, cookLogs, shopping, trips, settingsRow, backupRow] =
+    const [ingredients, recipes, lots, loose, txns, meals, cookLogs, shopping, trips, settingsRow, backupRow, autoRow, restoredRow] =
       await Promise.all([
         db.ingredients.toArray(),
         db.recipes.toArray(),
@@ -58,14 +62,18 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         db.meals.toArray(),
         db.cookLogs.orderBy('at').reverse().limit(200).toArray(),
         db.shopping.toArray(),
-        db.trips.orderBy('finishedAt').reverse().limit(20).toArray(),
+        db.trips.orderBy('finishedAt').reverse().limit(500).toArray(),
         db.kv.get('settings'),
         db.kv.get('lastBackupAt'),
+        db.kv.get('autoBackupAt'),
+        db.kv.get('autoRestoredAt'),
       ]);
     return {
       ingredients, recipes, lots, loose, txns, meals, cookLogs, shopping, trips,
       settings: withDefaults(settingsRow?.value as Partial<Settings> | undefined),
       lastBackupAt: backupRow?.value as number | undefined,
+      autoBackupAt: autoRow?.value as number | undefined,
+      autoRestoredAt: restoredRow?.value as number | undefined,
       loadedAt: Date.now(),
     };
   }, []);

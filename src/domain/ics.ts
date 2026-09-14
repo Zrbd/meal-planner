@@ -1,8 +1,9 @@
 // Calendar (.ics) reminders. iPhone web apps can't schedule notifications for later,
 // but Calendar can: export thaw / cook / use-by / shopping reminders with alarms.
-import { addDaysISO, daysBetween, nextShoppingDay } from './dates';
+import { addDaysISO, daysBetween, nextShoppingDay, toISODate } from './dates';
 import { thawNeeds } from './freshness';
-import type { Ingredient, ISODate, LooseStock, PlannedMeal, Recipe, Slot, StockLot } from './types';
+import { COOK_TIME, formatDuration, prepTasks, prepTitle } from './prep';
+import type { Ingredient, ISODate, LooseStock, PlannedMeal, Recipe, StockLot } from './types';
 
 export interface CalEvent {
   uid: string;
@@ -49,8 +50,6 @@ export function buildICS(events: CalEvent[], now: number): string {
   return lines.map(fold).join('\r\n') + '\r\n';
 }
 
-const COOK_TIME: Record<Slot, string> = { breakfast: '07:30', lunch: '11:30', dinner: '17:00' };
-
 export function reminderEvents(input: {
   meals: PlannedMeal[];
   recipesById: Map<string, Recipe>;
@@ -76,6 +75,21 @@ export function reminderEvents(input: {
       title: `🧊 Thaw ${t.ing.name.toLowerCase()}`,
       description: `For ${recipe?.title ?? 'a planned meal'} on ${t.date}. ${t.ing.thawTip ?? 'Move it from the freezer to the fridge.'}`,
       alarmMin: 0,
+    });
+  }
+
+  for (const t of prepTasks({ ...input, horizonDays: input.days ?? 7 })) {
+    if (t.minutes < 30) continue;
+    const at = new Date(t.startAt);
+    const recipe = recipesById.get(t.recipeId);
+    events.push({
+      uid: `prep-${t.id}`,
+      date: toISODate(at),
+      time: `${pad(at.getHours())}:${pad(at.getMinutes())}`,
+      minutes: 15,
+      title: `⏲️ ${prepTitle(t)}`,
+      description: `Needs ${formatDuration(t.minutes)} before cooking ${recipe?.title ?? 'a planned meal'}.`,
+      alarmMin: 60,
     });
   }
 

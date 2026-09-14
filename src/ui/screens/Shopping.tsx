@@ -3,18 +3,39 @@ import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { aisleEmoji, aisleLabel } from '../../data/aisles';
 import { addDaysISO, formatDay, nextShoppingDay, relativeDayLabel } from '../../domain/dates';
+import { money, spending } from '../../domain/prices';
 import { buildShoppingList, describeBuy, shoppingListText, type ShoppingLine } from '../../domain/shopping';
+import type { Ingredient, UnitSystem } from '../../domain/types';
 import { formatQty } from '../../domain/units';
+import { defaultExpiry } from '../../services/pantry';
 import { addManualItem, clearChecked, patchShoppingState, removeShoppingState, toggleChecked } from '../../services/shopping';
 import { finishTrip, undoTrip } from '../../services/trip';
 import { AmountInput, EmptyState, PageHeader, Sheet } from '../components';
 import { useAppData } from '../data';
+import { usePrices } from '../hooks';
 import { useToast } from '../toast';
+
+/** Parse a typed price; blank or nonsense → undefined. */
+const parsePrice = (s: string | undefined) => {
+  const n = parseFloat((s ?? '').replace(/[^0-9.]/g, ''));
+  return n > 0 ? Math.round(n * 100) / 100 : undefined;
+};
+
+/** One-line warning about extra perishables that would go bad. */
+function wasteText(l: ShoppingLine, ing: Ingredient | undefined, units: UnitSystem): string {
+  if (!l.waste || !ing) return '';
+  const { qty, exact, useBy, fix } = l.waste;
+  const fq = (n: number) => formatQty(n, ing, units);
+  if (fix === 'loose') return `⚠️ ~${fq(qty)} would go bad — buy just ${fq(exact)} loose`;
+  if (fix === 'freeze') return `❄️ Freeze the extra ~${fq(qty)} — nothing uses it by ${formatDay(useBy, 'EEE')}`;
+  return `⚠️ ~${fq(qty)} extra goes bad by ${formatDay(useBy, 'EEE')} — plan a meal for it`;
+}
 
 export function Shopping() {
   const d = useAppData();
   const { today, settings, ingById, recipeById } = d;
   const toast = useToast();
+  const prices = usePrices();
   const [params, setParams] = useSearchParams();
   const defaultTo = addDaysISO(nextShoppingDay(today, settings.shoppingDay), -1 + 7 * 0);
   const from = params.get('from') ?? today;
@@ -24,6 +45,8 @@ export function Shopping() {
   const [manual, setManual] = useState('');
   const [showSkipped, setShowSkipped] = useState(false);
   const [finishOpen, setFinishOpen] = useState(false);
+  /** Prices typed in the put-away sheet, by line key. */
+  const [paid, setPaid] = useState<Record<string, string>>({});
 
   const result = useMemo(
     () =>
@@ -33,12 +56,22 @@ export function Shopping() {
       }),
     [from, to, today, d.meals, recipeById, ingById, d.lots, d.loose, d.shopping, settings.aisleOrder, settings.bufferDays, d.dailyRates],
   );
+  const spent = useMemo(() => spending(d.trips, today), [d.trips, today]);
+  const priceByKey = new Map(d.shopping.filter((s) => s.price).map((s) => [s.key, s.price!]));
 
   const buy = result.lines.filter((l) => l.section === 'buy');
   const check = result.lines.filter((l) => l.section === 'check');
   const skipped = result.lines.filter((l) => l.section === 'skipped');
-  const checkedCount = [...buy, ...check].filter((l) => l.checked).length;
+  const checkedLines = [...buy, ...check].filter((l) => l.checked);
+  const checkedCount = checkedLines.length;
   const remaining = buy.filter((l) => !l.checked).length;
+
+  /** What a line should cost at the last price you paid. */
+  const estimate = (l: ShoppingLine) => {
+    const unit = l.ingredientId ? prices.get(l.ingredientId) : undefined;
+    return unit !== undefined && l.buy > 0 ? unit * l.buy : undefined;
+  };
+  const listEstimate = buy.reduce((s, l) => s + (priceByKey.get(l.key) ?? estimate(l) ?? 0), 0);
 
   const setRange = (f: string, t: string) => {
     setParams({ from: f, to: t }, { replace: true });
@@ -70,6 +103,8 @@ export function Shopping() {
   const renderLine = (l: ShoppingLine) => {
     const ing = l.ingredientId ? ingById.get(l.ingredientId) : undefined;
     const amount = describeBuy(l, ing, settings.units);
+    const price = priceByKey.get(l.key);
+    const est = estimate(l);
     return (
       <li key={l.key} className="flex items-center gap-1">
         <button
@@ -86,7 +121,15 @@ export function Shopping() {
             <span className="truncate font-medium">{l.name}</span>
             <span className="ml-auto shrink-0 text-sm font-semibold">{amount}</span>
           </div>
-          {!l.checked && reasonText(l) && <div className="truncate text-xs text-stone-500">{reasonText(l)}</div>}
+          <div className="flex gap-2 text-xs">
+            <span className="min-w-0 flex-1 truncate text-stone-500">{!l.checked && reasonText(l)}</span>
+            {price !== undefined ? (
+              <span className="shrink-0 text-stone-600">{money(price)}</span>
+            ) : est !== undefined && !l.checked ? (
+              <span className="shrink-0 text-stone-400">~{money(est)}</span>
+            ) : null}
+          </div>
+          {!l.checked && l.waste && <div className="truncate text-xs text-amber-700">{wasteText(l, ing, settings.units)}</div>}
         </button>
       </li>
     );
@@ -98,6 +141,12 @@ export function Shopping() {
     if (last && last[0] === l.aisle) last[1].push(l);
     else groups.push([l.aisle, [l]]);
   }
+
+  const openFinish = () => {
+    setPaid(Object.fromEntries(checkedLines.map((l) => [l.key, priceByKey.get(l.key)?.toFixed(2) ?? ''])));
+    setFinishOpen(true);
+  };
+  const paidTotal = checkedLines.reduce((s, l) => s + (parsePrice(paid[l.key]) ?? 0), 0);
 
   return (
     <>
@@ -119,6 +168,23 @@ export function Shopping() {
           </div>
           <ChevronDown size={18} className="text-stone-400" />
         </button>
+
+        {(listEstimate > 0 || spent.total > 0) && (
+          <div className="card grid grid-cols-3 divide-x divide-stone-100 py-2 text-center" aria-label="Spending">
+            <div>
+              <div className="text-xs text-stone-500">This list</div>
+              <div className="font-semibold">{listEstimate > 0 ? `~${money(listEstimate)}` : '—'}</div>
+            </div>
+            <div>
+              <div className="text-xs text-stone-500">Last 7 days</div>
+              <div className="font-semibold">{money(spent.week)}</div>
+            </div>
+            <div>
+              <div className="text-xs text-stone-500">{formatDay(today, 'MMMM')}</div>
+              <div className="font-semibold">{money(spent.month)}</div>
+            </div>
+          </div>
+        )}
 
         {result.errors.length > 0 && (
           <div className="card border-amber-300 bg-amber-50 p-3 text-xs text-amber-900">
@@ -193,7 +259,7 @@ export function Shopping() {
       {checkedCount > 0 && (
         <div className="fixed inset-x-0 z-20 bottom-safe-tab">
           <div className="mx-auto max-w-xl px-4">
-            <button className="btn btn-primary w-full py-3.5 shadow-lg" onClick={() => setFinishOpen(true)}>
+            <button className="btn btn-primary w-full py-3.5 shadow-lg" onClick={openFinish}>
               <ShoppingBag size={18} /> Done shopping · put {checkedCount} item{checkedCount === 1 ? '' : 's'} away
             </button>
           </div>
@@ -235,30 +301,52 @@ export function Shopping() {
             <button
               className="btn btn-primary w-full"
               onClick={async () => {
-                const items = [...buy, ...check].filter((l) => l.checked).map((l) => ({
-                  key: l.key, ingredientId: l.ingredientId, name: l.name, qty: l.manual ? 0 : l.buy,
+                const items = checkedLines.map((l) => ({
+                  key: l.key, ingredientId: l.ingredientId, name: l.name, qty: l.manual ? 0 : l.buy, price: parsePrice(paid[l.key]),
                 }));
                 const tripId = await finishTrip([from, to], items);
                 setFinishOpen(false);
-                toast('Pantry updated', { label: 'Undo', run: () => undoTrip(tripId) });
+                toast(paidTotal > 0 ? `Pantry updated · spent ${money(paidTotal)}` : 'Pantry updated', { label: 'Undo', run: () => undoTrip(tripId) });
               }}
             >
-              Add to pantry
+              Add to pantry{paidTotal > 0 ? ` · ${money(paidTotal)}` : ''}
             </button>
           }
         >
-          <p className="mb-2 text-sm text-stone-500">These go into your pantry with typical use-by dates. You can adjust amounts or dates later in Pantry.</p>
+          <p className="mb-2 text-sm text-stone-500">
+            These go into your pantry with typical use-by dates. Add what you paid (optional) to track the cost of each meal and your grocery spending.
+          </p>
           <ul className="divide-y divide-stone-100">
-            {[...buy, ...check].filter((l) => l.checked).map((l) => {
+            {checkedLines.map((l) => {
               const ing = l.ingredientId ? ingById.get(l.ingredientId) : undefined;
+              const useBy = ing && ing.trackMode === 'exact' ? defaultExpiry(ing, ing.defaultLocation, today) : undefined;
+              const est = estimate(l);
               return (
-                <li key={l.key} className="flex justify-between py-2 text-sm">
-                  <span>{l.name}</span>
-                  <span className="text-stone-500">{ing ? (ing.trackMode === 'loose' ? 'restocked' : `${formatQty(l.buy, ing, settings.units)} · ${ing.defaultLocation}`) : '—'}</span>
+                <li key={l.key} className="flex items-center gap-2 py-2 text-sm">
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate">{l.name}</div>
+                    <div className="truncate text-xs text-stone-500">
+                      {ing ? (ing.trackMode === 'loose' ? 'restocked' : `${formatQty(l.buy, ing, settings.units)} · ${ing.defaultLocation}`) : '—'}
+                      {useBy && ` · use by ${formatDay(useBy, 'MMM d')}`}
+                    </div>
+                  </div>
+                  <label className="flex shrink-0 items-center gap-1 text-stone-400">
+                    $
+                    <input
+                      className="input w-20 px-2 py-1 text-right text-sm"
+                      inputMode="decimal"
+                      aria-label={`Price paid for ${l.name}`}
+                      placeholder={est !== undefined ? est.toFixed(2) : '0.00'}
+                      value={paid[l.key] ?? ''}
+                      onChange={(e) => setPaid({ ...paid, [l.key]: e.target.value })}
+                      onBlur={() => void patchShoppingState(l.key, { price: parsePrice(paid[l.key]) })}
+                    />
+                  </label>
                 </li>
               );
             })}
           </ul>
+          {paidTotal > 0 && <p className="mt-2 text-right text-sm font-semibold">Total {money(paidTotal)}</p>}
           <button className="btn btn-ghost mt-2 w-full text-sm" onClick={async () => { await clearChecked(); setFinishOpen(false); }}>
             Uncheck everything instead
           </button>
@@ -269,9 +357,11 @@ export function Shopping() {
 }
 
 function LineSheet({ line, onClose }: { line: ShoppingLine; onClose: () => void }) {
-  const { ingById, recipeById, settings, today } = useAppData();
+  const { ingById, recipeById, settings, today, shopping } = useAppData();
   const ing = line.ingredientId ? ingById.get(line.ingredientId) : undefined;
   const [qty, setQty] = useState(line.buy);
+  const [price, setPrice] = useState(() => shopping.find((s) => s.key === line.key)?.price?.toFixed(2) ?? '');
+  const fq = (n: number) => (ing ? formatQty(n, ing, settings.units) : String(n));
 
   return (
     <Sheet open onClose={onClose} title={line.name}>
@@ -282,6 +372,24 @@ function LineSheet({ line, onClose }: { line: ShoppingLine; onClose: () => void 
             {line.packages.items.length > 0 && <div>Buying <b>{describeBuy(line, ing, settings.units)}</b>{line.leftover > 0 && <> — about {formatQty(line.leftover, ing, settings.units)} left over.</>}</div>}
           </div>
         )}
+        {line.waste && ing && (
+          <div className="rounded-xl bg-amber-50 p-3 text-sm text-amber-900">
+            {line.waste.fix === 'loose' && (
+              <>About <b>{fq(line.waste.qty)}</b> of that would likely go bad before {formatDay(line.waste.useBy, 'EEEE')} — no planned meal uses it. Buy just <b>{fq(line.waste.exact)}</b> loose or from the counter instead.</>
+            )}
+            {line.waste.fix === 'freeze' && (
+              <>No planned meal uses the extra ~{fq(line.waste.qty)} before it goes bad ({formatDay(line.waste.useBy, 'EEE, MMM d')}). Freeze it as soon as you get home.</>
+            )}
+            {line.waste.fix === 'plan' && (
+              <>You'll have ~{fq(line.waste.qty)} extra that goes bad around {formatDay(line.waste.useBy, 'EEE, MMM d')}. Plan a meal that uses it, or look for a smaller size.</>
+            )}
+            {line.waste.fix === 'loose' && (
+              <button className="btn btn-secondary mt-2 w-full" onClick={async () => { await patchShoppingState(line.key, { qtyOverride: line.waste!.exact }); onClose(); }}>
+                Buy just {fq(line.waste.exact)}
+              </button>
+            )}
+          </div>
+        )}
         {line.reasons.some((r) => r.recipeId) && (
           <ul className="space-y-1 text-sm text-stone-600">
             {line.reasons.filter((r) => r.recipeId).map((r, i) => (
@@ -289,6 +397,20 @@ function LineSheet({ line, onClose }: { line: ShoppingLine; onClose: () => void 
             ))}
           </ul>
         )}
+        <label className="block">
+          <span className="label">Price paid (optional)</span>
+          <div className="flex items-center gap-2">
+            <span className="text-stone-400">$</span>
+            <input
+              className="input"
+              inputMode="decimal"
+              placeholder="0.00"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              onBlur={() => void patchShoppingState(line.key, { price: parsePrice(price) })}
+            />
+          </div>
+        </label>
         {!line.manual && (
           <button className="btn btn-secondary w-full" onClick={async () => { await patchShoppingState(line.key, { haveIt: true, checked: false }); onClose(); }}>
             I already have this

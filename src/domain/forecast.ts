@@ -1,6 +1,7 @@
 // Low-stock detection, usage-rate forecasts, and expiry alerts.
-import { addDaysISO, daysBetween, nextShoppingDay, relativeDayLabel } from './dates';
+import { addDaysISO, daysBetween, nextShoppingDay, relativeDayLabel, toISODate } from './dates';
 import { thawNeeds, useUpCandidates } from './freshness';
+import { formatClock, formatDuration, prepTasks, prepTitle } from './prep';
 import { buildDemands, negligible, onHand, simulate } from './stock';
 import type { Ingredient, InventoryTxn, ISODate, LooseStock, PlannedMeal, Recipe, StockLot } from './types';
 
@@ -30,13 +31,15 @@ export function effectiveThreshold(ing: Ingredient, dailyRate: number, bufferDay
   return Math.max(smallest * 0.25, dailyRate * bufferDays);
 }
 
-export type AlertKind = 'expired' | 'thaw' | 'short' | 'out' | 'expiring' | 'old' | 'low';
-const SEVERITY: Record<AlertKind, number> = { expired: 0, thaw: 1, short: 2, out: 3, expiring: 4, old: 5, low: 6 };
+export type AlertKind = 'expired' | 'thaw' | 'prep' | 'short' | 'out' | 'expiring' | 'old' | 'low';
+const SEVERITY: Record<AlertKind, number> = { expired: 0, thaw: 1, prep: 1, short: 2, out: 3, expiring: 4, old: 5, low: 6 };
 
 export interface Alert {
   id: string;
   kind: AlertKind;
+  /** Empty for recipe-level alerts (prep). */
   ingredientId: string;
+  recipeId?: string;
   lotId?: string;
   title: string;
   detail: string;
@@ -164,13 +167,33 @@ export function computeAlerts(input: AlertInput): Alert[] {
   for (const t of thawNeeds(freshIn)) {
     const recipe = recipes.get(t.recipeId);
     const cookingToday = t.date === today;
+    // a second, "do it now" alert (and notification) once it's time: this evening, or right away for today's meal
+    const due = t.thawBy === today && (cookingToday || new Date(now).getHours() >= 18);
     alerts.push({
-      id: `thaw:${t.lot.id}`,
+      id: `${due ? 'thaw-now' : 'thaw'}:${t.lot.id}`,
       kind: 'thaw',
       ingredientId: t.ing.id,
       lotId: t.lot.id,
       title: cookingToday ? `Thaw the ${t.ing.name.toLowerCase()} now` : t.thawBy === today ? `Move the ${t.ing.name.toLowerCase()} to the fridge tonight` : `Thaw ${t.ing.name.toLowerCase()} ${relativeDayLabel(t.thawBy, today).toLowerCase()}`,
       detail: `For ${recipe?.title ?? 'a planned meal'} (${relativeDayLabel(t.date, today)})${cookingToday ? ' — use the cold-water method' : ''}`,
+    });
+  }
+
+  // Marinating, soaking, rising… anything that must start ahead of cooking. Heads-up a day before, again when it's time.
+  for (const t of prepTasks({ meals, recipesById: recipes, ingById: ingredients, today, horizonDays: 1 })) {
+    if (t.minutes < 30 || now >= t.cookAt || t.startAt - now > 86_400_000) continue;
+    const recipe = recipes.get(t.recipeId);
+    const soon = t.startAt - now <= 30 * 60_000;
+    const startDay = toISODate(new Date(t.startAt));
+    alerts.push({
+      id: `${soon ? 'prep-now' : 'prep'}:${t.id}`,
+      kind: 'prep',
+      ingredientId: '',
+      recipeId: t.recipeId,
+      title: soon
+        ? `${prepTitle(t)} now`
+        : `${prepTitle(t)} by ${formatClock(t.startAt)}${startDay === today ? '' : ` ${relativeDayLabel(startDay, today).toLowerCase()}`}`,
+      detail: `Needs ${formatDuration(t.minutes)} before cooking ${recipe?.title ?? 'a planned meal'} (${relativeDayLabel(t.date, today)} ${t.slot})`,
     });
   }
 

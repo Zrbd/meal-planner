@@ -1,4 +1,5 @@
 // Shopping list builder: planned meals + pantry → exactly what to buy for a date range.
+import { addDaysISO } from './dates';
 import { effectiveThreshold } from './forecast';
 import { choosePackages, describePackages, type PackChoice } from './packages';
 import { buildDemands, negligible, onHand, simulate } from './stock';
@@ -31,6 +32,37 @@ export interface ShoppingLine {
   checked: boolean;
   manual: boolean;
   overridden: boolean;
+  /** Perishable extra that would likely spoil before any planned meal uses it, and how to avoid that. */
+  waste?: WasteHint;
+}
+
+export interface WasteHint {
+  /** Amount likely to go bad (baseUnit). */
+  qty: number;
+  /** Use-by date if bought on the first day of the range. */
+  useBy: ISODate;
+  /** Exactly what the meals need (whole items for 'ea'). */
+  exact: number;
+  /** loose = buy just `exact` loose / at the counter; freeze = freeze the extra; plan = plan a meal for it. */
+  fix: 'loose' | 'freeze' | 'plan';
+}
+
+const LOOSE_AISLES: string[] = ['produce', 'meat', 'seafood', 'deli'];
+
+/** Would buying `buy` of a perishable leave extra that spoils before planned meals get to it? */
+export function wasteHint(ing: Ingredient, buy: number, need: number, from: ISODate, laterUse: { date: ISODate; qty: number }[], leftoverStock: number): WasteHint | undefined {
+  if (ing.trackMode !== 'exact' || ing.defaultLocation === 'freezer') return undefined;
+  const shelf = ing.shelfLife[ing.defaultLocation];
+  if (!shelf || shelf > 14) return undefined;
+  const extra = buy - need;
+  if (negligible(extra, ing.baseUnit) || extra < buy * 0.1) return undefined;
+  const useBy = addDaysISO(from, shelf);
+  const later = laterUse.filter((u) => u.date <= useBy).reduce((s, u) => s + u.qty, 0);
+  const spoils = extra - Math.max(0, later - leftoverStock);
+  if (negligible(spoils, ing.baseUnit) || spoils < buy * 0.1) return undefined;
+  const exact = ing.baseUnit === 'ea' ? Math.max(1, Math.ceil(need - 0.05)) : need;
+  const canBuyLoose = LOOSE_AISLES.includes(ing.aisle) && ing.baseUnit !== 'ml' && exact < buy - 1e-6;
+  return { qty: spoils, useBy, exact, fix: canBuyLoose ? 'loose' : ing.shelfLife.freezer ? 'freeze' : 'plan' };
 }
 
 export interface ShoppingInput {
@@ -112,6 +144,13 @@ export function buildShoppingList(input: ShoppingInput): ShoppingResult {
     }
   }
 
+  // Meals after the range that could still use up extra perishables before they spoil.
+  const laterMeals = input.meals.filter((m) => m.date > to && m.date <= addDaysISO(to, 14));
+  const laterByIng = new Map<string, { date: ISODate; qty: number }[]>();
+  for (const d of buildDemands(laterMeals, recipes, ingredients).demands) {
+    laterByIng.set(d.ingredientId, [...(laterByIng.get(d.ingredientId) ?? []), { date: d.date, qty: d.qty }]);
+  }
+
   const lines: ShoppingLine[] = [];
   for (const [id, qty] of need) {
     const ing = ingredients.get(id);
@@ -119,11 +158,13 @@ export function buildShoppingList(input: ShoppingInput): ShoppingResult {
     const st = stateByKey.get(id);
     const packages = buyFor(qty, ing);
     const buy = st?.qtyOverride ?? packages.total;
+    const onlyRestock = (reasons.get(id) ?? []).every((r) => r.kind === 'restock');
     lines.push({
       key: id, ingredientId: id, name: ing.name, aisle: ing.aisle, need: qty, buy, packages,
       leftover: Math.max(0, buy - qty), reasons: reasons.get(id) ?? [],
       section: st?.haveIt ? 'skipped' : 'buy', checked: !!st?.checked, manual: false,
       overridden: st?.qtyOverride !== undefined,
+      waste: onlyRestock ? undefined : wasteHint(ing, buy, qty, from, laterByIng.get(id) ?? [], onHand(sim.remaining, id)),
     });
   }
 

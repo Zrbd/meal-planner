@@ -12,6 +12,7 @@ export interface TripItem {
   qty: number; // baseUnit
   location?: Location;
   expiresOn?: ISODate;
+  price?: number;
 }
 
 export async function finishTrip(range: [ISODate, ISODate], items: TripItem[]): Promise<string> {
@@ -40,7 +41,7 @@ export async function finishTrip(range: [ISODate, ISODate], items: TripItem[]): 
     await db.shopping.bulkDelete(items.map((i) => i.key));
     await db.trips.add({
       id: tripId, range, finishedAt: now,
-      lines: items.map((i) => ({ ingredientId: i.ingredientId, name: i.name, qty: i.qty })),
+      lines: items.map((i) => ({ ingredientId: i.ingredientId, name: i.name, qty: i.qty, ...(i.price ? { price: i.price } : {}) })),
     });
   });
   return tripId;

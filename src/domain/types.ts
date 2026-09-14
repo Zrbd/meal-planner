@@ -157,12 +157,16 @@ export interface ShoppingState {
   haveIt?: boolean;
   qtyOverride?: number; // baseUnit
   manualName?: string;
+  /** What you paid for this line, in dollars. */
+  price?: number;
 }
 
 export interface TripLine {
   ingredientId?: string;
   name: string;
   qty: number;
+  /** Dollars paid for the whole line. */
+  price?: number;
 }
 
 export interface Trip {

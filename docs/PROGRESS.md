@@ -44,7 +44,17 @@ Living handoff log. Newest notes at the top of each section.
 - Units: recipe page has a per-recipe US/Metric toggle; tapping an amount cycles that one line through its options (`amountOptions`). Stored in localStorage `units:{recipeId}`; base recipe unchanged.
 - Notifications: iOS web apps can't schedule local notifications. When enabled, `NotificationBridge` badges the icon and shows a digest of new alerts (deduped 2 days) each time the app opens; Settings → "Add this week's reminders to Calendar" shares an .ics with thaw/cook/use-by/shopping alarms (`domain/ics.ts`).
 
+- Pantry: every ingredient has a food category (`domain/categories.ts`), shown as groups; spices and staples are separate tabs. Ingredients a planned meal this week uses appear in the pantry even with nothing on hand.
+- Recipes: filters for cuisine, protein type and dish type (`domain/dishes.ts`: `proteinTypeOf`, `dishTypeOf`). Auto-fill dinners must be `isFullMeal` (entrée/soup/salad with ≥28 g protein per serving); sides like rice or green beans are never a dinner.
+- Plan: "Quick add" (`domain/quickadd.ts`) offers only recipes fully covered by stock after earlier planned meals take their share. Each day lists the cookware its meals need (`equipmentOf`, from step text). Week cost shows in the subtitle.
+- Prices: optional price per shopping line (put-away sheet or line sheet) is saved on the trip. `domain/prices.ts` derives the latest unit price → estimated line cost, recipe cost ("About $X · $Y a serving") and spending totals (7 days / month).
+- Waste-free buying: `wasteHint` flags perishable package extra (shelf life ≤14 days) that no meal within its use-by would use, and suggests buying exactly what's needed loose, freezing the extra, or planning a meal for it. Put-away sheet shows use-by dates.
+- Prep ahead (`domain/prep.ts`): marinate/soak/rise/chill/rest steps with ≥15 min are read from recipe text (overnight = 8 h, ranges use the low end). Cooking is assumed to start at breakfast 7:30, lunch 11:30, dinner 17:00. Home "Prep ahead" timeline lists thaw and prep with start times. Alerts: a heads-up up to 24 h before (≥30 min steps), then a "now" alert 30 min before, and thaw-now at 18:00 the night before. The .ics export includes prep events. A 2-minute clock tick re-evaluates while the app is open.
+- Auto backup (`db/autobackup.ts`): every launch and every time the app is backgrounded, a compact copy (no plain built-in recipes) goes to localStorage + Cache Storage. On launch, if the DB has no user data but the copy does, it's imported and re-seeded, and Home shows a "restored" banner. "Start over" clears the copy first. Real files can't be written silently on iOS, so manual backup files are still recommended.
+
 ## Known gaps / ideas for next session
+- Notifications only fire while the app is open (iOS web app limit). Calendar export covers timed reminders.
+- The auto-backup copy lives in the same site storage iOS may evict; it protects against DB corruption/partial loss, not against deleting the app.
 - JS bundle is ~700 kB (216 kB gzip) — could code-split screens with `React.lazy`.
 - Auto-fill can put similar proteins on back-to-back days; consider a variety penalty for same protein on adjacent days in `autoplan.ts`.
 - No UI tests yet (only domain/services). Consider Playwright smoke tests.

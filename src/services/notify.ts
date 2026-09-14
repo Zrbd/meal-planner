@@ -29,7 +29,7 @@ export async function setBadge(count: number): Promise<void> {
 const SENT_KEY = 'notify:sent';
 const DAY = 86_400_000;
 /** Kinds worth interrupting you for; "low" waits for the shopping list. */
-const PUSH_KINDS = new Set(['expired', 'thaw', 'short', 'out', 'expiring', 'old']);
+const PUSH_KINDS = new Set(['expired', 'thaw', 'prep', 'short', 'out', 'expiring', 'old']);
 
 /** Notify about alerts not already notified in the last 2 days. */
 export async function pushNewAlerts(alerts: Alert[], now = Date.now()): Promise<number> {

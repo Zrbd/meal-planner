@@ -2,6 +2,7 @@ import { CalendarPlus, Download, RotateCcw, Upload, X } from 'lucide-react';
 import { isInstalled, requestNotifications, shareReminders } from '../../services/notify';
 import { useRef, useState, type ReactNode } from 'react';
 import { importBackup, resetEverything, shareBackup } from '../../db/backup';
+import { deviceStore } from '../../db/autobackup';
 import { updateSettings } from '../../db/settings';
 import { SLOTS } from '../../domain/types';
 import { IngredientPicker, PageHeader, Segmented } from '../components';
@@ -35,7 +36,7 @@ function Row({ title, hint, children }: { title: string; hint?: string; children
 }
 
 export function SettingsScreen() {
-  const { settings: s, ingById, lastBackupAt, meals, recipeById, lots, loose, today } = useAppData();
+  const { settings: s, ingById, lastBackupAt, autoBackupAt, meals, recipeById, lots, loose, today } = useAppData();
   const toast = useToast();
   const fileRef = useRef<HTMLInputElement>(null);
   const [dislikeOpen, setDislikeOpen] = useState(false);
@@ -166,7 +167,12 @@ export function SettingsScreen() {
             to Files or iCloud Drive now and then.
           </p>
           <p className="text-xs text-stone-500">
-            Last backup: {lastBackupAt ? new Date(lastBackupAt).toLocaleDateString() : 'never'}
+            Last backup file: {lastBackupAt ? new Date(lastBackupAt).toLocaleDateString() : 'never'}
+          </p>
+          <p className="text-xs text-stone-500">
+            Automatic backup: {autoBackupAt ? new Date(autoBackupAt).toLocaleString() : 'not yet'}. A copy is saved every time you open or
+            leave the app, and if the app's data ever disappears it's restored from that copy automatically. It lives on this phone
+            too, so a backup file is still the safest bet if you delete the app.
           </p>
           <button
             className="btn btn-primary w-full"
@@ -203,6 +209,8 @@ export function SettingsScreen() {
             onClick={async () => {
               if (!window.confirm('Erase your pantry, plans, and your own recipes? This cannot be undone.')) return;
               if (!window.confirm('Really erase everything?')) return;
+              // clear the automatic copy first, or the next launch would "restore" what you just erased
+              await deviceStore.clear();
               await resetEverything();
               toast('App reset');
             }}

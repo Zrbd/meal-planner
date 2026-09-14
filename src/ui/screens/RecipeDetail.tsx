@@ -11,7 +11,8 @@ import { addMeal, removeMeal } from '../../services/plan';
 import { deleteRecipe, duplicateRecipe, setArchived, setRating, toggleFavorite } from '../../services/recipes';
 import { EmptyState, PageHeader, RecipeThumb, Segmented, Sheet, totalTime } from '../components';
 import { useAppData } from '../data';
-import { useAvailability } from '../hooks';
+import { useAvailability, usePrices } from '../hooks';
+import { money, recipeCost } from '../../domain/prices';
 import { useToast } from '../toast';
 
 export function RecipeDetail() {
@@ -25,6 +26,7 @@ export function RecipeDetail() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [planOpen, setPlanOpen] = useState(false);
   const units = useRecipeUnits(id, settings.units);
+  const prices = usePrices();
 
   const coverage = useMemo(
     () => recipe && recipeCoverage(recipe, servings, available, looseLevel, ingById),
@@ -43,6 +45,7 @@ export function RecipeDetail() {
   const missing = new Set(coverage?.missing ?? []);
   const tips = tipIngredients(recipe, ingById);
   const stepTips = tipsByStep(recipe, ingById);
+  const cost = recipeCost(recipe, servings, ingById, prices);
 
   return (
     <>
@@ -110,6 +113,12 @@ export function RecipeDetail() {
         {coverage && (
           <p className="mt-1 text-sm text-stone-500">
             {coverage.canMake ? '✅ You have everything you need.' : `You're missing ${coverage.missing.length} ingredient${coverage.missing.length === 1 ? '' : 's'}.`}
+          </p>
+        )}
+        {cost.priced > 0 && (
+          <p className="mt-0.5 text-sm text-stone-500">
+            💵 About {money(cost.total)} · {money(cost.total / servings)} a serving
+            {cost.unpriced > 0 && <span className="text-stone-400"> ({cost.unpriced} ingredient{cost.unpriced === 1 ? '' : 's'} not priced yet)</span>}
           </p>
         )}
         <div className="mt-3 flex items-center gap-2">

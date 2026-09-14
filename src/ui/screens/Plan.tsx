@@ -10,7 +10,8 @@ import { SLOTS, type PlannedMeal, type Slot } from '../../domain/types';
 import { addLeftovers, addMeal, applyAutoPlan, removeMeal, setSkipped, updateMeal } from '../../services/plan';
 import { PageHeader, RecipeCard, RecipeThumb, SearchInput, Segmented, Sheet } from '../components';
 import { useAppData, type AppData } from '../data';
-import { useCoverage, useDishInfo } from '../hooks';
+import { useCoverage, useDishInfo, usePrices } from '../hooks';
+import { money, recipeCost } from '../../domain/prices';
 import { useToast } from '../toast';
 import Fuse from 'fuse.js';
 import { useUpCandidates, type UseUpItem } from '../../domain/freshness';
@@ -73,6 +74,13 @@ export function Plan() {
 
   const weekMeals = meals.filter((m) => m.date >= weekStart && m.date <= weekEnd);
   const plannedCount = weekMeals.filter((m) => m.status === 'planned' && !m.leftoverOf).length;
+  const prices = usePrices();
+  const weekCost = weekMeals
+    .filter((m) => m.status !== 'skipped' && !m.leftoverOf)
+    .reduce((sum, m) => {
+      const r = recipeById.get(m.recipeId);
+      return r ? sum + recipeCost(r, m.servings, d.ingById, prices).total : sum;
+    }, 0);
   const slotsShown = SLOTS.filter((s) => settings.enabledSlots.includes(s) || weekMeals.some((m) => m.slot === s));
 
   const openSlotsForAutofill = (): PlanSlot[] => {
@@ -107,7 +115,7 @@ export function Plan() {
     <>
       <PageHeader
         title="Meal plan"
-        subtitle={`${plannedCount} meal${plannedCount === 1 ? '' : 's'} planned`}
+        subtitle={`${plannedCount} meal${plannedCount === 1 ? '' : 's'} planned${weekCost > 0 ? ` · about ${money(weekCost)} in ingredients` : ''}`}
         right={
           <button className="btn btn-ghost px-3" onClick={startAuto}>
             <Sparkles size={18} /> Auto-fill
