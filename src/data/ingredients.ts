@@ -178,6 +178,7 @@ const CATALOG: Ingredient[] = [
   can('black-beans', 'Black beans', 425, { aliases: ['canned black beans'] }),
   can('chickpeas', 'Chickpeas', 425, { aliases: ['garbanzo beans', 'canned chickpeas'] }),
   can('kidney-beans', 'Kidney beans', 425, { aliases: ['red kidney beans'] }),
+  can('sweetened-condensed-milk', 'Sweetened condensed milk (14 oz)', 397, { aliases: ['condensed milk'], density: 1.28 }),
   can('crushed-tomatoes', 'Crushed tomatoes (28 oz)', 794, { aliases: ['crushed tomatoes', 'canned crushed tomatoes'], density: 1.07 }),
   can('diced-tomatoes', 'Diced tomatoes (14.5 oz)', 411, { aliases: ['diced tomatoes', 'canned diced tomatoes'], density: 1.03 }),
   can('tuna', 'Tuna', 142, { aliases: ['canned tuna'] }),
