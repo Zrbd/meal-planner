@@ -239,6 +239,7 @@ const CATALOG: Ingredient[] = [
   I('kimchi', 'Kimchi', 'international', 'g', { aliases: ['napa cabbage kimchi', 'baechu kimchi'], density: 0.7, packages: [{ label: '16 oz jar', qty: oz(16) }], defaultLocation: 'fridge', shelfLife: { fridge: 90 } }),
   looseLiquid('kecap-manis', 'Kecap manis (sweet soy sauce)', 'international', 1.3, '9 oz bottle', floz(9), { aliases: ['sweet soy sauce', 'indonesian sweet soy'] }),
   looseLiquid('mirin', 'Mirin', 'international', 1.1, '10 oz bottle', floz(10), { aliases: ['chinese cooking wine', 'shaoxing wine', 'dry sherry', 'cooking wine'] }),
+  I('massaman-curry-paste', 'Massaman curry paste', 'international', 'g', { aliases: ['massaman paste', 'matsaman curry paste'], density: 1.1, trackMode: 'loose', packages: [{ label: '4 oz jar', qty: oz(4) }], defaultLocation: 'fridge', shelfLife: { fridge: 180 } }),
   I('red-curry-paste', 'Thai red curry paste', 'international', 'g', { aliases: ['red curry paste', 'thai curry paste', 'green curry paste'], density: 1.1, trackMode: 'loose', packages: [{ label: '4 oz jar', qty: oz(4) }], defaultLocation: 'fridge', shelfLife: { fridge: 180 } }),
   I('pine-nuts', 'Pine nuts', 'snacks', 'g', { aliases: ['pignoli', 'pine nut'], density: 0.55, packages: [{ label: '4 oz bag', qty: oz(4) }], shelfLife: { pantry: 90 } }),
   I('tortilla-chips', 'Tortilla chips', 'snacks', 'g', { aliases: ['corn chips'], density: 0.25, packages: [{ label: '11 oz bag', qty: oz(11) }], shelfLife: { pantry: 90 } }),
