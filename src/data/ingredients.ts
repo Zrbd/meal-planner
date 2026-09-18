@@ -65,6 +65,7 @@ const CATALOG: Ingredient[] = [
   I('romaine-hearts', 'Romaine hearts', 'produce', 'ea', { aliases: ['romaine', 'romaine lettuce', 'lettuce', 'romaine heart'], gramsPerEach: 280, density: 0.2, unitAliases: { heart: 1, head: 1 }, packages: [{ label: '3-pack', qty: 3 }], shelfLife: { fridge: 10 } }),
   I('cherry-tomatoes', 'Cherry tomatoes', 'produce', 'g', { aliases: ['grape tomatoes'], density: 0.63, packages: [{ label: '10 oz pint', qty: oz(10) }], shelfLife: { fridge: 7 } }),
   I('tomato', 'Tomatoes', 'produce', 'ea', { aliases: ['tomato', 'roma tomatoes', 'roma tomato'], gramsPerEach: 180, density: 0.76, defaultLocation: 'pantry', shelfLife: { pantry: 5, fridge: 10 } }),
+  I('tomatillo', 'Tomatillos', 'produce', 'g', { aliases: ['tomatillos'], gramsPerEach: 40, density: 0.7, packages: [{ label: '1 lb', qty: lb(1) }], shelfLife: { fridge: 14 } }),
   I('cucumber', 'Cucumber', 'produce', 'ea', { aliases: ['english cucumber'], gramsPerEach: 300, density: 0.56, shelfLife: { fridge: 7 } }),
   I('avocado', 'Avocado', 'produce', 'ea', { aliases: ['avocados'], gramsPerEach: 170, defaultLocation: 'pantry', shelfLife: { pantry: 4, fridge: 7 } }),
   I('lemon', 'Lemons', 'produce', 'ea', { aliases: ['lemon', 'lemon juice'], gramsPerEach: 100, density: 2.2, shelfLife: { fridge: 21 } }), // density lets "1 tbsp lemon juice" → fraction of a lemon (~45 ml juice each)
@@ -183,6 +184,7 @@ const CATALOG: Ingredient[] = [
   can('kidney-beans', 'Kidney beans', 425, { aliases: ['red kidney beans'] }),
   can('sweetened-condensed-milk', 'Sweetened condensed milk (14 oz)', 397, { aliases: ['condensed milk'], density: 1.28 }),
   can('crushed-tomatoes', 'Crushed tomatoes (28 oz)', 794, { aliases: ['crushed tomatoes', 'canned crushed tomatoes'], density: 1.07 }),
+  can('hominy', 'White hominy (15 oz)', 425, { aliases: ['canned hominy', 'pozole corn'], density: 0.85 }),
   can('diced-tomatoes', 'Diced tomatoes (14.5 oz)', 411, { aliases: ['diced tomatoes', 'canned diced tomatoes'], density: 1.03 }),
   can('tuna', 'Tuna', 142, { aliases: ['canned tuna'] }),
   can('pinto-beans', 'Pinto beans', 425, { aliases: ['canned pinto beans'] }),
