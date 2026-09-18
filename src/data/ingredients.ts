@@ -229,6 +229,7 @@ const CATALOG: Ingredient[] = [
   I('dried-apricots', 'Dried apricots', 'snacks', 'g', { aliases: ['apricots, dried'], density: 0.6, packages: [{ label: '6 oz bag', qty: oz(6) }], shelfLife: { pantry: 180 } }),
   I('pepitas', 'Pepitas / seeds', 'snacks', 'g', { aliases: ['pumpkin seeds', 'sunflower seeds', 'hemp seeds'], density: 0.55, packages: [{ label: '8 oz bag', qty: oz(8) }], shelfLife: { pantry: 180 } }),
 
+  I('curry-roux', 'Japanese curry roux', 'international', 'g', { aliases: ['japanese curry roux', 'curry block', 'golden curry'], density: 1, packages: [{ label: '7.8 oz box', qty: oz(7.8) }], shelfLife: { pantry: 540 } }),
   I('sofrito', 'Sofrito', 'international', 'g', { aliases: ['recaito', 'puerto rican sofrito'], density: 1, trackMode: 'loose', packages: [{ label: '12 oz jar', qty: oz(12) }], defaultLocation: 'fridge', shelfLife: { fridge: 14, freezer: 180 } }),
   I('tomato-paste', 'Tomato paste', 'canned', 'g', { density: 1.1, unitAliases: { can: 170 }, packages: [{ label: '6 oz can', qty: 170 }], shelfLife: { pantry: 730 } }),
   I('marinara', 'Marinara sauce', 'canned', 'g', { aliases: ['marinara', 'pasta sauce', 'spaghetti sauce'], density: 1.05, unitAliases: { jar: 680 }, packages: [{ label: '24 oz jar', qty: 680 }], shelfLife: { pantry: 365 } }),
