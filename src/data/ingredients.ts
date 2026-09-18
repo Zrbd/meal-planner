@@ -245,6 +245,7 @@ const CATALOG: Ingredient[] = [
   I('sofrito', 'Sofrito', 'international', 'g', { aliases: ['recaito', 'puerto rican sofrito'], density: 1, trackMode: 'loose', packages: [{ label: '12 oz jar', qty: oz(12) }], defaultLocation: 'fridge', shelfLife: { fridge: 14, freezer: 180 } }),
   I('tomato-paste', 'Tomato paste', 'canned', 'g', { density: 1.1, unitAliases: { can: 170 }, packages: [{ label: '6 oz can', qty: 170 }], shelfLife: { pantry: 730 } }),
   I('marinara', 'Marinara sauce', 'canned', 'g', { aliases: ['marinara', 'pasta sauce', 'spaghetti sauce'], density: 1.05, unitAliases: { jar: 680 }, packages: [{ label: '24 oz jar', qty: 680 }], shelfLife: { pantry: 365 } }),
+  I('shredded-coconut', 'Shredded coconut', 'baking', 'g', { aliases: ['desiccated coconut', 'unsweetened shredded coconut', 'coconut flakes'], density: 0.35, packages: [{ label: '7 oz bag', qty: oz(7) }], shelfLife: { pantry: 365 } }),
   I('coconut-milk', 'Coconut milk', 'international', 'ea', { aliases: ['canned coconut milk', 'full-fat coconut milk'], gramsPerEach: 400, density: 0.97, unitAliases: { can: 1 }, displayUnit: 'can', shelfLife: { pantry: 730 } }),
   I('chicken-broth', 'Chicken broth', 'canned', 'ml', { aliases: ['chicken stock', 'low-sodium chicken broth'], density: 1, packages: [{ label: '32 oz carton', qty: 946 }], shelfLife: { pantry: 365 } }),
   I('vegetable-broth', 'Vegetable broth', 'canned', 'ml', { aliases: ['vegetable stock', 'veggie broth'], density: 1, packages: [{ label: '32 oz carton', qty: 946 }], shelfLife: { pantry: 365 } }),
