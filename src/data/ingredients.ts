@@ -48,6 +48,7 @@ const CATALOG: Ingredient[] = [
   // ---------- Produce ----------
   I('yellow-onion', 'Yellow onion', 'produce', 'ea', { aliases: ['onion', 'white onion', 'brown onion', 'sweet onion'], gramsPerEach: 150, density: 0.68, defaultLocation: 'pantry', shelfLife: { pantry: 30 } }),
   I('red-onion', 'Red onion', 'produce', 'ea', { aliases: ['purple onion'], gramsPerEach: 150, density: 0.68, defaultLocation: 'pantry', shelfLife: { pantry: 30 } }),
+  I('lemongrass', 'Lemongrass', 'produce', 'ea', { aliases: ['lemongrass stalk', 'fresh lemongrass'], gramsPerEach: 20, unitAliases: { stalk: 1 }, packages: [{ label: '2-stalk pack', qty: 2 }], shelfLife: { fridge: 14, freezer: 180 } }),
   I('shallot', 'Shallot', 'produce', 'ea', { gramsPerEach: 45, density: 0.68, defaultLocation: 'pantry', shelfLife: { pantry: 30 } }),
   I('garlic', 'Garlic', 'produce', 'g', { aliases: ['garlic clove', 'cloves garlic', 'garlic cloves'], unitAliases: { clove: 5, head: 50 }, displayUnit: 'clove', density: 0.6, packages: [{ label: 'head', qty: 50 }], defaultLocation: 'pantry', shelfLife: { pantry: 60 } }),
   I('green-onion', 'Green onions', 'produce', 'ea', { aliases: ['scallion', 'scallions', 'green onion', 'spring onions'], gramsPerEach: 15, density: 0.42, unitAliases: { bunch: 8, stalk: 1 }, packages: [{ label: 'bunch', qty: 8 }], shelfLife: { fridge: 10 } }),
@@ -210,6 +211,7 @@ const CATALOG: Ingredient[] = [
   can('refried-beans', 'Refried beans', 454, { aliases: ['canned refried beans'], density: 1.1 }),
   can('corn-can', 'Canned corn', 432, { aliases: ['canned corn', 'corn kernels'], density: 0.72 }),
   can('green-chiles', 'Diced green chiles (4 oz)', 113, { aliases: ['green chiles', 'diced green chiles', 'chopped green chiles'], density: 1 }),
+  can('fava-beans', 'Fava beans', 425, { aliases: ['broad beans', 'ful medames', 'canned fava beans'] }),
   can('pigeon-peas', 'Pigeon peas (gandules)', 425, { aliases: ['gandules', 'canned pigeon peas'] }),
   can('tomato-sauce', 'Tomato sauce (15 oz)', 425, { aliases: ['tomato sauce', 'smooth tomato sauce', 'tomato puree', 'canned tomato sauce'], density: 1.03 }),
   can('chipotle-adobo', 'Chipotles in adobo (7 oz)', 198, { aliases: ['chipotle peppers in adobo', 'chipotle in adobo', 'chipotle pepper'], unitAliases: { can: 1, pepper: 0.07 } }),
