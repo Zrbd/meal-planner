@@ -85,7 +85,8 @@ Living handoff log. Newest notes at the top of each section.
 - Lumpia shanghai and chicken momo added; ground chicken, spring roll and wonton wrappers added to the catalog.
 - Ghanaian waakye and Ethiopian chicken tibs added.
 - Trinidad doubles and chicken mole added.
-- SEED_VERSION 119.
+- Jamaican rice and peas and garlic mashed potatoes sides added.
+- SEED_VERSION 120.
 - Later in the same session: more world mains (arepas de queso, tteokbokki, chicken katsu, chicken congee, pancit bihon, borscht, moussaka with ground turkey, japchae, mapo tofu, palak paneer, chicken biryani, pozole verde, vegetarian shepherd's pie, misir wat), more desserts (no-bake cheesecake, churros, tiramisu, baklava, carrot cake, bread pudding, cut-out sugar cookies, panna cotta) and ten more sides (gomen, cilantro lime rice, cumin lime coleslaw, roasted cauliflower, street corn salad, roasted brussels sprouts, glazed carrots, braised red cabbage, creamed corn, macaroni salad).
 - Bundle: the recipe catalog and ingredient catalog are now dynamic imports inside `seedIfNeeded`, and the six screens you only reach by navigating (cook mode, recipe editor, settings, stock check, prep, pantry item) are `React.lazy` behind a `Suspense` fallback. Launch JS went from 1,953 kB (545 kB gzip) to ~735 kB (229 kB gzip).
 
