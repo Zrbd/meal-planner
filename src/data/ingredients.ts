@@ -76,6 +76,8 @@ const CATALOG: Ingredient[] = [
   I('sweet-potato', 'Sweet potatoes', 'produce', 'g', { aliases: ['sweet potato', 'yams'], gramsPerEach: 250, density: 0.56, defaultLocation: 'pantry', shelfLife: { pantry: 21 } }),
   I('apple', 'Apples', 'produce', 'ea', { aliases: ['apple', 'honeycrisp apple', 'granny smith apple'], gramsPerEach: 180, shelfLife: { fridge: 30 } }),
   I('banana', 'Bananas', 'produce', 'ea', { aliases: ['banana'], gramsPerEach: 120, defaultLocation: 'pantry', shelfLife: { pantry: 5 } }),
+  I('plantain', 'Plantains', 'produce', 'ea', { aliases: ['green plantain', 'ripe plantain'], gramsPerEach: 200, density: 0.6, defaultLocation: 'pantry', shelfLife: { pantry: 7 } }),
+  I('yucca', 'Yucca (cassava)', 'produce', 'g', { aliases: ['cassava', 'frozen yucca', 'yuca'], density: 0.6, packages: [{ label: '1 lb bag frozen', qty: lb(1) }], defaultLocation: 'freezer', shelfLife: { freezer: 240 } }),
   I('orange', 'Oranges', 'produce', 'ea', { aliases: ['orange'], gramsPerEach: 140, density: 1.75, shelfLife: { fridge: 21 } }), // ~80 ml juice each
   I('strawberries', 'Strawberries', 'produce', 'g', { aliases: ['strawberry'], density: 0.6, packages: [{ label: '1 lb clamshell', qty: lb(1) }], shelfLife: { fridge: 5 } }),
   I('blueberries', 'Blueberries', 'produce', 'g', { aliases: ['blueberry'], density: 0.62, packages: [{ label: '6 oz container', qty: oz(6) }], shelfLife: { fridge: 7 } }),
