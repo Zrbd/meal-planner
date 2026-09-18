@@ -259,6 +259,7 @@ const CATALOG: Ingredient[] = [
   I('curry-roux', 'Japanese curry roux', 'international', 'g', { aliases: ['japanese curry roux', 'curry block', 'golden curry'], density: 1, packages: [{ label: '7.8 oz box', qty: oz(7.8) }], shelfLife: { pantry: 540 } }),
   I('aji-amarillo-paste', 'Aji amarillo paste', 'international', 'g', { aliases: ['aji amarillo', 'yellow chili paste', 'peruvian yellow pepper paste'], density: 1.05, trackMode: 'loose', packages: [{ label: '7.5 oz jar', qty: oz(7.5) }], defaultLocation: 'fridge', shelfLife: { fridge: 90 } }),
   looseLiquid('harissa', 'Harissa paste', 'international', 1.1, '10 oz jar', 285, { aliases: ['harissa', 'harissa paste', 'north african chili paste'] }),
+  I('dried-chiles', 'Dried chiles', 'international', 'ea', { aliases: ['guajillo chiles', 'pasilla chiles', 'ancho chiles', 'dried chili pods'], gramsPerEach: 8, packages: [{ label: '2 oz bag', qty: oz(2) }], shelfLife: { pantry: 540 } }),
   I('tamarind-paste', 'Tamarind paste', 'international', 'g', { aliases: ['tamarind concentrate', 'tamarind pulp'], density: 1.2, trackMode: 'loose', packages: [{ label: '8 oz jar', qty: oz(8) }], shelfLife: { fridge: 365 } }),
   I('sofrito', 'Sofrito', 'international', 'g', { aliases: ['recaito', 'puerto rican sofrito'], density: 1, trackMode: 'loose', packages: [{ label: '12 oz jar', qty: oz(12) }], defaultLocation: 'fridge', shelfLife: { fridge: 14, freezer: 180 } }),
   I('tomato-paste', 'Tomato paste', 'canned', 'g', { density: 1.1, unitAliases: { can: 170 }, packages: [{ label: '6 oz can', qty: 170 }], shelfLife: { pantry: 730 } }),
@@ -273,6 +274,7 @@ const CATALOG: Ingredient[] = [
   I('kalamata-olives', 'Kalamata olives', 'canned', 'g', { aliases: ['olives', 'kalamata'], density: 0.6, packages: [{ label: '6 oz jar', qty: 170 }], shelfLife: { pantry: 365 } }),
   I('green-olives', 'Green olives', 'canned', 'g', { aliases: ['pimento-stuffed olives', 'manzanilla olives'], density: 0.6, packages: [{ label: '7 oz jar', qty: 198 }], shelfLife: { pantry: 365 } }),
   I('dill-pickles', 'Dill pickles', 'oils-condiments', 'g', { aliases: ['pickles', 'pickle chips', 'dill pickle'], density: 0.7, unitAliases: { slice: 7 }, packages: [{ label: '24 oz jar', qty: 680 }], defaultLocation: 'fridge', shelfLife: { fridge: 90 } }),
+  I('pumpkin-seeds', 'Pumpkin seeds (pepitas)', 'snacks', 'g', { aliases: ['pepitas', 'pumpkin seeds', 'shelled pumpkin seeds'], density: 0.55, packages: [{ label: '8 oz bag', qty: oz(8) }], shelfLife: { pantry: 180 } }),
   I('peanuts', 'Roasted peanuts', 'snacks', 'g', { aliases: ['peanuts', 'dry roasted peanuts'], density: 0.6, packages: [{ label: '16 oz jar', qty: lb(1) }], shelfLife: { pantry: 180 } }),
   I('peanut-butter', 'Peanut butter', 'snacks', 'g', { density: 1.08, trackMode: 'loose', packages: [{ label: '16 oz jar', qty: lb(1) }], shelfLife: { pantry: 180 } }),
 
