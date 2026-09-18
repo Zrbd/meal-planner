@@ -122,6 +122,7 @@ const CATALOG: Ingredient[] = [
   meat('baby-back-ribs', 'Baby back ribs', { aliases: ['pork ribs', 'back ribs', 'rack of ribs'], gramsPerEach: 1400, packages: [{ label: '1 rack (~3 lb)', qty: lb(3) }], shelfLife: { fridge: 4, freezer: 180 } }),
   meat('ground-pork', 'Ground pork', { aliases: ['pork mince'], packages: [{ label: '1 lb pack', qty: lb(1) }] }),
   meat('italian-sausage', 'Italian sausage', { aliases: ['sweet italian sausage', 'hot italian sausage', 'chicken sausage', 'turkey sausage'], gramsPerEach: 100, unitAliases: { link: 1 }, packages: [{ label: '1 lb pack', qty: lb(1) }] }),
+  meat('whole-chicken', 'Whole chicken', { aliases: ['fryer chicken', 'roasting chicken', 'whole fryer'], gramsPerEach: lb(4), packages: [{ label: '4 lb bird', qty: lb(4) }] }),
   meat('chicken-wings', 'Chicken wings', { aliases: ['wings', 'party wings', 'flats and drumettes'], gramsPerEach: 60, packages: [{ label: '5 lb bag', qty: lb(5) }, { label: '2 lb pack', qty: lb(2) }] }),
   meat('pork-shoulder', 'Pork shoulder (Boston butt)', { aliases: ['pork butt', 'boston butt', 'bone-in pork shoulder', 'pork shoulder roast'], packages: [{ label: '8 lb bone-in', qty: lb(8) }], shelfLife: { fridge: 4, freezer: 180 } }),
   meat('turkey-breast', 'Turkey breast (bone-in)', { aliases: ['bone-in turkey breast', 'whole turkey breast'], packages: [{ label: '6 lb breast', qty: lb(6) }], shelfLife: { fridge: 2, freezer: 180 } }),
