@@ -171,6 +171,7 @@ const CATALOG: Ingredient[] = [
   I('penne', 'Penne', 'pasta-grains', 'g', { aliases: ['ziti', 'rigatoni', 'penne pasta'], packages: [{ label: '1 lb box', qty: lb(1) }] }),
   I('egg-noodles', 'Egg noodles', 'pasta-grains', 'g', { aliases: ['wide egg noodles'], density: 0.16, packages: [{ label: '12 oz bag', qty: oz(12) }] }),
   I('rice-noodles', 'Rice noodles', 'international', 'g', { aliases: ['pad thai noodles', 'rice stick noodles'], packages: [{ label: '14 oz pack', qty: oz(14) }], shelfLife: { pantry: 365 } }),
+  I('sweet-potato-noodles', 'Korean sweet potato starch noodles (dangmyeon)', 'international', 'g', { aliases: ['dangmyeon', 'glass noodles', 'japchae noodles'], packages: [{ label: '1 lb pack', qty: lb(1) }], shelfLife: { pantry: 365 } }),
   I('white-rice', 'White rice', 'pasta-grains', 'g', { aliases: ['rice', 'long-grain white rice', 'long grain rice', 'jasmine rice', 'basmati rice'], density: 0.78, packages: [{ label: '2 lb bag', qty: lb(2) }, { label: '5 lb bag', qty: lb(5) }], keepStocked: true }),
   I('arborio-rice', 'Arborio rice', 'pasta-grains', 'g', { aliases: ['arborio', 'risotto rice'], density: 0.85, packages: [{ label: '1 lb bag', qty: lb(1) }] }),
   I('quinoa', 'Quinoa', 'pasta-grains', 'g', { density: 0.72, packages: [{ label: '12 oz bag', qty: oz(12) }] }),
