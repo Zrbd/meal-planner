@@ -555,4 +555,26 @@ export const WORLD = [
     ],
     notes: 'Doubanjiang is the one ingredient you cannot fake; look for Pixian on the label. A tablespoon of chopped fermented black beans with it is traditional.',
   }),
+  defineRecipe({
+    id: 'arepas-de-queso', title: 'Arepas de Queso',
+    credit: { name: 'My Colombian Recipes', author: 'Erica Dinho', url: 'https://www.mycolombianrecipes.com/cheese-cornmeal-patties-arepas-de-queso/' },
+    description: 'Colombian corn cakes made from precooked corn flour with cheese worked into the dough, griddled until a golden crust forms.',
+    servings: 4, prep: 10, cook: 10, cuisine: 'Colombian', protein: 'vegetarian', difficulty: 1,
+    diet: ['vegetarian', 'gluten-free'], role: 'side', tags: ['quick', 'vegetables'],
+    ingredients: [
+      [1, 'cup', 'masarepa'],
+      [1, 'cup', 'water', 'warm'],
+      [0.33, 'cup', 'mozzarella', 'grated, or queso fresco'],
+      [2, 'tbsp', 'butter', 'plus more for the pan'],
+      [0.25, 'tsp', 'salt'],
+    ],
+    steps: [
+      'Stir the corn flour, warm water, cheese, butter, and salt together in a bowl and let the dough rest 5 minutes so the flour hydrates.',
+      'Knead it about 3 minutes with wet hands until it is smooth and no longer cracks at the edges. If it cracks, work in water a tablespoon at a time.',
+      'Divide into 4 balls and flatten each to about half an inch between two sheets of plastic wrap.',
+      'Melt a little butter in a skillet over medium heat and cook the arepas about 3 minutes a side, until a golden crust forms and they sound hollow when tapped.',
+      'Serve hot, on their own or split and stuffed.',
+    ],
+    notes: 'Masarepa is precooked corn flour and is not interchangeable with cornmeal or masa harina for tortillas.',
+  }),
 ];
