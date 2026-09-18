@@ -238,6 +238,7 @@ const CATALOG: Ingredient[] = [
 
   I('curry-roux', 'Japanese curry roux', 'international', 'g', { aliases: ['japanese curry roux', 'curry block', 'golden curry'], density: 1, packages: [{ label: '7.8 oz box', qty: oz(7.8) }], shelfLife: { pantry: 540 } }),
   I('aji-amarillo-paste', 'Aji amarillo paste', 'international', 'g', { aliases: ['aji amarillo', 'yellow chili paste', 'peruvian yellow pepper paste'], density: 1.05, trackMode: 'loose', packages: [{ label: '7.5 oz jar', qty: oz(7.5) }], defaultLocation: 'fridge', shelfLife: { fridge: 90 } }),
+  I('tamarind-paste', 'Tamarind paste', 'international', 'g', { aliases: ['tamarind concentrate', 'tamarind pulp'], density: 1.2, trackMode: 'loose', packages: [{ label: '8 oz jar', qty: oz(8) }], shelfLife: { fridge: 365 } }),
   I('sofrito', 'Sofrito', 'international', 'g', { aliases: ['recaito', 'puerto rican sofrito'], density: 1, trackMode: 'loose', packages: [{ label: '12 oz jar', qty: oz(12) }], defaultLocation: 'fridge', shelfLife: { fridge: 14, freezer: 180 } }),
   I('tomato-paste', 'Tomato paste', 'canned', 'g', { density: 1.1, unitAliases: { can: 170 }, packages: [{ label: '6 oz can', qty: 170 }], shelfLife: { pantry: 730 } }),
   I('marinara', 'Marinara sauce', 'canned', 'g', { aliases: ['marinara', 'pasta sauce', 'spaghetti sauce'], density: 1.05, unitAliases: { jar: 680 }, packages: [{ label: '24 oz jar', qty: 680 }], shelfLife: { pantry: 365 } }),
@@ -289,6 +290,7 @@ const CATALOG: Ingredient[] = [
 
   // ---------- Oils, vinegars & condiments ----------
   looseLiquid('olive-oil', 'Olive oil', 'oils-condiments', 0.91, '500 ml bottle', 500, { aliases: ['extra virgin olive oil', 'extra-virgin olive oil', 'evoo'], keepStocked: true }),
+  looseLiquid('coconut-oil', 'Coconut oil', 'oils-condiments', 0.92, '14 oz jar', 414, { aliases: ['virgin coconut oil'] }),
   looseLiquid('palm-oil', 'Red palm oil', 'oils-condiments', 0.9, '16 oz jar', 473, { aliases: ['palm oil', 'red oil', 'zomi'] }),
   looseLiquid('vegetable-oil', 'Vegetable oil', 'oils-condiments', 0.92, '48 oz bottle', floz(48), { aliases: ['canola oil', 'neutral oil', 'cooking oil', 'avocado oil'], keepStocked: true }),
   looseLiquid('sesame-oil', 'Toasted sesame oil', 'international', 0.92, '5 oz bottle', floz(5), { aliases: ['sesame oil'] }),
@@ -331,6 +333,7 @@ const CATALOG: Ingredient[] = [
   spice('garam-masala', 'Garam masala', 0.4),
   spice('ground-turmeric', 'Ground turmeric', 0.63, ['turmeric']),
   spice('ground-coriander', 'Ground coriander', 0.4, ['coriander']),
+  spice('curry-leaves', 'Curry leaves', 0.15, ['fresh curry leaves', 'kari patta'], { packages: [{ label: 'sprig pack', qty: 10 }] }),
   spice('curry-powder', 'Curry powder', 0.42, ['yellow curry powder']),
   spice('cayenne', 'Cayenne pepper', 0.36, ['cayenne', 'ground cayenne']),
   spice('dried-thyme', 'Dried thyme', 0.28, ['thyme']),
