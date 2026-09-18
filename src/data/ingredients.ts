@@ -128,6 +128,7 @@ const CATALOG: Ingredient[] = [
   meat('baby-back-ribs', 'Baby back ribs', { aliases: ['pork ribs', 'back ribs', 'rack of ribs'], gramsPerEach: 1400, packages: [{ label: '1 rack (~3 lb)', qty: lb(3) }], shelfLife: { fridge: 4, freezer: 180 } }),
   meat('ground-chicken', 'Ground chicken', { aliases: ['chicken mince', 'ground chicken thigh'], packages: [{ label: '1 lb pack', qty: lb(1) }] }),
   meat('ground-pork', 'Ground pork', { aliases: ['pork mince'], packages: [{ label: '1 lb pack', qty: lb(1) }] }),
+  meat('merguez', 'Merguez sausage', { aliases: ['merguez', 'north african lamb sausage'], gramsPerEach: 70, unitAliases: { link: 1 }, packages: [{ label: '1 lb', qty: lb(1) }], shelfLife: { fridge: 4, freezer: 120 } }),
   meat('italian-sausage', 'Italian sausage', { aliases: ['sweet italian sausage', 'hot italian sausage', 'chicken sausage', 'turkey sausage'], gramsPerEach: 100, unitAliases: { link: 1 }, packages: [{ label: '1 lb pack', qty: lb(1) }] }),
   meat('whole-chicken', 'Whole chicken', { aliases: ['fryer chicken', 'roasting chicken', 'whole fryer'], gramsPerEach: lb(4), packages: [{ label: '4 lb bird', qty: lb(4) }] }),
   meat('chicken-wings', 'Chicken wings', { aliases: ['wings', 'party wings', 'flats and drumettes'], gramsPerEach: 60, packages: [{ label: '5 lb bag', qty: lb(5) }, { label: '2 lb pack', qty: lb(2) }] }),
@@ -257,6 +258,7 @@ const CATALOG: Ingredient[] = [
 
   I('curry-roux', 'Japanese curry roux', 'international', 'g', { aliases: ['japanese curry roux', 'curry block', 'golden curry'], density: 1, packages: [{ label: '7.8 oz box', qty: oz(7.8) }], shelfLife: { pantry: 540 } }),
   I('aji-amarillo-paste', 'Aji amarillo paste', 'international', 'g', { aliases: ['aji amarillo', 'yellow chili paste', 'peruvian yellow pepper paste'], density: 1.05, trackMode: 'loose', packages: [{ label: '7.5 oz jar', qty: oz(7.5) }], defaultLocation: 'fridge', shelfLife: { fridge: 90 } }),
+  looseLiquid('harissa', 'Harissa paste', 'international', 1.1, '10 oz jar', 285, { aliases: ['harissa', 'harissa paste', 'north african chili paste'] }),
   I('tamarind-paste', 'Tamarind paste', 'international', 'g', { aliases: ['tamarind concentrate', 'tamarind pulp'], density: 1.2, trackMode: 'loose', packages: [{ label: '8 oz jar', qty: oz(8) }], shelfLife: { fridge: 365 } }),
   I('sofrito', 'Sofrito', 'international', 'g', { aliases: ['recaito', 'puerto rican sofrito'], density: 1, trackMode: 'loose', packages: [{ label: '12 oz jar', qty: oz(12) }], defaultLocation: 'fridge', shelfLife: { fridge: 14, freezer: 180 } }),
   I('tomato-paste', 'Tomato paste', 'canned', 'g', { density: 1.1, unitAliases: { can: 170 }, packages: [{ label: '6 oz can', qty: 170 }], shelfLife: { pantry: 730 } }),
