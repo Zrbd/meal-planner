@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { INGREDIENTS } from '../src/data/ingredients';
 import { defineRecipe } from '../src/data/recipes/define';
-import { eligibleRecipes } from '../src/domain/autoplan';
+import { eligibleRecipes, pickSide } from '../src/domain/autoplan';
 import { CATEGORIES, categoryOf } from '../src/domain/categories';
 import { addDaysISO } from '../src/domain/dates';
-import { dishTypeOf, equipmentOf, isFullMeal, proteinTypeOf } from '../src/domain/dishes';
+import { dishTypeOf, equipmentOf, isFullMeal, proteinTypeOf, starchesOf } from '../src/domain/dishes';
 import { computeAlerts } from '../src/domain/forecast';
 import { localMs, prepSteps, prepTasks, stepMinutes } from '../src/domain/prep';
 import { recipeCost, spending, unitPrices } from '../src/domain/prices';
@@ -142,5 +142,45 @@ describe('waste-free buying', () => {
     expect(wasteHint(dairy, tenOz, 150, TODAY, [], 0)?.fix).toBe('plan');
     expect(wasteHint({ ...dairy, shelfLife: { fridge: 5, freezer: 60 } }, tenOz, 150, TODAY, [], 0)?.fix).toBe('freeze');
     expect(wasteHint({ ...spinach, shelfLife: { pantry: 60 }, defaultLocation: 'pantry' }, tenOz, 150, TODAY, [], 0)).toBeUndefined();
+  });
+});
+
+describe('side pairing', () => {
+  const riceSide = defineRecipe({
+    id: 'test-side-rice', title: 'Buttery Rice', description: '', servings: 4, prep: 5, cook: 20, cuisine: 'American', credit,
+    role: 'side', tags: ['side'],
+    ingredients: [[1, 'cup', 'white-rice'], [2, 'tbsp', 'butter']],
+    steps: ['Simmer the rice.'],
+  });
+  const greenSide = defineRecipe({
+    id: 'test-side-beans', title: 'Sautéed Green Beans', description: '', servings: 4, prep: 5, cook: 10, cuisine: 'American', credit,
+    role: 'side', tags: ['side'],
+    ingredients: [[1, 'lb', 'green-beans'], [1, 'tbsp', 'olive-oil']],
+    steps: ['Sauté the beans in a skillet.'],
+  });
+  const riceMain = defineRecipe({
+    id: 'test-main-rice', title: 'Chicken and Rice', description: '', servings: 4, prep: 5, cook: 30, cuisine: 'American', credit,
+    ingredients: [[1.5, 'lb', 'chicken-thighs'], [1, 'cup', 'white-rice']],
+    steps: ['Simmer it all in a pot.'],
+  });
+  const grilledMain = defineRecipe({
+    id: 'test-main-grilled', title: 'Grilled Chicken Thighs', description: '', servings: 4, prep: 5, cook: 20, cuisine: 'American', credit,
+    ingredients: [[1.5, 'lb', 'chicken-thighs'], [1, 'tbsp', 'olive-oil']],
+    steps: ['Grill the chicken.'],
+  });
+
+  it('knows which starches a dish leans on', () => {
+    expect([...starchesOf(riceMain)]).toEqual(['rice']);
+    expect([...starchesOf(grilledMain)]).toEqual([]);
+  });
+
+  it('does not serve rice alongside a rice main', () => {
+    const pick = pickSide(riceMain, [riceSide, greenSide], new Set(), new Map(), ingById, () => 0.5);
+    expect(pick?.id).toBe('test-side-beans');
+  });
+
+  it('adds a starch when the main has none', () => {
+    const pick = pickSide(grilledMain, [riceSide, greenSide], new Set(), new Map(), ingById, () => 0.5);
+    expect(pick?.id).toBe('test-side-rice');
   });
 });

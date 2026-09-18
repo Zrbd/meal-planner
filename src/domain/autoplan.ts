@@ -2,7 +2,7 @@
 // rescuing expiring food, sharing perishables across meals, and variety.
 import { availableByIngredient } from './coverage';
 import { addDaysISO, isWeeknight } from './dates';
-import { isFullMeal } from './dishes';
+import { isFullMeal, starchesOf } from './dishes';
 import { choosePackages } from './packages';
 import { EPS, SLOT_ORDER, isUsableOn, lotsInUseOrder, negligible, recipeNeeds } from './stock';
 import type { Ingredient, ISODate, LooseStock, PlannedMeal, Recipe, Settings, Slot, SmokerMode, StockLot } from './types';
@@ -113,6 +113,13 @@ export function eligibleRecipes(
   return quick.length ? quick : base;
 }
 
+/** Rice with rice is a dull plate: repeat the main's starch and you lose points, add one it lacks and you gain. */
+function sideStarchScore(main: Set<string>, side: Set<string>): number {
+  if (!side.size) return 0;
+  for (const s of side) if (main.has(s)) return -3;
+  return main.size ? 0 : 1.5;
+}
+
 /** A side dish for a main: the ones it is written to go with first, then something that fits. */
 export function pickSide(
   main: Recipe,
@@ -125,6 +132,7 @@ export function pickSide(
   const sides = recipes.filter((r) => !r.archived && isSide(r) && !used.has(r.id));
   if (!sides.length) return undefined;
   const paired = new Set([...(main.pairsWith ?? []), ...sides.filter((s) => s.pairsWith?.includes(main.id)).map((s) => s.id)]);
+  const mainStarch = starchesOf(main);
   let best: { r: Recipe; score: number } | undefined;
   for (const r of sides) {
     let have = 0, tot = 0;
@@ -137,6 +145,7 @@ export function pickSide(
     const score =
       (paired.has(r.id) ? 6 : 0) +
       (r.cuisine === main.cuisine ? 2 : 0) +
+      sideStarchScore(mainStarch, starchesOf(r)) +
       (tot ? have / tot : 0.5) * 2 -
       (r.prepMin + r.cookMin) / 60 +
       rng() * 0.5;

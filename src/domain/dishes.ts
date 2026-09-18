@@ -149,3 +149,27 @@ export function equipmentForRecipes(recipes: Recipe[]): (Equipment & { count: nu
   const order = EQUIPMENT.map((e) => e.id);
   return [...map.values()].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
 }
+
+export type Starch = 'rice' | 'potato' | 'pasta' | 'bread' | 'beans';
+
+const STARCH_BY_ID: Record<string, Starch> = {
+  'white-rice': 'rice', 'brown-rice': 'rice', 'arborio-rice': 'rice',
+  potato: 'potato', 'sweet-potato': 'potato', gnocchi: 'potato',
+  spaghetti: 'pasta', penne: 'pasta', linguine: 'pasta', fettuccine: 'pasta', 'small-pasta': 'pasta',
+  orzo: 'pasta', 'egg-noodles': 'pasta', 'lo-mein-noodles': 'pasta', 'rice-noodles': 'pasta',
+  'refrigerated-tortellini': 'pasta', couscous: 'pasta', quinoa: 'pasta',
+  baguette: 'bread', 'sandwich-bread': 'bread', pita: 'bread', 'flour-tortillas': 'bread',
+  'corn-tortillas': 'bread', cornmeal: 'bread', 'hamburger-buns': 'bread', bagels: 'bread',
+  'black-beans': 'beans', 'pinto-beans': 'beans', 'kidney-beans': 'beans', 'cannellini-beans': 'beans',
+  chickpeas: 'beans', 'refried-beans': 'beans', 'brown-lentils': 'beans', 'red-lentils': 'beans',
+};
+
+/** The starches a dish leans on, so a rice main doesn't get a rice side. */
+export function starchesOf(recipe: Recipe): Set<Starch> {
+  const out = new Set<Starch>();
+  for (const ri of recipe.ingredients) {
+    const s = STARCH_BY_ID[ri.ingredientId];
+    if (s) out.add(s);
+  }
+  return out;
+}
