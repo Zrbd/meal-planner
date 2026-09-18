@@ -252,6 +252,7 @@ const CATALOG: Ingredient[] = [
   I('pistachios', 'Pistachios', 'snacks', 'g', { aliases: ['shelled pistachios'], density: 0.5, packages: [{ label: '8 oz bag', qty: oz(8) }], shelfLife: { pantry: 180 } }),
   I('phyllo-dough', 'Phyllo dough', 'frozen', 'g', { aliases: ['filo dough', 'phyllo pastry'], packages: [{ label: '16 oz package', qty: oz(16) }], defaultLocation: 'freezer', shelfLife: { freezer: 270 } }),
   I('sesame-seeds', 'Sesame seeds', 'spices', 'g', { density: 0.6, trackMode: 'loose', packages: [{ label: 'jar', qty: 60 }], shelfLife: { pantry: 365 } }),
+  I('dried-cranberries', 'Dried cranberries', 'snacks', 'g', { aliases: ['craisins', 'dried cranberries', 'sweetened dried cranberries'], density: 0.6, packages: [{ label: '5 oz bag', qty: oz(5) }], shelfLife: { pantry: 360 } }),
   I('raisins', 'Raisins / dried fruit', 'snacks', 'g', { aliases: ['raisins', 'dried cranberries', 'craisins'], density: 0.65, packages: [{ label: '6 oz box', qty: oz(6) }], shelfLife: { pantry: 180 } }),
   I('dried-apricots', 'Dried apricots', 'snacks', 'g', { aliases: ['apricots, dried'], density: 0.6, packages: [{ label: '6 oz bag', qty: oz(6) }], shelfLife: { pantry: 180 } }),
   I('pepitas', 'Pepitas / seeds', 'snacks', 'g', { aliases: ['pumpkin seeds', 'sunflower seeds', 'hemp seeds'], density: 0.55, packages: [{ label: '8 oz bag', qty: oz(8) }], shelfLife: { pantry: 180 } }),
