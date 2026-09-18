@@ -1192,4 +1192,28 @@ export const SIDES = [
     ],
     notes: 'Yukon golds mash creamier than russets and need less cream. A ricer gives the silkiest result; a masher keeps them rustic.',
   }),
+  defineRecipe({
+    id: 'side-colcannon', title: 'Colcannon',
+    credit: { name: 'Veggie Desserts', author: 'Kate Hackworthy', url: 'https://veggiedesserts.com/colcannon-irish-potatoes/' },
+    description: 'Irish mashed potatoes folded with buttery kale and scallion-infused milk.',
+    servings: 6, prep: 10, cook: 25, cuisine: 'Irish', diet: ['vegetarian', 'gluten-free'], role: 'side',
+    tags: ['side', 'potatoes', 'comfort', 'budget'],
+    ingredients: [
+      [900, 'g', 'potato', 'peeled and cubed'],
+      [4, 'tbsp', 'butter'],
+      [150, 'g', 'kale', 'chopped, stems removed'],
+      [0.75, 'cup', 'milk'],
+      [3, 'ea', 'green-onion', 'chopped'],
+      [1.5, 'tsp', 'salt', 'to taste'],
+      [0.5, 'tsp', 'black-pepper'],
+    ],
+    steps: [
+      'Boil the potatoes in salted water about 15 minutes, until a fork slides in easily, then drain and mash.',
+      'Meanwhile soften the kale in half the butter over medium heat, 5 minutes.',
+      'Warm the milk with the scallions and the rest of the butter until steaming but not boiling — boiled milk makes the mash gluey and dulls the onion.',
+      'Beat the infused milk into the potatoes, then fold in the greens.',
+      'Season and serve hot with a well of extra butter in the middle.',
+    ],
+    notes: 'Cabbage works as well as kale and is just as traditional. On Halloween Irish cooks hide charms in the bowl as fortunes for the year.',
+  }),
 ];
