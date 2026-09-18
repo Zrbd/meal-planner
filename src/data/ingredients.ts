@@ -196,6 +196,7 @@ const CATALOG: Ingredient[] = [
   I('water-chestnuts', 'Water chestnuts', 'international', 'ea', { aliases: ['sliced water chestnuts'], gramsPerEach: 227, density: 0.6, unitAliases: { can: 1 }, displayUnit: 'can', shelfLife: { pantry: 730 } }),
   looseLiquid('oyster-sauce', 'Oyster sauce', 'international', 1.2, '9 oz bottle', 255, { aliases: ['vegetarian oyster sauce'] }),
   looseLiquid('hoisin', 'Hoisin sauce', 'international', 1.2, '8.5 oz jar', 240, { aliases: ['hoisin sauce'] }),
+  looseLiquid('gochujang', 'Gochujang (Korean chili paste)', 'international', 1.2, '17.6 oz tub', 500, { aliases: ['korean chili paste', 'red pepper paste'] }),
   I('kimchi', 'Kimchi', 'international', 'g', { aliases: ['napa cabbage kimchi', 'baechu kimchi'], density: 0.7, packages: [{ label: '16 oz jar', qty: oz(16) }], defaultLocation: 'fridge', shelfLife: { fridge: 90 } }),
   looseLiquid('kecap-manis', 'Kecap manis (sweet soy sauce)', 'international', 1.3, '9 oz bottle', floz(9), { aliases: ['sweet soy sauce', 'indonesian sweet soy'] }),
   looseLiquid('mirin', 'Mirin', 'international', 1.1, '10 oz bottle', floz(10), { aliases: ['chinese cooking wine', 'shaoxing wine', 'dry sherry', 'cooking wine'] }),
