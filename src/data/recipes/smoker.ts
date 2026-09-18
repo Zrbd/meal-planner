@@ -1,0 +1,137 @@
+// Smoker recipes, tagged so auto-plan can ask before it puts one on a weeknight.
+// Adapted from Hey Grill Hey (Susie Bulloch); amounts follow the originals, steps are our own words.
+// Her branded Sweet Rub is swapped for a generic BBQ rub so you can use whatever shaker you own.
+import { defineRecipe } from './define';
+
+const hgh = (slug: string) => ({ name: 'Hey Grill Hey', author: 'Susie Bulloch', url: `https://heygrillhey.com/${slug}/` });
+
+export const SMOKER = [
+  defineRecipe({
+    id: 'smoked-chicken-thighs', title: 'Smoked Chicken Thighs', credit: hgh('smoked-chicken-thighs'),
+    description: 'Bone-in thighs rubbed and smoked at 275°F, then glazed with barbecue sauce for the last stretch.',
+    servings: 4, prep: 10, cook: 60, cuisine: 'American', protein: 'chicken', difficulty: 2,
+    tags: ['smoker', 'bbq'],
+    ingredients: [
+      [2, 'lb', 'chicken-drumsticks', 'bone-in, skin-on thighs'],
+      [2, 'tbsp', 'bbq-rub'],
+      [0.5, 'cup', 'bbq-sauce'],
+    ],
+    steps: [
+      'Heat the smoker to 275°F (135°C) with a fruit wood like apple or cherry.',
+      'Trim any flaps of loose skin, then tuck each thigh into a tidy round shape so it cooks evenly.',
+      'Season all sides generously with the rub.',
+      'Smoke skin side up until the thickest part reads 165°F (74°C) — anywhere from 45 to 75 minutes depending on size.',
+      'Brush on the barbecue sauce and keep smoking until they hit 170–175°F (77–79°C) and the glaze sets.',
+      'Rest 5–10 minutes before serving. Cook to temperature, not to the clock.',
+    ],
+    notes: 'Thighs are forgiving — a few degrees past done is still juicy, unlike breasts.',
+  }),
+  defineRecipe({
+    id: 'smoked-pulled-pork', title: 'Smoked Pulled Pork', credit: hgh('simple-smoked-pulled-pork'),
+    description: 'A whole pork butt rubbed and smoked low and slow all day until it shreds with a fork. Feeds a crowd and freezes well.',
+    servings: 16, prep: 15, cook: 1080, cuisine: 'American', protein: 'pork', difficulty: 3,
+    tags: ['smoker', 'bbq', 'big-batch'],
+    ingredients: [
+      [8, 'lb', 'pork-shoulder', 'bone-in Boston butt'],
+      [3, 'tbsp', 'whole-grain-mustard', 'yellow mustard, as a binder'],
+      [0.33, 'cup', 'bbq-rub'],
+    ],
+    steps: [
+      'Heat the smoker to 225°F (110°C). Hickory or apple wood suits pork without overpowering it.',
+      'Pat the shoulder dry and wipe away any bone dust from the butcher.',
+      'Smear a thin coat of mustard all over — it is just glue for the rub, and you will not taste it.',
+      'Coat every surface heavily with the rub.',
+      'Smoke fat side up until the meat reads 195–201°F (90–94°C) in several spots. Expect 15–20 hours, and plan for it to take longer than you think.',
+      'Wrap tightly in foil and rest at least an hour — this is not optional; it finishes the cook.',
+      'Pull out the bone, shred the meat, and discard the lumps of fat and gristle.',
+    ],
+    notes: 'Start it the night before. Leftovers freeze in 1-pound portions for sandwiches, tacos, and nachos.',
+  }),
+  defineRecipe({
+    id: 'smoked-chicken-wings', title: 'Crispy Smoked Chicken Wings', credit: hgh('crispy-smoked-chicken-wings'),
+    description: 'Smoked low for flavor, then finished hot so the skin actually crisps. Three ingredients.',
+    servings: 6, prep: 10, cook: 60, cuisine: 'American', protein: 'chicken', difficulty: 2,
+    slots: ['dinner', 'lunch'], tags: ['smoker', 'bbq'],
+    ingredients: [
+      [5, 'lb', 'chicken-wings', 'flats and drumettes'],
+      [2.5, 'tbsp', 'baking-powder'],
+      [1, 'tsp', 'salt'],
+    ],
+    steps: [
+      'Pat the wings thoroughly dry with paper towels — moisture is what keeps skin flabby.',
+      'Toss them in a big zip-top bag with the baking powder and salt until evenly dusted.',
+      'Heat the smoker to 250°F (120°C) and smoke the wings 30 minutes.',
+      'Crank the heat to 425°F (220°C) and cook about 30 minutes more, until the skin is crisp and the wings read 175°F (79°C).',
+      'Serve plain, dusted with more rub, or tossed in hot sauce.',
+    ],
+    notes: 'Baking powder, not baking soda — soda tastes soapy. It dries the skin so it crisps.',
+  }),
+  defineRecipe({
+    id: 'smoked-turkey-breast', title: 'Cider-Brined Smoked Turkey Breast', credit: hgh('smoked-turkey-breast'),
+    description: 'Turkey breast brined overnight in apple cider, then smoked at 275°F until just done — sliceable, juicy, good cold too.',
+    servings: 6, prep: 15, cook: 180, cuisine: 'American', protein: 'turkey', difficulty: 2,
+    tags: ['smoker', 'bbq', 'make-ahead'],
+    ingredients: [
+      [4.5, 'lb', 'turkey-breast'],
+      [1, 'tbsp', 'bbq-rub'],
+      'Apple cider brine',
+      [3, 'cup', 'apple-cider'], [2, 'cup', 'water'], [1, 'cup', 'apple-cider-vinegar'],
+      [0.25, 'cup', 'salt'], [0.25, 'cup', 'brown-sugar'], [0.25, 'cup', 'worcestershire'],
+      [2, 'tbsp', 'bbq-rub'], [1, 'tbsp', 'garlic-powder'], [1, 'tbsp', 'onion-powder'],
+    ],
+    steps: [
+      'Whisk all the brine ingredients together until the salt and sugar dissolve.',
+      'Submerge the turkey breast, cover, and refrigerate 8–12 hours.',
+      'Lift it out, rinse lightly, and pat completely dry. Coat all over with the tablespoon of rub.',
+      'Heat the smoker to 275°F (135°C) — apple wood echoes the cider nicely.',
+      'Smoke about 3 hours, until the thickest part reads 165°F (74°C).',
+      'Tent with foil, rest 5 minutes, and slice across the grain.',
+    ],
+    notes: 'Do not brine longer than 12 hours or the texture turns spongy. Sliced leftovers make excellent sandwiches.',
+  }),
+  defineRecipe({
+    id: 'smoked-mac-and-cheese', title: 'Smoked Mac and Cheese', credit: hgh('smoked-mac-and-cheese'),
+    description: 'A skillet of real cheese-sauce mac with a panko crust, smoked an hour so it picks up just enough smoke.',
+    servings: 8, prep: 20, cook: 60, cuisine: 'American', difficulty: 2, diet: ['vegetarian'],
+    role: 'side', tags: ['smoker', 'side', 'bbq'],
+    ingredients: [
+      [1, 'lb', 'small-pasta', 'elbow macaroni'],
+      [0.5, 'cup', 'butter'], [4, 'tbsp', 'all-purpose-flour'], [1, 'tbsp', 'mustard-powder'],
+      [2, 'cup', 'half-and-half'], [4, 'oz', 'cream-cheese'],
+      [3, 'cup', 'cheddar', 'sharp, shredded'], [1.5, 'cup', 'smoked-gouda', 'shredded'],
+      'Topping',
+      [1, 'cup', 'panko'], [0.25, 'cup', 'butter', 'melted'], [2, 'tbsp', 'bbq-rub'],
+    ],
+    steps: [
+      'Heat the smoker to 225°F (110°C) and boil the macaroni to just al dente — it keeps cooking later.',
+      'Melt the half cup of butter in a large cast iron skillet, whisk in the flour and mustard powder, and cook a minute or two.',
+      'Whisk in the half-and-half and let it thicken, then melt in the cream cheese, cheddar, and gouda off the heat.',
+      'Fold the drained noodles into the sauce.',
+      'Toss the panko with the melted butter and rub, and scatter it over the top.',
+      'Smoke uncovered about 1 hour, until bubbling and lightly browned.',
+    ],
+    notes: 'An hour gives gentle smoke; push to two if you want it obvious. Shred your own cheese — bagged shreds are coated and go grainy.',
+  }),
+  defineRecipe({
+    id: 'smoked-baked-beans', title: 'Smoked Baked Beans', credit: hgh('smoked-baked-beans'),
+    description: 'Canned beans built out with bacon, onion, jalapeño, and molasses, then smoked three hours in a cast iron skillet.',
+    servings: 12, prep: 15, cook: 180, cuisine: 'American', difficulty: 1,
+    role: 'side', tags: ['smoker', 'side', 'bbq'],
+    ingredients: [
+      [6, 'slice', 'bacon', 'thick cut'],
+      [1, 'ea', 'yellow-onion', 'diced'], [3, 'ea', 'jalapeno', 'diced, or 1 green bell pepper'],
+      [2, 'can', 'pork-and-beans', '28 oz cans'],
+      [0.75, 'cup', 'bbq-sauce'], [0.5, 'cup', 'brown-sugar', 'dark'],
+      [0.25, 'cup', 'apple-cider-vinegar'], [2, 'tbsp', 'dijon-mustard'], [2, 'tbsp', 'molasses'],
+    ],
+    steps: [
+      'Heat the smoker to 250°F (120°C) with a mild fruit wood.',
+      'Cook the bacon in a cast iron skillet until the fat renders but it is not yet crisp.',
+      'Add the onion and jalapeño and cook 3–5 minutes in the bacon fat.',
+      'Stir in the beans, barbecue sauce, brown sugar, vinegar, mustard, and molasses.',
+      'Smoke uncovered about 3 hours, until thickened and the bacon has rendered all the way.',
+      'Let it settle a few minutes before serving — it is molten straight off the smoker.',
+    ],
+    notes: 'Pairs with anything else on the smoker; it happily shares the grate with pulled pork.',
+  }),
+];

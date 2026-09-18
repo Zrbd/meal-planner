@@ -108,6 +108,9 @@ const CATALOG: Ingredient[] = [
   meat('pork-tenderloin', 'Pork tenderloin', { aliases: ['pork loin'], packages: [{ label: '1.25 lb tenderloin', qty: lb(1.25) }] }),
   meat('ground-pork', 'Ground pork', { aliases: ['pork mince'], packages: [{ label: '1 lb pack', qty: lb(1) }] }),
   meat('italian-sausage', 'Italian sausage', { aliases: ['sweet italian sausage', 'hot italian sausage', 'chicken sausage', 'turkey sausage'], gramsPerEach: 100, unitAliases: { link: 1 }, packages: [{ label: '1 lb pack', qty: lb(1) }] }),
+  meat('chicken-wings', 'Chicken wings', { aliases: ['wings', 'party wings', 'flats and drumettes'], gramsPerEach: 60, packages: [{ label: '5 lb bag', qty: lb(5) }, { label: '2 lb pack', qty: lb(2) }] }),
+  meat('pork-shoulder', 'Pork shoulder (Boston butt)', { aliases: ['pork butt', 'boston butt', 'bone-in pork shoulder', 'pork shoulder roast'], packages: [{ label: '8 lb bone-in', qty: lb(8) }], shelfLife: { fridge: 4, freezer: 180 } }),
+  meat('turkey-breast', 'Turkey breast (bone-in)', { aliases: ['bone-in turkey breast', 'whole turkey breast'], packages: [{ label: '6 lb breast', qty: lb(6) }], shelfLife: { fridge: 2, freezer: 180 } }),
   meat('rotisserie-chicken', 'Cooked chicken (rotisserie)', { aliases: ['rotisserie chicken', 'cooked chicken', 'shredded chicken'], density: 0.55, unitAliases: { chicken: 900 }, packages: [{ label: 'whole rotisserie (~2 lb meat)', qty: 900 }], shelfLife: { fridge: 4, freezer: 90 } }),
   I('cod', 'White fish fillets (cod)', 'seafood', 'g', { aliases: ['cod', 'tilapia', 'white fish', 'cod fillets', 'haddock', 'pollock'], gramsPerEach: 170, valueWeight: 3, packages: [{ label: '1 lb pack', qty: lb(1) }], shelfLife: { fridge: 2, freezer: 180 } }),
   I('salmon', 'Salmon fillets', 'seafood', 'g', { aliases: ['salmon', 'salmon fillet'], gramsPerEach: 170, valueWeight: 3, shelfLife: { fridge: 2, freezer: 90 } }),
@@ -120,6 +123,7 @@ const CATALOG: Ingredient[] = [
   I('heavy-cream', 'Heavy cream', 'dairy', 'ml', { aliases: ['heavy whipping cream', 'whipping cream', 'cream'], density: 1, packages: [{ label: '1 cup carton', qty: 237 }, { label: '1 pint carton', qty: 473 }], shelfLife: { fridge: 14 } }),
   I('sour-cream', 'Sour cream', 'dairy', 'g', { density: 0.96, packages: [{ label: '8 oz tub', qty: oz(8) }, { label: '16 oz tub', qty: oz(16) }], shelfLife: { fridge: 14 } }),
   I('greek-yogurt', 'Greek yogurt (plain)', 'dairy', 'g', { aliases: ['greek yogurt', 'plain greek yogurt', 'plain yogurt', 'yogurt'], density: 1.05, packages: [{ label: '5.3 oz cup', qty: 150 }, { label: '32 oz tub', qty: oz(32) }], shelfLife: { fridge: 14 } }),
+  I('smoked-gouda', 'Smoked gouda (shredded)', 'dairy', 'g', { aliases: ['gouda', 'smoked cheese'], density: 0.42, packages: [{ label: '8 oz block', qty: oz(8) }], defaultLocation: 'fridge', shelfLife: { fridge: 21 } }),
   I('cream-cheese', 'Cream cheese', 'dairy', 'g', { density: 0.97, packages: [{ label: '8 oz block', qty: oz(8) }], shelfLife: { fridge: 21 }, valueWeight: 2 }),
   I('parmesan', 'Parmesan', 'dairy', 'g', { aliases: ['parmesan cheese', 'grated parmesan', 'parmigiano reggiano', 'parmigiano-reggiano'], density: 0.42, packages: [{ label: '5 oz tub', qty: oz(5) }, { label: '8 oz wedge', qty: oz(8) }], shelfLife: { fridge: 30 }, valueWeight: 2 }),
   I('mozzarella', 'Mozzarella (shredded)', 'dairy', 'g', { aliases: ['mozzarella', 'shredded mozzarella', 'mozzarella cheese'], density: 0.48, packages: [{ label: '8 oz bag', qty: oz(8) }, { label: '16 oz bag', qty: oz(16) }], shelfLife: { fridge: 14 }, valueWeight: 2 }),
@@ -134,6 +138,7 @@ const CATALOG: Ingredient[] = [
   I('cottage-cheese', 'Cottage cheese', 'dairy', 'g', { density: 0.95, packages: [{ label: '16 oz tub', qty: oz(16) }], shelfLife: { fridge: 10 } }),
   I('refrigerated-tortellini', 'Cheese tortellini', 'dairy', 'g', { aliases: ['tortellini', 'cheese tortellini', 'ravioli'], packages: [{ label: '20 oz pack', qty: oz(20) }], shelfLife: { fridge: 21, freezer: 90 } }),
   I('pesto', 'Basil pesto', 'dairy', 'g', { aliases: ['pesto'], density: 1, packages: [{ label: '6 oz jar', qty: oz(6) }], shelfLife: { fridge: 7 } }),
+  I('apple-cider', 'Apple cider', 'beverages', 'ml', { aliases: ['apple juice', 'unfiltered apple juice'], density: 1.04, packages: [{ label: '64 oz jug', qty: floz(64) }], defaultLocation: 'fridge', shelfLife: { fridge: 14 } }),
   I('orange-juice', 'Orange juice', 'beverages', 'ml', { aliases: ['oj'], density: 1.04, packages: [{ label: '52 oz bottle', qty: floz(52) }], defaultLocation: 'fridge', shelfLife: { fridge: 10 } }),
 
   // ---------- Bakery ----------
@@ -175,6 +180,7 @@ const CATALOG: Ingredient[] = [
   can('tuna', 'Tuna', 142, { aliases: ['canned tuna'] }),
   can('pinto-beans', 'Pinto beans', 425, { aliases: ['canned pinto beans'] }),
   can('cannellini-beans', 'White beans (cannellini)', 425, { aliases: ['cannellini beans', 'great northern beans', 'white beans', 'navy beans'] }),
+  can('pork-and-beans', 'Pork and beans (28 oz)', 794, { aliases: ['baked beans', 'canned baked beans', 'pork n beans'], density: 1.05 }),
   can('refried-beans', 'Refried beans', 454, { aliases: ['canned refried beans'], density: 1.1 }),
   can('corn-can', 'Canned corn', 432, { aliases: ['canned corn', 'corn kernels'], density: 0.72 }),
   can('green-chiles', 'Diced green chiles (4 oz)', 113, { aliases: ['green chiles', 'diced green chiles', 'chopped green chiles'], density: 1 }),
@@ -231,6 +237,7 @@ const CATALOG: Ingredient[] = [
   I('whole-wheat-flour', 'Whole wheat flour', 'baking', 'g', { aliases: ['white whole wheat flour', 'whole wheat pastry flour'], density: 0.51, trackMode: 'loose', packages: [{ label: '5 lb bag', qty: lb(5) }], shelfLife: { pantry: 180 } }),
   looseLiquid('water', 'Water', 'other', 1, 'tap', 1000, { aliases: ['cold water', 'warm water', 'hot water', 'boiling water'], alwaysOnHand: true, shelfLife: { pantry: 9999 } }),
   looseLiquid('honey', 'Honey', 'oils-condiments', 1.42, '12 oz bottle', 240),
+  looseLiquid('molasses', 'Molasses', 'oils-condiments', 1.4, '12 oz bottle', floz(12), { aliases: ['dark molasses', 'unsulphured molasses'] }),
   looseLiquid('maple-syrup', 'Maple syrup', 'oils-condiments', 1.32, '12 oz bottle', floz(12), { aliases: ['pure maple syrup', 'syrup'] }),
 
   // ---------- Oils, vinegars & condiments ----------
@@ -263,6 +270,7 @@ const CATALOG: Ingredient[] = [
   spice('chili-powder', 'Chili powder', 0.54),
   spice('ground-cumin', 'Ground cumin', 0.48, ['cumin']),
   spice('paprika', 'Paprika', 0.46, ['sweet paprika']),
+  spice('bbq-rub', 'BBQ rub', 0.55, ['sweet rub', 'barbecue rub', 'bbq seasoning', 'pork rub', 'chicken rub'], { packages: [{ label: '12 oz shaker', qty: oz(12) }] }),
   spice('smoked-paprika', 'Smoked paprika', 0.46),
   spice('garlic-powder', 'Garlic powder', 0.65, ['granulated garlic']),
   spice('onion-powder', 'Onion powder', 0.5),
