@@ -206,6 +206,8 @@ const CATALOG: Ingredient[] = [
   I('red-curry-paste', 'Thai red curry paste', 'international', 'g', { aliases: ['red curry paste', 'thai curry paste', 'green curry paste'], density: 1.1, trackMode: 'loose', packages: [{ label: '4 oz jar', qty: oz(4) }], defaultLocation: 'fridge', shelfLife: { fridge: 180 } }),
   I('almonds', 'Almonds', 'snacks', 'g', { aliases: ['sliced almonds', 'slivered almonds', 'cashews', 'walnuts', 'pecans', 'nuts'], density: 0.45, packages: [{ label: '6 oz bag', qty: oz(6) }], shelfLife: { pantry: 180 } }),
   I('walnuts', 'Walnuts', 'snacks', 'g', { aliases: ['walnut halves', 'chopped walnuts', 'pecans'], density: 0.5, packages: [{ label: '8 oz bag', qty: oz(8) }], shelfLife: { pantry: 180 } }),
+  I('pistachios', 'Pistachios', 'snacks', 'g', { aliases: ['shelled pistachios'], density: 0.5, packages: [{ label: '8 oz bag', qty: oz(8) }], shelfLife: { pantry: 180 } }),
+  I('phyllo-dough', 'Phyllo dough', 'frozen', 'g', { aliases: ['filo dough', 'phyllo pastry'], packages: [{ label: '16 oz package', qty: oz(16) }], defaultLocation: 'freezer', shelfLife: { freezer: 270 } }),
   I('sesame-seeds', 'Sesame seeds', 'spices', 'g', { density: 0.6, trackMode: 'loose', packages: [{ label: 'jar', qty: 60 }], shelfLife: { pantry: 365 } }),
   I('raisins', 'Raisins / dried fruit', 'snacks', 'g', { aliases: ['raisins', 'dried cranberries', 'craisins'], density: 0.65, packages: [{ label: '6 oz box', qty: oz(6) }], shelfLife: { pantry: 180 } }),
   I('dried-apricots', 'Dried apricots', 'snacks', 'g', { aliases: ['apricots, dried'], density: 0.6, packages: [{ label: '6 oz bag', qty: oz(6) }], shelfLife: { pantry: 180 } }),
