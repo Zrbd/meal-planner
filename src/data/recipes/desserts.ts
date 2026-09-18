@@ -567,4 +567,27 @@ export const DESSERTS = [
     ],
     notes: 'Best within a couple of hours of frying. The batter can rise in the fridge overnight for a slightly tangier flavor.',
   }),
+  defineRecipe({
+    id: 'brigadeiros', title: 'Brigadeiros (Brazilian Fudge Balls)',
+    credit: { name: "Olivia's Cuisine", author: 'Olivia Mesquita', url: 'https://www.oliviascuisine.com/traditional-brigadeiros/' },
+    description: 'Condensed milk cooked down with cocoa and butter into a thick fudge, rolled into balls and coated in chocolate sprinkles.',
+    servings: 24, prep: 10, cook: 20, cuisine: 'Brazilian', difficulty: 1,
+    diet: ['vegetarian', 'gluten-free'], role: 'dessert', tags: ['dessert', 'party', 'no-bake', 'kid-friendly'],
+    ingredients: [
+      [14, 'oz', 'sweetened-condensed-milk'],
+      [4, 'tbsp', 'cocoa-powder', 'sifted'],
+      [2, 'tbsp', 'butter', 'unsalted, plus more for your hands'],
+      [0.125, 'tsp', 'salt'],
+      [0.5, 'cup', 'sprinkles', 'chocolate'],
+    ],
+    steps: [
+      'Whisk the condensed milk, cocoa, salt, and butter together in a small saucepan off the heat so there are no lumps of cocoa.',
+      'Cook over medium-low heat, stirring constantly. Constantly is not an exaggeration — the bottom scorches the moment you stop.',
+      'It is ready when you drag the spoon through the center and the mixture takes a second to flow back together, about 10–15 minutes.',
+      'Scrape it onto a buttered plate and let it cool to room temperature.',
+      'Butter your hands and roll teaspoon-sized balls, then roll each in sprinkles.',
+      'Set them in small paper candy cups.',
+    ],
+    notes: 'Undercook it and they will not hold a ball; overcook it and they turn chewy. If the mixture is too soft to roll, chill it 20 minutes. Keeps several days at room temperature.',
+  }),
 ];

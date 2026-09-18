@@ -279,6 +279,7 @@ const CATALOG: Ingredient[] = [
   I('chia-seeds', 'Chia seeds', 'baking', 'g', { aliases: ['chia'], density: 0.65, trackMode: 'loose', packages: [{ label: '12 oz bag', qty: oz(12) }] }),
   I('cornmeal', 'Cornmeal', 'baking', 'g', { aliases: ['polenta'], density: 0.6, trackMode: 'loose', packages: [{ label: '24 oz canister', qty: oz(24) }] }),
   I('masarepa', 'Masarepa (precooked corn flour)', 'baking', 'g', { aliases: ['arepa flour', 'precooked cornmeal', 'masa al instante'], density: 0.6, packages: [{ label: '2 lb bag', qty: lb(2) }], shelfLife: { pantry: 365 } }),
+  I('sprinkles', 'Chocolate sprinkles', 'baking', 'g', { aliases: ['sprinkles', 'jimmies', 'granulado'], density: 0.7, trackMode: 'loose', packages: [{ label: '4 oz jar', qty: oz(4) }], shelfLife: { pantry: 540 } }),
   I('cocoa-powder', 'Cocoa powder', 'baking', 'g', { aliases: ['unsweetened cocoa powder'], density: 0.36, trackMode: 'loose', packages: [{ label: '8 oz can', qty: oz(8) }] }),
   I('chocolate-chips', 'Chocolate chips', 'baking', 'g', { aliases: ['semi-sweet chocolate chips', 'dark chocolate chips'], density: 0.72, packages: [{ label: '12 oz bag', qty: oz(12) }] }),
   I('dark-chocolate', 'Dark chocolate', 'baking', 'g', { aliases: ['bittersweet chocolate', '70% dark chocolate', 'dark chocolate bar', 'semi-sweet chocolate'], packages: [{ label: '3.5 oz bar', qty: 100 }], shelfLife: { pantry: 365 } }),
