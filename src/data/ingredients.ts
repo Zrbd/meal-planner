@@ -288,6 +288,7 @@ const CATALOG: Ingredient[] = [
   I('dark-chocolate', 'Dark chocolate', 'baking', 'g', { aliases: ['bittersweet chocolate', '70% dark chocolate', 'dark chocolate bar', 'semi-sweet chocolate'], packages: [{ label: '3.5 oz bar', qty: 100 }], shelfLife: { pantry: 365 } }),
   I('whole-wheat-flour', 'Whole wheat flour', 'baking', 'g', { aliases: ['white whole wheat flour', 'whole wheat pastry flour'], density: 0.51, trackMode: 'loose', packages: [{ label: '5 lb bag', qty: lb(5) }], shelfLife: { pantry: 180 } }),
   looseLiquid('water', 'Water', 'other', 1, 'tap', 1000, { aliases: ['cold water', 'warm water', 'hot water', 'boiling water'], alwaysOnHand: true, shelfLife: { pantry: 9999 } }),
+  I('apricot-jam', 'Apricot jam', 'oils-condiments', 'g', { aliases: ['apricot preserves', 'apricot jelly'], density: 1.33, trackMode: 'loose', packages: [{ label: '12 oz jar', qty: oz(12) }], defaultLocation: 'pantry', shelfLife: { pantry: 540, fridge: 180 } }),
   looseLiquid('honey', 'Honey', 'oils-condiments', 1.42, '12 oz bottle', 240),
   looseLiquid('molasses', 'Molasses', 'oils-condiments', 1.4, '12 oz bottle', floz(12), { aliases: ['dark molasses', 'unsulphured molasses'] }),
   looseLiquid('maple-syrup', 'Maple syrup', 'oils-condiments', 1.32, '12 oz bottle', floz(12), { aliases: ['pure maple syrup', 'syrup'] }),
