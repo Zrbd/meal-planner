@@ -282,6 +282,8 @@ const CATALOG: Ingredient[] = [
   looseLiquid('vanilla-extract', 'Vanilla extract', 'baking', 0.88, '2 oz bottle', floz(2), { aliases: ['vanilla', 'pure vanilla extract'] }),
   I('panko', 'Panko breadcrumbs', 'baking', 'g', { aliases: ['panko', 'breadcrumbs', 'bread crumbs'], density: 0.25, packages: [{ label: '8 oz box', qty: oz(8) }], shelfLife: { pantry: 180 } }),
   I('chia-seeds', 'Chia seeds', 'baking', 'g', { aliases: ['chia'], density: 0.65, trackMode: 'loose', packages: [{ label: '12 oz bag', qty: oz(12) }] }),
+  I('semolina', 'Semolina flour', 'pasta-grains', 'g', { aliases: ['farina', 'semolina', 'coarse semolina', 'suji', 'rava'], density: 0.68, packages: [{ label: '24 oz box', qty: oz(24) }], shelfLife: { pantry: 365 } }),
+  I('milk-powder', 'Nonfat dry milk powder', 'baking', 'g', { aliases: ['dry milk', 'powdered milk', 'full fat milk powder'], density: 0.45, packages: [{ label: '1 lb bag', qty: lb(1) }], shelfLife: { pantry: 540 } }),
   I('masa-harina', 'Masa harina', 'pasta-grains', 'g', { aliases: ['corn masa flour', 'instant corn masa', 'maseca'], density: 0.55, packages: [{ label: '2 lb bag', qty: lb(2) }], shelfLife: { pantry: 365 } }),
   I('grits', 'Grits', 'pasta-grains', 'g', { aliases: ['quick grits', 'stone ground grits', 'hominy grits'], density: 0.68, packages: [{ label: '24 oz bag', qty: oz(24) }] }),
   I('cornmeal', 'Cornmeal', 'baking', 'g', { aliases: ['polenta'], density: 0.6, trackMode: 'loose', packages: [{ label: '24 oz canister', qty: oz(24) }] }),
