@@ -787,4 +787,28 @@ export const SIDES = [
     ],
     notes: 'Squeezing out the water is what separates seasoned spinach from watery spinach. Keeps three or four days in the fridge and is good straight from it.',
   }),
+  defineRecipe({
+    id: 'side-cucumber-raita', title: 'Cucumber Raita',
+    credit: { name: "Swasthi's Recipes", author: 'Swasthi Shreekanth', url: 'https://www.indianhealthyrecipes.com/cucumber-raita-recipe/' },
+    description: 'Cool yogurt with chopped cucumber, roasted cumin and herbs — the standard foil to anything spicy.',
+    servings: 4, prep: 10, cook: 0, cuisine: 'Indian', diet: ['vegetarian', 'gluten-free'], role: 'side',
+    tags: ['side', 'no-cook', 'quick'],
+    ingredients: [
+      [1, 'ea', 'cucumber', 'chopped small'],
+      [300, 'g', 'greek-yogurt', 'thick, chilled'],
+      [0.5, 'tsp', 'salt', 'to taste'],
+      [1, 'tsp', 'ground-cumin', 'roasted'],
+      [0.25, 'tsp', 'black-pepper'],
+      [2, 'tbsp', 'cilantro', 'finely chopped'],
+      [5, 'leaf', 'mint', 'finely chopped', 'optional'],
+      [1, 'ea', 'jalapeno', 'seeded and chopped', 'optional'],
+    ],
+    steps: [
+      'Toast the cumin in a dry pan over low heat until fragrant, then grind it. Roasted cumin is what makes raita taste like raita.',
+      'Whisk the chilled yogurt smooth in a bowl.',
+      'Stir in the cucumber, chile, cilantro, mint, and salt.',
+      'Sprinkle the cumin and black pepper over the top and serve cold.',
+    ],
+    notes: 'Grate the cucumber instead of chopping for a thinner, drinkable raita — use Greek yogurt if you do, or squeeze the cucumber first. A pinch of chaat masala is the restaurant touch.',
+  }),
 ];
