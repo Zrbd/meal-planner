@@ -1,4 +1,4 @@
-import { Check, ChevronDown, Share, ShoppingBag } from 'lucide-react';
+import { Check, ChevronDown, Search, Share, ShoppingBag } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { aisleEmoji, aisleLabel } from '../../data/aisles';
@@ -10,6 +10,7 @@ import { formatQty } from '../../domain/units';
 import { addPackageSize, defaultExpiry } from '../../services/pantry';
 import { addManualItem, clearChecked, patchShoppingState, removeShoppingState, toggleChecked } from '../../services/shopping';
 import { finishTrip, undoTrip } from '../../services/trip';
+import { storeById, storeSearchUrl } from '../../domain/stores';
 import { AmountInput, EmptyState, PageHeader, Sheet } from '../components';
 import { useAppData } from '../data';
 import { usePrices } from '../hooks';
@@ -393,6 +394,7 @@ function LineSheet({ line, onClose }: { line: ShoppingLine; onClose: () => void 
   const [qty, setQty] = useState(line.buy);
   const [price, setPrice] = useState(() => shopping.find((s) => s.key === line.key)?.price?.toFixed(2) ?? '');
   const fq = (n: number) => (ing ? formatQty(n, ing, settings.units) : String(n));
+  const storeUrl = storeSearchUrl(settings.store, ing?.name ?? line.name);
 
   return (
     <Sheet open onClose={onClose} title={line.name}>
@@ -442,6 +444,11 @@ function LineSheet({ line, onClose }: { line: ShoppingLine; onClose: () => void 
             />
           </div>
         </label>
+        {storeUrl && (
+          <a className="btn btn-secondary w-full" href={storeUrl} target="_blank" rel="noopener noreferrer">
+            <Search size={16} /> Find it at {storeById(settings.store)?.label}
+          </a>
+        )}
         {!line.manual && (
           <button className="btn btn-secondary w-full" onClick={async () => { await patchShoppingState(line.key, { haveIt: true, checked: false }); onClose(); }}>
             I already have this

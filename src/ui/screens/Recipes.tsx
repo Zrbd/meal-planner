@@ -1,4 +1,3 @@
-import Fuse from 'fuse.js';
 import { ClipboardPaste, PenLine, Plus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
@@ -7,6 +6,7 @@ import { EmptyState, PageHeader, RecipeCard, SearchInput, Sheet, totalTime } fro
 import { useAppData } from '../data';
 import { useCoverage, useDishInfo } from '../hooks';
 import { DISH_TYPES, PROTEIN_TYPES } from '../../domain/dishes';
+import { searchRecipes } from '../../domain/search';
 
 const FILTERS: { id: string; label: string; test: (r: Recipe, canMake: boolean) => boolean }[] = [
   { id: 'all', label: 'All', test: () => true },
@@ -21,7 +21,7 @@ const FILTERS: { id: string; label: string; test: (r: Recipe, canMake: boolean) 
 ];
 
 export function Recipes() {
-  const { recipes } = useAppData();
+  const { recipes, ingById } = useAppData();
   const coverage = useCoverage();
   const dish = useDishInfo();
   const [params, setParams] = useSearchParams();
@@ -45,14 +45,9 @@ export function Recipes() {
   const [showHidden, setShowHidden] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
 
-  const fuse = useMemo(
-    () => new Fuse(recipes, { keys: ['title', 'cuisine', 'protein', 'description'], threshold: 0.35, ignoreLocation: true }),
-    [recipes],
-  );
-
   const list = useMemo(() => {
     const f = FILTERS.find((x) => x.id === filter) ?? FILTERS[0];
-    const base = q.trim() ? fuse.search(q.trim()).map((r) => r.item) : [...recipes].sort((a, b) => a.title.localeCompare(b.title));
+    const base = q.trim() ? searchRecipes(recipes, q.trim(), { ingById }) : [...recipes].sort((a, b) => a.title.localeCompare(b.title));
     const out = base.filter((r) => {
       if (r.archived !== showHidden || !f.test(r, !!coverage.get(r.id)?.canMake)) return false;
       const info = dish.get(r.id);
@@ -63,7 +58,7 @@ export function Recipes() {
     });
     if (!q.trim()) out.sort((a, b) => (coverage.get(b.id)?.ratio ?? 0) - (coverage.get(a.id)?.ratio ?? 0) || Number(b.favorite) - Number(a.favorite));
     return out;
-  }, [recipes, q, fuse, filter, showHidden, coverage, dish, cuisine, protein, dishType]);
+  }, [recipes, q, ingById, filter, showHidden, coverage, dish, cuisine, protein, dishType]);
 
   const hiddenCount = recipes.filter((r) => r.archived).length;
 

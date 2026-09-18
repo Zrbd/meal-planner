@@ -8,6 +8,7 @@ import { useAlerts } from './hooks';
 import { CookMode } from './screens/CookMode';
 import { Home } from './screens/Home';
 import { Pantry } from './screens/Pantry';
+import { StockCheck } from './screens/StockCheck';
 import { PantryItem } from './screens/PantryItem';
 import { Plan } from './screens/Plan';
 import { Prep } from './screens/Prep';
@@ -144,6 +145,7 @@ export function App() {
               <Route path="/plan" element={<Plan />} />
               <Route path="/shop" element={<Shopping />} />
               <Route path="/pantry" element={<Pantry />} />
+              <Route path="/pantry/check" element={<StockCheck />} />
               <Route path="/pantry/:id" element={<PantryItem />} />
               <Route path="/prep" element={<Prep />} />
               <Route path="/settings" element={<SettingsScreen />} />

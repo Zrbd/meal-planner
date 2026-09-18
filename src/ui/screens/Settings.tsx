@@ -4,7 +4,9 @@ import { useRef, useState, type ReactNode } from 'react';
 import { importBackup, resetEverything, shareBackup } from '../../db/backup';
 import { deviceStore } from '../../db/autobackup';
 import { updateSettings } from '../../db/settings';
-import { SLOTS } from '../../domain/types';
+import { SLOTS, type SmokerMode } from '../../domain/types';
+import { STORES, type StoreId } from '../../domain/stores';
+import { Link } from 'react-router';
 import { IngredientPicker, PageHeader, Segmented } from '../components';
 import { useAppData } from '../data';
 import { useToast } from '../toast';
@@ -117,10 +119,50 @@ export function SettingsScreen() {
           <Row title="Low-stock warning" hint="Warn when an item will run out within this many days">
             <Stepper label="days" value={s.bufferDays} min={1} max={14} onChange={(n) => set({ bufferDays: n })} />
           </Row>
+          <Row title="Store links" hint="Tap an item on your list to look it up here">
+            <select className="input w-auto px-2 py-1.5" value={s.store ?? 'walmart'} onChange={(e) => set({ store: e.target.value as StoreId })}>
+              {STORES.map((st) => <option key={st.id} value={st.id}>{st.label}</option>)}
+            </select>
+          </Row>
           <Row title="Units">
             <div className="w-36">
               <Segmented value={s.units} options={[{ value: 'us', label: 'US' }, { value: 'metric', label: 'Metric' }]} onChange={(v) => set({ units: v })} />
             </div>
+          </Row>
+        </div>
+
+        <h2 className="section-title">Auto-plan</h2>
+        <div className="card divide-y divide-stone-100">
+          <Row title="Lean on the pantry" hint="How much of a recipe you need on hand before it gets suggested">
+            <div className="w-40">
+              <Segmented
+                value={(s.pantryPull ?? 0.35) >= 0.55 ? 'high' : (s.pantryPull ?? 0.35) >= 0.3 ? 'mid' : 'low'}
+                options={[{ value: 'low', label: 'Any' }, { value: 'mid', label: 'Some' }, { value: 'high', label: 'Most' }]}
+                onChange={(v) => set({ pantryPull: v === 'low' ? 0.15 : v === 'mid' ? 0.35 : 0.6 })}
+              />
+            </div>
+          </Row>
+          <Row title="Plan a side with dinner" hint="Adds a side dish that goes with each main">
+            <input type="checkbox" className="h-6 w-6 accent-brand" checked={s.planSides !== false} onChange={(e) => set({ planSides: e.target.checked })} />
+          </Row>
+          <Row title="Smoker recipes">
+            <div className="w-44">
+              <Segmented
+                value={s.smoker ?? 'weekends'}
+                options={[{ value: 'off', label: 'Never' }, { value: 'weekends', label: 'Weekends' }, { value: 'any', label: 'Any day' }]}
+                onChange={(v) => set({ smoker: v as SmokerMode })}
+              />
+            </div>
+          </Row>
+          <Row title="Ask before smoking" hint="Check with you when a smoker recipe lands in the plan">
+            <input type="checkbox" className="h-6 w-6 accent-brand" checked={s.smokerConfirm !== false} onChange={(e) => set({ smokerConfirm: e.target.checked })} />
+          </Row>
+        </div>
+
+        <h2 className="section-title">Pantry</h2>
+        <div className="card divide-y divide-stone-100">
+          <Row title="Stock check" hint="Go through your kitchen one ingredient at a time">
+            <Link className="btn btn-secondary px-3 py-1.5" to="/pantry/check">Start</Link>
           </Row>
         </div>
 

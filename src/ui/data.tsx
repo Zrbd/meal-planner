@@ -35,6 +35,8 @@ export interface AppData {
   autoRestoredAt?: number;
   /** Checked-off prep checklist task ids. */
   prepChecks: Set<string>;
+  /** Ingredients already answered for in the pantry walkthrough. */
+  stockChecked: Set<string>;
   dailyRates: Map<string, number>;
 }
 
@@ -54,7 +56,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
 
   const raw = useLiveQuery(async () => {
     const since = Date.now() - 60 * DAY;
-    const [ingredients, recipes, lots, loose, txns, meals, cookLogs, shopping, trips, settingsRow, backupRow, autoRow, restoredRow, checksRow] =
+    const [ingredients, recipes, lots, loose, txns, meals, cookLogs, shopping, trips, settingsRow, backupRow, autoRow, restoredRow, checksRow, stockCheckRow] =
       await Promise.all([
         db.ingredients.toArray(),
         db.recipes.toArray(),
@@ -70,6 +72,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         db.kv.get('autoBackupAt'),
         db.kv.get('autoRestoredAt'),
         db.kv.get('prepChecks'),
+        db.kv.get('stockCheck'),
       ]);
     return {
       ingredients, recipes, lots, loose, txns, meals, cookLogs, shopping, trips,
@@ -78,6 +81,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       autoBackupAt: autoRow?.value as number | undefined,
       autoRestoredAt: restoredRow?.value as number | undefined,
       prepChecks: new Set((checksRow?.value as string[] | undefined) ?? []),
+      stockChecked: new Set(((stockCheckRow?.value as { done?: string[] } | undefined)?.done ?? [])),
       loadedAt: Date.now(),
     };
   }, []);

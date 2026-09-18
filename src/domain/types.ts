@@ -1,6 +1,10 @@
 // Core data types shared by domain logic, DB, and UI.
 // All quantities in stock/demand math are in the ingredient's baseUnit.
 import type { CategoryId } from './categories';
+import type { StoreId } from './stores';
+
+/** When smoker recipes are welcome in the plan. */
+export type SmokerMode = 'off' | 'weekends' | 'any';
 
 export type BaseUnit = 'g' | 'ml' | 'ea';
 export type Dimension = 'mass' | 'volume' | 'count';
@@ -101,6 +105,12 @@ export interface Recipe {
   ingredients: RecipeIngredient[];
   steps: string[]; // timers are detected from text in cook mode
   notes?: string;
+  /** Free-form tags, e.g. 'smoker', 'grill', 'make-ahead'. */
+  tags?: string[];
+  /** What this is on the table: the main dish, a side, or dessert. */
+  role?: 'main' | 'side' | 'dessert';
+  /** Recipe ids that go well with this one — sides for a main, mains for a side. */
+  pairsWith?: string[];
   /** Where the recipe comes from. Built-in recipes are adapted from these and link back. */
   credit?: RecipeCredit;
   favorite: boolean;
@@ -203,4 +213,14 @@ export interface Settings {
   /** Show alerts as phone notifications + app badge when the app opens. */
   notifications: boolean;
   lastBackupAt?: number;
+  /** Store used for "look this up" links on the shopping list. */
+  store?: StoreId;
+  /** How much of a meal you should already have on hand before auto-plan leans on it (0–1). */
+  pantryPull?: number;
+  /** Auto-plan pairs each dinner with a side dish. */
+  planSides?: boolean;
+  /** When auto-plan may pick recipes that use the smoker. */
+  smoker?: SmokerMode;
+  /** Ask before a smoker recipe goes into the plan. */
+  smokerConfirm?: boolean;
 }

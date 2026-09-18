@@ -19,6 +19,9 @@ export interface RecipeDef {
   ingredients: IngTuple[];
   steps: string[];
   notes?: string;
+  tags?: string[];
+  role?: 'main' | 'side' | 'dessert';
+  pairsWith?: string[];
   /** Required for built-ins: the human source this recipe is adapted from. Steps are rewritten, not copied. */
   credit: RecipeCredit;
 }
@@ -49,6 +52,9 @@ export function defineRecipe(d: RecipeDef): Recipe {
     ingredients,
     steps: d.steps,
     notes: d.notes,
+    tags: d.tags,
+    role: d.role,
+    pairsWith: d.pairsWith,
     credit: d.credit,
     favorite: false,
     archived: false,

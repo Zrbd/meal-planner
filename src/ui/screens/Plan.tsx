@@ -1,9 +1,9 @@
-import { ChevronLeft, ChevronRight, ListChecks, MoreHorizontal, Plus, ShoppingCart, Sparkles, Zap } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ListChecks, MoreHorizontal, Pin, Plus, ShoppingCart, Sparkles, Zap } from 'lucide-react';
 import { equipmentForRecipes } from '../../domain/dishes';
 import { cookableRecipes, type Cookable } from '../../domain/quickadd';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { autoPlan, eligibleRecipes, type AutoPick, type PlanSlot } from '../../domain/autoplan';
+import { autoPlan, usesSmoker, eligibleRecipes, type AutoPick, type PlanSlot } from '../../domain/autoplan';
 import { addDaysISO, formatDay, rangeDays, relativeDayLabel, startOfWeekISO } from '../../domain/dates';
 import { SLOT_ORDER } from '../../domain/stock';
 import { SLOTS, type PlannedMeal, type Slot } from '../../domain/types';
@@ -17,9 +17,15 @@ import Fuse from 'fuse.js';
 import { useUpCandidates, type UseUpItem } from '../../domain/freshness';
 import { formatQty } from '../../domain/units';
 
-function planInput(d: AppData, slots: PlanSlot[], seed: number, avoid?: Map<string, string[]>, useUp?: string[]) {
+function planInput(d: AppData, slots: PlanSlot[], seed: number, avoid?: Map<string, string[]>, useUp?: string[], keeping: AutoPick[] = []) {
+  // Meals you asked to keep are treated as already planned, so the rest of the week is picked
+  // around them — no repeats, and their ingredients are spoken for.
+  const held: PlannedMeal[] = keeping.map((p, i) => ({
+    id: `keep:${i}`, recipeId: p.recipeId, date: p.date, slot: p.slot,
+    servings: d.settings.householdSize, status: 'planned' as const,
+  }));
   return {
-    slots, existing: d.meals, recipes: d.recipes, ingById: d.ingById, lots: d.lots, loose: d.loose,
+    slots, existing: [...d.meals, ...held], recipes: d.recipes, ingById: d.ingById, lots: d.lots, loose: d.loose,
     recentCooks: d.cookLogs.map((c) => ({ recipeId: c.recipeId, at: c.at })),
     settings: d.settings, servings: d.settings.householdSize, today: d.today, now: d.now, seed, avoid, useUp,
   };
@@ -71,6 +77,7 @@ export function Plan() {
   const [useUpAsk, setUseUpAsk] = useState<UseUpItem[] | null>(null);
   const [useUpIds, setUseUpIds] = useSessionState<string[]>('plan:useUp', () => []);
   const [quickDay, setQuickDay] = useState<{ date: string; slot: Slot } | null>(null);
+  const [kept, setKept] = useSessionState<string[]>('plan:kept', () => []);
 
   const weekMeals = meals.filter((m) => m.date >= weekStart && m.date <= weekEnd);
   const plannedCount = weekMeals.filter((m) => m.status === 'planned' && !m.leftoverOf).length;
@@ -93,14 +100,32 @@ export function Plan() {
     return out;
   };
 
-  const runAuto = (s: number, useUp = useUpIds) => {
-    const slots = openSlotsForAutofill();
-    if (!slots.length) {
+  const runAuto = (s: number, useUp = useUpIds, keeping: AutoPick[] = [], avoid?: Map<string, string[]>) => {
+    const held = keeping.filter((p) => !p.side);
+    const slots = openSlotsForAutofill().filter((sl) => !held.some((k) => k.date === sl.date && k.slot === sl.slot));
+    if (!slots.length && !held.length) {
       toast(weekEnd < today ? "That week's already past" : 'This week is already full');
       return;
     }
     setSeed(s);
-    setPicks(autoPlan(planInput(d, slots, s, undefined, useUp)));
+    const fresh = slots.length ? autoPlan(planInput(d, slots, s, avoid, useUp, held)) : [];
+    setPicks([...keeping, ...fresh].sort((a, b) => a.date.localeCompare(b.date) || SLOT_ORDER[a.slot] - SLOT_ORDER[b.slot] || Number(a.side) - Number(b.side)));
+  };
+
+  /** Re-pick everything except the meals marked "keep". */
+  const shuffleRest = () => {
+    const keeping = (picks ?? []).filter((p) => kept.includes(`${p.date}:${p.slot}`));
+    const keepIds = new Set(keeping.map((k) => `${k.date}:${k.slot}`));
+    runAuto(seed + 1, useUpIds, (picks ?? []).filter((p) => keepIds.has(`${p.date}:${p.slot}`)));
+  };
+
+  /** Swap out the smoker meals for something cooked indoors. */
+  const dropSmoker = () => {
+    const smokerPicks = (picks ?? []).filter((p) => p.usesSmoker);
+    const avoid = new Map<string, string[]>();
+    for (const p of smokerPicks) avoid.set(`${p.date}:${p.slot}`, d.recipes.filter((r) => usesSmoker(r)).map((r) => r.id));
+    const keeping = (picks ?? []).filter((p) => !p.usesSmoker && !smokerPicks.some((sp) => sp.date === p.date && sp.slot === p.slot));
+    runAuto(seed + 1, useUpIds, keeping, avoid);
   };
 
   /** Ask about food that's been sitting around before filling the week. */
@@ -299,7 +324,9 @@ export function Plan() {
         title="Suggested meals"
         footer={
           <div className="flex gap-2">
-            <button className="btn btn-secondary flex-1" onClick={() => runAuto(seed + 1)}>Shuffle</button>
+            <button className="btn btn-secondary flex-1" onClick={shuffleRest}>
+              {kept.length ? 'Shuffle the rest' : 'Shuffle'}
+            </button>
             <button
               className="btn btn-primary flex-[2]"
               disabled={!picks?.length}
@@ -324,25 +351,47 @@ export function Plan() {
         }
       >
         <p className="mb-3 text-sm text-stone-500">
-          Picked to use what you have, save expiring food, and keep things varied. Tap × to leave one out.
+          Picked to use what you have, save expiring food, and keep things varied. Pin the ones you want and
+          shuffle the rest; tap × to leave one out.
         </p>
+        {settings.smokerConfirm !== false && picks?.some((p) => p.usesSmoker) && (
+          <div className="mb-3 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">
+            <b>Smoker night.</b> {picks.filter((p) => p.usesSmoker).map((p) => recipeById.get(p.recipeId)?.title).join(' and ')} {picks.filter((p) => p.usesSmoker).length === 1 ? 'is' : 'are'} cooked in the smoker. Keep it?
+            <div className="mt-2 flex gap-2">
+              <button className="btn btn-secondary flex-1 py-1" onClick={dropSmoker}>Cook indoors instead</button>
+            </div>
+          </div>
+        )}
         {picks?.length === 0 && <p className="text-sm">No recipes match your settings. Check diet filters in Settings.</p>}
         <div className="space-y-2">
           {picks?.map((p, i) => {
             const r = recipeById.get(p.recipeId)!;
+            const key = `${p.date}:${p.slot}`;
+            const keep = kept.includes(key);
             return (
-              <div key={`${p.date}${p.slot}`} className="flex items-center gap-2">
+              <div key={`${key}:${p.recipeId}`} className={`flex items-center gap-2 ${p.side ? 'pl-6' : ''}`}>
                 <div className="min-w-0 flex-1">
                   <RecipeCard
                     recipe={r}
                     to={`/recipes/${r.id}`}
                     subtitle={
                       <span className="truncate capitalize">
-                        {relativeDayLabel(p.date, today)} · {p.slot}{p.reasons[0] ? ` · ${p.reasons[0]}` : ''}
+                        {p.side ? 'Side · ' : ''}{relativeDayLabel(p.date, today)} · {p.slot}
+                        {p.usesSmoker ? ' · 🔥 smoker' : ''}{p.reasons[0] ? ` · ${p.reasons[0]}` : ''}
                       </span>
                     }
                   />
                 </div>
+                {!p.side && (
+                  <button
+                    className={`icon-btn shrink-0 ${keep ? 'text-brand' : 'text-stone-300'}`}
+                    aria-label={keep ? `Stop keeping ${r.title}` : `Keep ${r.title}`}
+                    aria-pressed={keep}
+                    onClick={() => setKept(keep ? kept.filter((k) => k !== key) : [...kept, key])}
+                  >
+                    <Pin size={18} />
+                  </button>
+                )}
                 <button className="icon-btn shrink-0 text-stone-400" aria-label="Leave out" onClick={() => setPicks(picks.filter((_, j) => j !== i))}>
                   ×
                 </button>

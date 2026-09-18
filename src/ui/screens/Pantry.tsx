@@ -73,6 +73,12 @@ export function Pantry() {
     return out;
   }, [d.meals, d.recipeById, today]);
 
+  /** Every ingredient any recipe in the book calls for — so the pantry lists them all, stocked or not. */
+  const recipeUse = useMemo(
+    () => new Set(d.recipes.filter((r) => !r.archived).flatMap((r) => r.ingredients.map((i) => i.ingredientId))),
+    [d.recipes],
+  );
+
   const exactItems = useMemo(() => {
     const byIng = new Map<string, StockLot[]>();
     for (const l of lots) if (tab === 'all' || tab === l.location) byIng.set(l.ingredientId, [...(byIng.get(l.ingredientId) ?? []), l]);
@@ -80,7 +86,7 @@ export function Pantry() {
       if (i.trackMode !== 'exact' || i.alwaysOnHand || byIng.has(i.id)) continue;
       const inTab = tab === 'all' || tab === i.defaultLocation;
       // staples you keep stocked, and anything this week's meals call for, show up even when you're out
-      if (inTab && ((tab === 'all' && i.keepStocked) || weekUse.has(i.id))) byIng.set(i.id, []);
+      if (inTab && ((tab === 'all' && i.keepStocked) || weekUse.has(i.id) || recipeUse.has(i.id))) byIng.set(i.id, []);
     }
     return [...byIng]
       .map(([id, ls]) => ({ ing: d.ingById.get(id)!, lots: ls }))
@@ -91,7 +97,7 @@ export function Pantry() {
         return { ...x, forecast: f, soonest };
       })
       .sort((a, b) => (a.soonest ?? '9999').localeCompare(b.soonest ?? '9999') || a.ing.name.localeCompare(b.ing.name));
-  }, [lots, tab, ingredients, d.ingById, d.txns, d.now, matchIds, today, settings.bufferDays, weekUse]);
+  }, [lots, tab, ingredients, d.ingById, d.txns, d.now, matchIds, today, settings.bufferDays, weekUse, recipeUse]);
 
   const looseItems = useMemo(() => {
     if (tab !== 'spices' && tab !== 'staples') return [];

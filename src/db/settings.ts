@@ -15,6 +15,11 @@ export const DEFAULT_SETTINGS: Settings = {
   aisleOrder: DEFAULT_AISLE_ORDER,
   bufferDays: 3,
   notifications: false,
+  store: 'walmart',
+  pantryPull: 0.35,
+  planSides: true,
+  smoker: 'weekends',
+  smokerConfirm: true,
 };
 
 export function withDefaults(s: Partial<Settings> | undefined): Settings {

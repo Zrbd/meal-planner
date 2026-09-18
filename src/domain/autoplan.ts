@@ -5,7 +5,7 @@ import { addDaysISO, isWeeknight } from './dates';
 import { isFullMeal } from './dishes';
 import { choosePackages } from './packages';
 import { EPS, SLOT_ORDER, isUsableOn, lotsInUseOrder, negligible, recipeNeeds } from './stock';
-import type { Ingredient, ISODate, LooseStock, PlannedMeal, Recipe, Settings, Slot, StockLot } from './types';
+import type { Ingredient, ISODate, LooseStock, PlannedMeal, Recipe, Settings, Slot, SmokerMode, StockLot } from './types';
 
 export const PLAN_WEIGHTS = {
   coverage: 3,
@@ -18,7 +18,13 @@ export const PLAN_WEIGHTS = {
   sameCuisine: 1,
   jitter: 0.3,
   useUp: 5,
+  pairs: 1.5,
 };
+
+/** Coverage counts real food, not the spice rack: how much of a meal you already have. */
+export function pantryDepth(wHave: number): number {
+  return Math.min(1, wHave / 8);
+}
 
 export interface PlanSlot {
   date: ISODate;
@@ -29,6 +35,23 @@ export interface AutoPick extends PlanSlot {
   recipeId: string;
   score: number;
   reasons: string[];
+  /** A side dish planned alongside the main in the same slot. */
+  side?: boolean;
+  /** The main this side was picked for. */
+  sideOf?: string;
+  /** Part of this meal is cooked in the smoker, so the user gets asked about it. */
+  usesSmoker?: boolean;
+}
+
+export const usesSmoker = (r: Recipe) => !!r.tags?.includes('smoker');
+const isSide = (r: Recipe) => r.role === 'side';
+
+/** Smoker recipes are welcome, welcome on weekends only, or not at all. */
+export function smokerAllowed(date: ISODate, mode: SmokerMode | undefined): boolean {
+  const m = mode ?? 'weekends';
+  if (m === 'any') return true;
+  if (m === 'off') return false;
+  return !isWeeknight(date);
 }
 
 export interface AutoPlanInput {
@@ -39,7 +62,8 @@ export interface AutoPlanInput {
   lots: StockLot[];
   loose: LooseStock[];
   recentCooks: { recipeId: string; at: number }[];
-  settings: Pick<Settings, 'dietFilters' | 'dislikedIngredients' | 'weeknightMaxMin'>;
+  settings: Pick<Settings, 'dietFilters' | 'dislikedIngredients' | 'weeknightMaxMin'> &
+    Partial<Pick<Settings, 'pantryPull' | 'planSides' | 'smoker'>>;
   servings: number;
   today: ISODate;
   now: number;
@@ -73,6 +97,8 @@ export function eligibleRecipes(
   let base = recipes.filter(
     (r) =>
       !r.archived &&
+      !isSide(r) &&
+      (!usesSmoker(r) || smokerAllowed(date, settings.smoker)) &&
       r.slots.includes(slot) &&
       settings.dietFilters.every((t) => r.diet.includes(t)) &&
       !r.ingredients.some((i) => !i.optional && settings.dislikedIngredients.includes(i.ingredientId)),
@@ -85,6 +111,38 @@ export function eligibleRecipes(
   if (slot !== 'dinner' || !isWeeknight(date) || !settings.weeknightMaxMin) return base;
   const quick = base.filter((r) => r.prepMin + r.cookMin <= settings.weeknightMaxMin);
   return quick.length ? quick : base;
+}
+
+/** A side dish for a main: the ones it is written to go with first, then something that fits. */
+export function pickSide(
+  main: Recipe,
+  recipes: Recipe[],
+  used: Set<string>,
+  available: Map<string, number>,
+  ingById: Map<string, Ingredient>,
+  rng: () => number,
+): Recipe | undefined {
+  const sides = recipes.filter((r) => !r.archived && isSide(r) && !used.has(r.id));
+  if (!sides.length) return undefined;
+  const paired = new Set([...(main.pairsWith ?? []), ...sides.filter((s) => s.pairsWith?.includes(main.id)).map((s) => s.id)]);
+  let best: { r: Recipe; score: number } | undefined;
+  for (const r of sides) {
+    let have = 0, tot = 0;
+    for (const ri of r.ingredients) {
+      const ing = ingById.get(ri.ingredientId);
+      if (!ing || ing.trackMode === 'loose' || ing.alwaysOnHand) continue;
+      tot += 1;
+      if ((available.get(ing.id) ?? 0) > 0) have += 1;
+    }
+    const score =
+      (paired.has(r.id) ? 6 : 0) +
+      (r.cuisine === main.cuisine ? 2 : 0) +
+      (tot ? have / tot : 0.5) * 2 -
+      (r.prepMin + r.cookMin) / 60 +
+      rng() * 0.5;
+    if (!best || score > best.score) best = { r, score };
+  }
+  return best?.r;
 }
 
 export function autoPlan(input: AutoPlanInput): AutoPick[] {
@@ -168,11 +226,14 @@ export function autoPlan(input: AutoPlanInput): AutoPick[] {
         const ing = ingById.get(id);
         if (!ing) continue;
         if (useUp.has(id)) usesUp.push(ing.name.toLowerCase());
-        wTot += ing.valueWeight;
-        if (ing.trackMode === 'loose') {
-          if (looseLevel.get(id) !== 'out') wHave += ing.valueWeight;
+        // Spices, oil and tap water are always around; counting them made three-ingredient
+        // rice dishes look like the best-stocked meal in the book.
+        if (ing.trackMode === 'loose' || ing.alwaysOnHand) {
+          // A spice you have run out of still counts against the meal, just lightly.
+          if (ing.trackMode === 'loose' && looseLevel.get(id) === 'out') wTot += 1;
           continue;
         }
+        wTot += ing.valueWeight;
         wHave += ing.valueWeight * Math.min(1, (available.get(id) ?? 0) / (qty || 1));
         if (expiring.has(id)) expUse++;
         if (isPerishable(ing)) {
@@ -180,7 +241,11 @@ export function autoPlan(input: AutoPlanInput): AutoPick[] {
           if (bought.has(id)) perishShared++;
         }
       }
-      const coverage = wTot ? wHave / wTot : 0;
+      const ratio = wTot ? wHave / wTot : 0;
+      // How much of this meal is already in the kitchen has to clear the bar the user set,
+      // and a meal you have two things for does not beat one you have six things for.
+      const pull = input.settings.pantryPull ?? 0.35;
+      const coverage = ratio <= pull ? 0 : ((ratio - pull) / (1 - pull)) * (0.4 + 0.6 * pantryDepth(wHave));
       const expScore = expiring.size ? Math.min(1, expUse / Math.min(3, expiring.size)) : 0;
       const overlap = perishTot ? perishShared / perishTot : 0;
       const last = lastCooked.get(r.id);
@@ -200,10 +265,11 @@ export function autoPlan(input: AutoPlanInput): AutoPick[] {
         const reasons: string[] = [];
         if (usesUp.length) reasons.push(`Uses up your ${usesUp.slice(0, 2).join(' & ')}`);
         if (expScore > 0) reasons.push('Uses food expiring soon');
-        if (coverage >= 0.6) reasons.push('You have most ingredients');
+        if (ratio >= 0.6 && wTot > 0) reasons.push('You have most ingredients');
         if (overlap >= 0.3) reasons.push('Shares ingredients with other meals');
         if (r.favorite) reasons.push('Favorite');
-        best = { ...s, recipeId: r.id, score, reasons };
+        if (usesSmoker(r)) reasons.push('Cooked in the smoker');
+        best = { ...s, recipeId: r.id, score, reasons, usesSmoker: usesSmoker(r) || undefined };
       }
     }
     if (!best) continue;
@@ -212,6 +278,18 @@ export function autoPlan(input: AutoPlanInput): AutoPick[] {
     used.add(recipe.id);
     placed.push({ date: s.date, slot: s.slot, recipe });
     consume(recipe, s.date);
+
+    if (s.slot === 'dinner' && (input.settings.planSides ?? true)) {
+      const side = pickSide(recipe, input.recipes, used, available, ingById, rng);
+      if (side) {
+        picks.push({
+          ...s, recipeId: side.id, score: 0, side: true, sideOf: recipe.id,
+          reasons: [`Goes with ${recipe.title}`], usesSmoker: usesSmoker(side) || undefined,
+        });
+        used.add(side.id);
+        consume(side, s.date);
+      }
+    }
   }
   return picks;
 }
