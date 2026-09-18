@@ -233,4 +233,28 @@ export const DESSERTS = [
     ],
     notes: 'The blacker the bananas the better. It slices best the next day, and the loaf freezes well wrapped tightly.',
   }),
+  defineRecipe({
+    id: 'rice-pudding', title: 'Creamy Rice Pudding',
+    credit: { name: 'Budget Bytes', author: 'Beth Moncel', url: 'https://www.budgetbytes.com/rice-pudding/' },
+    description: 'Rice toasted in butter with cinnamon and nutmeg, then simmered slowly in milk until it thickens into pudding. Pantry ingredients, one pot.',
+    servings: 4, prep: 5, cook: 45, cuisine: 'American', difficulty: 1,
+    diet: ['vegetarian', 'gluten-free'], role: 'dessert', tags: ['dessert', 'pantry', 'make-ahead'],
+    ingredients: [
+      [1, 'tbsp', 'butter'],
+      [0.25, 'cup', 'almonds', 'sliced', 'optional'],
+      [0.5, 'cup', 'white-rice', 'long grain jasmine, uncooked'],
+      [0.25, 'tsp', 'ground-cinnamon'], [0.25, 'tsp', 'ground-nutmeg'],
+      [4, 'cup', 'milk', 'whole'],
+      [0.25, 'cup', 'sugar'], [0.25, 'tsp', 'vanilla-extract'], [0.25, 'tsp', 'salt'],
+    ],
+    steps: [
+      'Melt the butter in a saucepan over medium heat and stir the rice and almonds in it 1–2 minutes, until they smell toasty.',
+      'Add the cinnamon and nutmeg and stir another 30–60 seconds.',
+      'Pour in the milk and add the sugar, vanilla, and salt, stirring to combine.',
+      'Bring it to a simmer over medium heat, stirring now and then.',
+      'Turn the heat to medium-low and simmer uncovered about 40 minutes, stirring occasionally, until the rice is very soft and the pot has thickened noticeably.',
+      'Serve warm, or chill it and eat it cold the next day.',
+    ],
+    notes: 'It keeps thickening as it cools, so pull it off the heat while it still looks a little loose. Leftover cooked rice works too — cut the simmer to about 15 minutes.',
+  }),
 ];
