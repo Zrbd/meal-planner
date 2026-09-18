@@ -99,6 +99,7 @@ const CATALOG: Ingredient[] = [
   I('fresh-rosemary', 'Fresh rosemary', 'produce', 'g', { aliases: ['rosemary', 'rosemary sprigs'], density: 0.15, unitAliases: { sprig: 2 }, packages: [{ label: '0.75 oz pack', qty: 21 }], shelfLife: { fridge: 14 } }),
   I('butternut-squash', 'Butternut squash', 'produce', 'g', { aliases: ['squash', 'butternut'], density: 0.6, gramsPerEach: 1100, defaultLocation: 'pantry', shelfLife: { pantry: 60 } }),
   I('corn-on-cob', 'Fresh corn', 'produce', 'ea', { aliases: ['corn on the cob', 'ears of corn', 'ear of corn'], gramsPerEach: 150, unitAliases: { ear: 1 }, shelfLife: { fridge: 3 } }),
+  I('okra', 'Okra', 'produce', 'g', { aliases: ['fresh okra', 'frozen okra', 'lady fingers'], density: 0.4, packages: [{ label: '1 lb bag', qty: lb(1) }], shelfLife: { fridge: 5, freezer: 300 } }),
   I('eggplant', 'Eggplant', 'produce', 'ea', { aliases: ['aubergine'], gramsPerEach: 450, density: 0.35, shelfLife: { fridge: 7 } }),
   I('mango', 'Mango', 'produce', 'ea', { aliases: ['mangoes'], gramsPerEach: 200, defaultLocation: 'pantry', shelfLife: { pantry: 5, fridge: 7 } }),
   I('peaches', 'Peaches', 'produce', 'g', { aliases: ['peach', 'fresh peaches', 'nectarines'], gramsPerEach: 150, density: 0.6, packages: [{ label: '2 lb', qty: lb(2) }], defaultLocation: 'pantry', shelfLife: { pantry: 4, fridge: 7 } }),
