@@ -102,7 +102,8 @@ Living handoff log. Newest notes at the top of each section.
 - Haitian poul nan sos and Viennese apple strudel added.
 - Tunisian ojja with merguez and Ecuadorian llapingachos side added; harissa and merguez added to the catalog.
 - Cambodian chicken amok and Zambian ifisashi side added.
-- SEED_VERSION 136.
+- Taiwanese lu rou fan and Liege waffles added; pearl sugar added to the catalog.
+- SEED_VERSION 137.
 - Later in the same session: more world mains (arepas de queso, tteokbokki, chicken katsu, chicken congee, pancit bihon, borscht, moussaka with ground turkey, japchae, mapo tofu, palak paneer, chicken biryani, pozole verde, vegetarian shepherd's pie, misir wat), more desserts (no-bake cheesecake, churros, tiramisu, baklava, carrot cake, bread pudding, cut-out sugar cookies, panna cotta) and ten more sides (gomen, cilantro lime rice, cumin lime coleslaw, roasted cauliflower, street corn salad, roasted brussels sprouts, glazed carrots, braised red cabbage, creamed corn, macaroni salad).
 - Bundle: the recipe catalog and ingredient catalog are now dynamic imports inside `seedIfNeeded`, and the six screens you only reach by navigating (cook mode, recipe editor, settings, stock check, prep, pantry item) are `React.lazy` behind a `Suspense` fallback. Launch JS went from 1,953 kB (545 kB gzip) to ~735 kB (229 kB gzip).
 
