@@ -172,6 +172,7 @@ export const BUDGET_BYTES_42 = [
     id: 'warm-blistered-corn-avocado-lime-salad', title: 'Warm Corn and Avocado Salad', credit: bb('warm-corn-avocado-salad'),
     description: 'Frozen corn seared until golden and blistered, then tossed with cumin, red onion, creamy avocado, cilantro, and fresh lime.',
     servings: 4, prep: 10, cook: 7, cuisine: 'Mexican', protein: 'vegetarian', diet: [], slots: ['lunch', 'dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [2, 'tbsp', 'vegetable-oil'],
       [1, 'lb', 'frozen-corn', 'fully thawed'],

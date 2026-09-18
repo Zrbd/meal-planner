@@ -381,6 +381,7 @@ export const COOKIE_AND_KATE = [
     id: 'chopped-greek-salad', title: 'Chopped Greek Salad', credit: ck('chopped-greek-salad-recipe'),
     description: 'Crunchy romaine, tomatoes, cucumber, peppers, olives, and feta with a zesty oregano vinaigrette.',
     servings: 8, prep: 30, cook: 0, cuisine: 'Greek', protein: 'vegetarian', diet: ['vegetarian', 'gluten-free'], slots: ['lunch', 'dinner'],
+    role: 'side', tags: ['side'],
     ingredients: [
       [10, 'oz', 'romaine-hearts', 'chopped'], [10, 'oz', 'cherry-tomatoes', 'quartered'], [1, 'ea', 'cucumber', 'seeded and chopped'],
       [1, 'ea', 'bell-pepper', 'yellow or orange, chopped'], [0.5, 'ea', 'red-onion', 'chopped'], [0.5, 'cup', 'parsley', 'chopped'],
@@ -558,6 +559,7 @@ export const COOKIE_AND_KATE = [
     id: 'caesar-salad', title: 'Homemade Caesar Salad', credit: ck('caesar-salad-recipe'),
     description: 'Crisp romaine with chewy-crunchy homemade croutons and an easy, garlicky Parmesan dressing.',
     servings: 4, prep: 15, cook: 10, cuisine: 'American', protein: 'vegetarian', slots: ['lunch', 'dinner'],
+    role: 'side', tags: ['side'],
     ingredients: [
       'Croutons',
       [4, 'oz', 'baguette', 'or 2 thick slices crusty bread'], [2, 'tbsp', 'olive-oil'], [0.25, 'tsp', 'salt'], [0.125, 'tsp', 'garlic-powder'], [1, 'pinch', 'black-pepper'],

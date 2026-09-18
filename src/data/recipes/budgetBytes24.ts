@@ -113,6 +113,7 @@ export const BUDGET_BYTES_24 = [
     id: 'classic-three-bean-salad', title: 'Classic Three Bean Salad', credit: bb('classic-three-bean-salad'),
     description: 'A tangy, make-ahead salad of kidney beans, white beans, and green beans with red onion and parsley in a sweet cider-vinegar dressing.',
     servings: 5, prep: 15, cook: 0, cuisine: 'American', protein: 'beans', diet: [], slots: ['lunch', 'dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [1, 'can', 'kidney-beans', '15 oz, rinsed and drained'],
       [1, 'can', 'cannellini-beans', '15 oz, rinsed and drained'],

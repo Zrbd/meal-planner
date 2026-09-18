@@ -39,6 +39,7 @@ export const RECIPETIN_EATS_31 = [
     id: 'buttery-garlic-rice-stovetop', title: 'Garlic Rice', credit: rte('garlic-rice'),
     description: 'Fluffy stovetop rice toasted in golden garlic butter and cooked in chicken stock, then finished with more butter and parsley.',
     servings: 6, prep: 5, cook: 20, cuisine: 'International', protein: 'vegetarian', diet: [], slots: ['dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [4, 'tbsp', 'butter', 'unsalted, divided'],
       [5, 'clove', 'garlic', 'finely minced'],

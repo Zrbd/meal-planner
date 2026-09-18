@@ -102,6 +102,7 @@ export const RECIPETIN_EATS_23 = [
     id: 'parmesan-roasted-green-beans', title: 'Parmesan Roasted Green Beans', credit: rte('parmesan-roasted-green-beans'),
     description: 'A 20-minute side: green beans lined up on a tray with garlic and oil, blanketed with panko and Parmesan, and roasted until golden and crunchy.',
     servings: 4, prep: 5, cook: 15, cuisine: 'Italian', protein: 'vegetarian', diet: [], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [1, 'lb', 'green-beans', 'ends trimmed'],
       [2, 'tbsp', 'olive-oil', 'divided'],

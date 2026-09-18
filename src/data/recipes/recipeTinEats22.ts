@@ -224,6 +224,7 @@ export const RECIPETIN_EATS_22 = [
     id: 'garlic-sauteed-green-beans', title: 'Sautéed Green Beans with Garlic', credit: rte('garlic-sauteed-green-beans'),
     description: 'Blanched, bright-green beans tossed in a hot pan with olive oil and golden, crispy garlic. A 10-minute side that can be prepped ahead.',
     servings: 3, prep: 5, cook: 8, cuisine: 'American', protein: 'vegetarian', diet: [], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [8, 'oz', 'green-beans', 'trimmed'],
       [1, 'tsp', 'salt', 'for the blanching water'],

@@ -75,6 +75,7 @@ export const RECIPETIN_EATS_27 = [
     id: 'spicy-maple-carrots-crispy-chickpeas', title: 'Spicy Maple Roast Carrots with Crispy Chickpeas', credit: rte('spicy-maple-roast-carrots-with-crispy-chickpeas'),
     description: 'Carrots roasted in a sweet-hot maple sriracha glaze, piled on garlicky lemon yogurt sauce and topped with crunchy smoky oven-roasted chickpeas and cilantro.',
     servings: 3, prep: 15, cook: 40, cuisine: 'Middle Eastern', protein: 'beans', diet: [], difficulty: 2,
+    role: 'side', tags: ['side'],
     ingredients: [
       'Carrots',
       [2, 'lb', 'carrot', 'peeled and quartered lengthwise (mix of baby and regular)'],

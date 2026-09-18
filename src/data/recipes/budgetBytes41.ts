@@ -60,6 +60,7 @@ export const BUDGET_BYTES_41 = [
     id: 'moroccan-spiced-roasted-sweet-potatoes', title: 'Moroccan Spiced Sweet Potatoes', credit: bb('moroccan-spiced-sweet-potatoes'),
     description: 'Sweet potato cubes tossed in a warm cumin, turmeric, cinnamon, and paprika oil, roasted until tender, and finished with fresh cilantro.',
     servings: 4, prep: 10, cook: 30, cuisine: 'International', protein: 'vegetarian', diet: [], slots: ['dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [0.5, 'tbsp', 'ground-cumin'],
       [1, 'tsp', 'ground-turmeric'],
@@ -172,6 +173,7 @@ export const BUDGET_BYTES_41 = [
     id: 'crunchy-purple-cabbage-peanut-salad-tahini', title: 'Crunchy Cabbage Salad', credit: bb('cabbage-salad'),
     description: 'Finely shredded cabbage, carrots, green onion, cilantro, and peanuts tossed in a creamy blended tahini, ginger, soy, and honey dressing.',
     servings: 6, prep: 20, cook: 0, cuisine: 'Asian', protein: 'vegetarian', diet: [], slots: ['lunch', 'dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [4, 'cup', 'cabbage', 'purple, finely shredded'],
       [2, 'ea', 'carrot', 'grated'],
@@ -200,6 +202,7 @@ export const BUDGET_BYTES_41 = [
     id: 'simple-sauteed-carrots-zucchini-peppers', title: 'Simple Sautéed Vegetables', credit: bb('simple-sauteed-vegetables'),
     description: 'A fast, crisp-tender side of carrots, zucchini, summer squash, and bell pepper sautéed with dried herbs and finished with a pat of butter.',
     servings: 4, prep: 10, cook: 10, cuisine: 'International', protein: 'vegetarian', diet: [], slots: ['dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [3, 'ea', 'carrot', 'peeled and sliced'],
       [2, 'ea', 'zucchini', 'cut into half-moons; the original uses 1 zucchini and 1 yellow squash'],

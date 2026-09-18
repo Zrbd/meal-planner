@@ -102,6 +102,7 @@ export const BUDGET_BYTES_37 = [
     id: 'broccoli-salad-bacon-cheddar', title: 'Broccoli Salad with Bacon', credit: bb('broccoli-salad'),
     description: 'Crunchy raw broccoli with cheddar, bacon, raisins, red onion, and toasted seeds in a sweet-tangy creamy dressing. Even better the next day.',
     servings: 6, prep: 15, cook: 5, cuisine: 'American', protein: 'pork', diet: [], slots: ['lunch', 'dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [1, 'lb', 'broccoli', '1 large crown, cut into small florets (about 4 cups)'],
       [1, 'cup', 'cheddar', 'shredded'],

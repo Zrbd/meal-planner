@@ -95,6 +95,7 @@ export const BUDGET_BYTES_40 = [
     id: 'warm-german-potato-salad-bacon', title: 'German Potato Salad', credit: bb('german-potato-salad'),
     description: 'Warm sliced red potatoes tossed in a tangy bacon-fat dressing with onion, mustard, and cider vinegar, plus crispy bacon and parsley.',
     servings: 6, prep: 10, cook: 15, cuisine: 'International', protein: 'pork', diet: [], slots: ['lunch', 'dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [2, 'lb', 'potato', 'small red potatoes'],
       [1.5, 'tsp', 'salt', 'divided'],

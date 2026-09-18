@@ -44,6 +44,7 @@ export const RECIPETIN_EATS_29 = [
     id: 'truly-crunchy-roast-potatoes', title: 'Truly Crunchy Roast Potatoes', credit: rte('truly-crunchy-roast-potatoes'),
     description: 'Parboiled potatoes roughed up with a grainy coating and roasted in screaming-hot oil for a shatteringly crunchy crust and fluffy insides.',
     servings: 6, prep: 15, cook: 60, cuisine: 'British', protein: 'vegetarian', diet: [], slots: ['dinner'], difficulty: 2,
+    role: 'side', tags: ['side'],
     ingredients: [
       [0.67, 'cup', 'vegetable-oil', 'a high smoke point oil'],
       [3, 'lb', 'potato', 'starchy, like russets'],

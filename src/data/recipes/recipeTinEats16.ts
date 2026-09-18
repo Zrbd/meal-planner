@@ -199,6 +199,7 @@ export const RECIPETIN_EATS_16 = [
     id: 'green-bean-salad-cherry-tomato-feta', title: 'Green Bean Salad with Cherry Tomatoes & Feta', credit: rte('green-bean-salad-with-cherry-tomato-feta'),
     description: 'Crisp-tender green beans with juicy cherry tomatoes, red onion, and salty feta in a lemon-Dijon dressing. It’s a make-ahead side or a light lunch.',
     servings: 8, prep: 10, cook: 5, cuisine: 'Mediterranean', protein: 'vegetarian', diet: [], slots: ['lunch', 'dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [1, 'lb', 'green-beans', 'trimmed'],
       [12, 'oz', 'cherry-tomatoes', 'halved'],

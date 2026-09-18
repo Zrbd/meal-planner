@@ -9,6 +9,7 @@ export const RECIPETIN_EATS_33 = [
     id: 'roasted-sweet-potato-stacks-rosemary-butter', title: 'Roasted Sweet Potato Stacks', credit: rte('roasted-sweet-potato-stacks'),
     description: 'Thin sweet potato slices tossed in rosemary butter, stacked in a muffin tin, and roasted until tender inside with golden, crispy edges.',
     servings: 6, prep: 15, cook: 45, cuisine: 'Australian', protein: 'vegetarian', diet: [], slots: ['dinner'], difficulty: 2,
+    role: 'side', tags: ['side'],
     ingredients: [
       [2.4, 'lb', 'sweet-potato', 'unpeeled weight, about 2–2¾ inches wide'],
       [3, 'tbsp', 'butter', 'unsalted, melted'],

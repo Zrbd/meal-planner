@@ -140,6 +140,7 @@ export const RECIPETIN_EATS_37 = [
     id: 'smashed-cucumber-salad-sesame-ginger', title: 'Smashed Cucumber Salad', credit: rte('smashed-cucumber-salad'),
     description: 'Cucumbers bashed so the craggy pieces soak up a punchy dressing of rice vinegar, sesame oil, ginger, and soy, topped with cilantro and green onions.',
     servings: 4, prep: 25, cook: 0, cuisine: 'Chinese', protein: 'vegetarian', diet: [], slots: ['lunch', 'dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [1, 'lb', 'cucumber', '4 medium or 2 long'],
       [0.75, 'tsp', 'salt'],

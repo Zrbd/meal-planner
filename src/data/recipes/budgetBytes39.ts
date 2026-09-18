@@ -110,6 +110,7 @@ export const BUDGET_BYTES_39 = [
     id: 'caprese-salad-homemade-balsamic-glaze', title: 'Caprese Salad', credit: bb('caprese-salad'),
     description: 'Juicy tomato chunks, torn fresh mozzarella, and whole basil leaves with olive oil and a homemade brown sugar balsamic glaze.',
     servings: 6, prep: 10, cook: 10, cuisine: 'Italian', protein: 'vegetarian', diet: [], slots: ['lunch', 'dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [8, 'oz', 'mozzarella', 'a fresh ball, torn'],
       [0.5, 'cup', 'basil', 'whole fresh leaves'],
@@ -134,6 +135,7 @@ export const BUDGET_BYTES_39 = [
     id: 'garlic-parmesan-cannellini-beans', title: 'Parmesan Beans', credit: bb('parmesan-beans'),
     description: 'Creamy cannellini beans simmered with garlic and broth until thick, then stirred with Parmesan and black pepper. A 20-minute pantry side.',
     servings: 4, prep: 5, cook: 15, cuisine: 'Italian', protein: 'beans', diet: [], slots: ['lunch', 'dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [2, 'clove', 'garlic', 'minced'],
       [2, 'tbsp', 'olive-oil'],
@@ -214,6 +216,7 @@ export const BUDGET_BYTES_39 = [
     id: 'simple-roasted-sweet-potato-cubes', title: 'Roasted Sweet Potatoes', credit: bb('roasted-sweet-potatoes'),
     description: 'Sweet potato cubes tossed with olive oil and salt and roasted on a preheated sheet pan for caramelized edges and creamy centers.',
     servings: 4, prep: 15, cook: 25, cuisine: 'American', protein: 'vegetarian', diet: [], slots: ['dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [2, 'lb', 'sweet-potato', 'scrubbed, cut into ½–1 inch cubes'],
       [2, 'tbsp', 'olive-oil'],

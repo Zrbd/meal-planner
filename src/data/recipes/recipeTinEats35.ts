@@ -9,6 +9,7 @@ export const RECIPETIN_EATS_35 = [
     id: 'browned-butter-garlic-mexican-corn-salad', title: 'Mexican Corn Salad', credit: rte('mexican-corn-salad'),
     description: 'Street-corn flavors in a salad: skillet-browned garlic butter corn tossed warm with a creamy lime and Parmesan dressing, cilantro, onions, and feta.',
     servings: 6, prep: 10, cook: 10, cuisine: 'Mexican', protein: 'vegetarian', diet: [], slots: ['lunch', 'dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [5, 'cup', 'frozen-corn', 'or kernels cut from about 4 large ears; don\'t thaw frozen'],
       [2, 'tbsp', 'butter'],
@@ -39,6 +40,7 @@ export const RECIPETIN_EATS_35 = [
     id: 'fluffy-mexican-red-tomato-rice', title: 'Mexican Red Rice', credit: rte('mexican-red-rice'),
     description: 'Fluffy restaurant-style red rice simmered in broth with tomato paste, garlic, and onion, with a whole jalapeño and cilantro sprig for gentle flavor.',
     servings: 4, prep: 3, cook: 15, cuisine: 'Mexican', protein: 'vegetarian', diet: [], slots: ['dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [1.5, 'tbsp', 'olive-oil'],
       [2, 'clove', 'garlic', 'minced'],
@@ -122,6 +124,7 @@ export const RECIPETIN_EATS_35 = [
     id: 'asian-side-salad-sesame-ginger-dressing', title: 'Asian Side Salad', credit: rte('asian-side-salad'),
     description: 'A quick everyday side of greens, cherry tomatoes, and red onion in a punchy soy, sesame, ginger, and rice vinegar dressing.',
     servings: 4, prep: 10, cook: 0, cuisine: 'Asian', protein: 'vegetarian', diet: [], slots: ['lunch', 'dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       'Dressing',
       [1, 'tbsp', 'soy-sauce', 'light or all-purpose'],

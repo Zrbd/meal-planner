@@ -9,6 +9,7 @@ export const BUDGET_BYTES_36 = [
     id: 'spinach-rice-feta-lemon', title: 'Spinach Rice with Feta', credit: bb('spinach-rice-with-feta'),
     description: 'Buttery garlic rice cooked together with frozen spinach and a squeeze of lemon, finished with salty crumbled feta. An easy side or light meal.',
     servings: 6, prep: 5, cook: 25, cuisine: 'Greek', protein: 'vegetarian', diet: [], slots: ['lunch', 'dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [8, 'oz', 'frozen-spinach', 'chopped'],
       [2, 'clove', 'garlic', 'minced'],
@@ -32,6 +33,7 @@ export const BUDGET_BYTES_36 = [
     id: 'guacamole-avocado-tomato-salad', title: 'Avocado and Tomato Salad', credit: bb('guacamole-salad'),
     description: 'All the flavors of guacamole left chunky: avocado, tomato, jalapeño, red onion, garlic, and cilantro dressed with lime and olive oil.',
     servings: 6, prep: 15, cook: 0, cuisine: 'Mexican', protein: 'vegetarian', diet: [], slots: ['lunch', 'dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [3, 'ea', 'avocado'],
       [3, 'ea', 'tomato', 'small'],
@@ -145,6 +147,7 @@ export const BUDGET_BYTES_36 = [
     id: 'twice-baked-potatoes-bacon-cheddar', title: 'Twice Baked Potatoes', credit: bb('twice-baked-potatoes'),
     description: 'Crispy-skinned russets filled with fluffy mashed potato, sour cream, butter, bacon, green onion, and cheddar, then baked again until melty.',
     servings: 8, prep: 20, cook: 70, cuisine: 'American', protein: 'pork', diet: [], slots: ['lunch', 'dinner'], difficulty: 2,
+    role: 'side', tags: ['side'],
     ingredients: [
       [2, 'lb', 'potato', '4 russets, about ½ lb each'],
       [1, 'tbsp', 'olive-oil'],

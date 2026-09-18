@@ -95,6 +95,7 @@ export const RECIPETIN_EATS_24 = [
     id: 'oven-roasted-eggplant-cubes', title: 'Oven Roasted Eggplant', credit: rte('roasted-eggplant'),
     description: 'Simple, high-heat roasted eggplant cubes that come out caramelized outside and creamy inside, a great side or base for bowls and pasta.',
     servings: 4, prep: 5, cook: 30, cuisine: 'Mediterranean', protein: 'vegetarian', diet: [], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [1.5, 'lb', 'eggplant', '2 medium'],
       [3, 'tbsp', 'olive-oil'],

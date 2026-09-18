@@ -104,6 +104,7 @@ export const RECIPETIN_EATS_34 = [
     id: 'cherry-tomato-basil-red-onion-salad', title: 'Cherry Tomato Salad', credit: rte('tomato-salad'),
     description: 'Halved ripe cherry tomatoes, thinly sliced red onion, and plenty of basil tossed in a simple cider vinegar and Dijon dressing.',
     servings: 4, prep: 10, cook: 0, cuisine: 'Australian', protein: 'vegetarian', diet: [], slots: ['lunch', 'dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [1.5, 'lb', 'cherry-tomatoes', 'or grape tomatoes, or larger tomatoes'],
       [0.5, 'ea', 'red-onion', 'finely sliced'],

@@ -64,6 +64,7 @@ export const RECIPETIN_EATS_30 = [
     id: 'oven-baked-fluffy-coconut-rice', title: 'Restaurant Style Coconut Rice', credit: rte('fluffy-coconut-rice'),
     description: 'Lightly sweet, fragrant coconut milk jasmine rice baked in the oven so every grain comes out fluffy and separate. Perfect with curries.',
     servings: 4, prep: 5, cook: 40, cuisine: 'Thai', protein: 'vegetarian', diet: [], slots: ['dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [2, 'cup', 'white-rice', 'jasmine'],
       [1, 'ea', 'coconut-milk', '14 oz can, full fat or light'],

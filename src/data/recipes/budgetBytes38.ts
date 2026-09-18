@@ -36,6 +36,7 @@ export const BUDGET_BYTES_38 = [
     id: 'cheddar-potatoes-au-gratin', title: 'Potatoes Au Gratin', credit: bb('potatoes-au-gratin'),
     description: 'Thin-sliced potatoes layered with a nutmeg-scented cheddar white sauce and baked until tender, golden, and bubbling.',
     servings: 8, prep: 15, cook: 85, cuisine: 'French', protein: 'vegetarian', diet: [], slots: ['dinner'], difficulty: 2,
+    role: 'side', tags: ['side'],
     ingredients: [
       [3, 'lb', 'potato', 'peeled and sliced ⅛ inch thick'],
       [1, 'ea', 'yellow-onion', 'finely diced'],
@@ -61,6 +62,7 @@ export const BUDGET_BYTES_38 = [
     id: 'loaded-everything-smashed-potatoes', title: 'Loaded Smashed Potatoes', credit: bb('loaded-smashed-potatoes'),
     description: 'Boiled baby potatoes smashed flat, brushed with everything bagel oil, roasted crisp, and topped with melted cheddar, sour cream, and green onion.',
     servings: 5, prep: 10, cook: 40, cuisine: 'American', protein: 'vegetarian', diet: [], slots: ['dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [1.5, 'lb', 'potato', 'baby potatoes, about 20'],
       [2, 'tsp', 'salt', 'for the boiling water'],
@@ -177,6 +179,7 @@ export const BUDGET_BYTES_38 = [
     id: 'sweet-crunch-cabbage-broccoli-tahini-salad', title: 'Sweet Crunch Winter Salad', credit: bb('sweet-crunch-winter-salad'),
     description: 'Finely chopped cabbage, broccoli, carrot, and green onion with crunchy seeds and dried fruit in a creamy lemon-maple tahini dressing.',
     servings: 4, prep: 20, cook: 0, cuisine: 'American', protein: 'vegetarian', diet: [], slots: ['lunch', 'dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       'Tahini dressing',
       [0.25, 'cup', 'tahini'],

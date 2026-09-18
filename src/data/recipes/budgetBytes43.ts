@@ -9,6 +9,7 @@ export const BUDGET_BYTES_43 = [
     id: 'easy-cheesy-broccoli-rice-cheddar-parmesan', title: 'Easy Cheesy Broccoli Rice', credit: bb('easy-cheesy-broccoli-rice'),
     description: 'Fluffy buttered rice folded with finely chopped broccoli, a hint of garlic and cayenne, and plenty of cheddar and Parmesan.',
     servings: 6, prep: 10, cook: 20, cuisine: 'International', protein: 'vegetarian', diet: [], slots: ['lunch', 'dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [2, 'cup', 'white-rice', 'long grain, uncooked'],
       [3, 'cup', 'water'],
@@ -56,6 +57,7 @@ export const BUDGET_BYTES_43 = [
     id: 'fluffy-garlic-herb-mashed-russet-potatoes', title: 'Garlic Herb Mashed Potatoes', credit: bb('fluffy-garlic-herb-mashed-potatoes'),
     description: 'Light, fluffy whipped russet mashed potatoes with butter, warm milk, and a simple dried herb and garlic seasoning.',
     servings: 6, prep: 20, cook: 15, cuisine: 'International', protein: 'vegetarian', diet: [], slots: ['dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [2.5, 'lb', 'potato', 'russet'],
       [0.5, 'tsp', 'salt', 'for the cooking water'],
@@ -142,6 +144,7 @@ export const BUDGET_BYTES_43 = [
     id: 'ensalada-de-aguacate-tomato-onion-avocado', title: 'Ensalada De Aguacate (Avocado Salad)', credit: bb('ensalada-de-aguacate-avocado-salad'),
     description: 'A simple layered platter of sliced tomatoes, onion, and avocado, each layer seasoned with a bright cilantro vinegar dressing.',
     servings: 4, prep: 10, cook: 0, cuisine: 'Mexican', protein: 'vegetarian', diet: [], slots: ['lunch', 'dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       'Dressing',
       [2, 'tbsp', 'red-wine-vinegar', 'the original uses distilled white vinegar'],

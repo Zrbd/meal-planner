@@ -71,6 +71,7 @@ export const RECIPETIN_EATS_32 = [
     id: 'paris-mash-buttery-mashed-potatoes', title: 'Paris Mash (Rich & Creamy Mashed Potato)', credit: rte('paris-mash-creamy-mashed-potato'),
     description: 'Restaurant-style, silky mashed potatoes made by beating cold butter into riced potatoes a few cubes at a time until almost pourable.',
     servings: 6, prep: 15, cook: 45, cuisine: 'French', protein: 'vegetarian', diet: [], slots: ['dinner'], difficulty: 2,
+    role: 'side', tags: ['side'],
     ingredients: [
       [2, 'lb', 'potato', 'Yukon Gold or another all-rounder, scrubbed'],
       [6, 'oz', 'butter', 'cold, unsalted, cut into ½-inch cubes (5–7 oz)'],
@@ -186,6 +187,7 @@ export const RECIPETIN_EATS_32 = [
     id: 'greek-lemon-garlic-oregano-potatoes', title: 'Greek Lemon Potatoes', credit: rte('greek-lemon-potatoes'),
     description: 'Thick potato wedges roasted in lemon juice, broth, garlic, and oregano until they soak it all up, then crisped with golden edges.',
     servings: 5, prep: 10, cook: 70, cuisine: 'Greek', protein: 'vegetarian', diet: [], slots: ['dinner'], difficulty: 1,
+    role: 'side', tags: ['side'],
     ingredients: [
       [2.5, 'lb', 'potato', 'Yukon Gold, peeled and cut into thick wedges'],
       [1.5, 'cup', 'chicken-broth', 'low sodium'],
