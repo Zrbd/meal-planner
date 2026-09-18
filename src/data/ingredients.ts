@@ -262,6 +262,7 @@ const CATALOG: Ingredient[] = [
   // ---------- Frozen ----------
   I('frozen-peas', 'Frozen peas', 'frozen', 'g', { aliases: ['peas', 'green peas'], density: 0.6, packages: [{ label: '12 oz bag', qty: oz(12) }], shelfLife: { freezer: 240 } }),
   I('frozen-broccoli', 'Frozen broccoli', 'frozen', 'g', { density: 0.38, packages: [{ label: '12 oz bag', qty: oz(12) }], shelfLife: { freezer: 240 } }),
+  I('lima-beans', 'Frozen lima beans', 'frozen', 'g', { aliases: ['lima beans', 'butter beans', 'baby limas'], density: 0.6, packages: [{ label: '12 oz bag', qty: oz(12) }], shelfLife: { freezer: 240 } }),
   I('frozen-corn', 'Frozen corn', 'frozen', 'g', { aliases: ['corn', 'frozen corn kernels', 'sweet corn'], density: 0.6, packages: [{ label: '12 oz bag', qty: oz(12) }], shelfLife: { freezer: 240 } }),
   I('frozen-mixed-veg', 'Frozen mixed vegetables', 'frozen', 'g', { aliases: ['mixed vegetables', 'frozen stir fry vegetables', 'frozen peas and carrots'], density: 0.55, packages: [{ label: '12 oz bag', qty: oz(12) }], shelfLife: { freezer: 240 } }),
   I('frozen-spinach', 'Frozen spinach', 'frozen', 'g', { aliases: ['frozen chopped spinach'], density: 0.6, packages: [{ label: '10 oz box', qty: oz(10) }], shelfLife: { freezer: 240 } }),
