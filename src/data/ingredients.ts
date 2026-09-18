@@ -63,6 +63,8 @@ const CATALOG: Ingredient[] = [
   I('asparagus', 'Asparagus', 'produce', 'g', { density: 0.57, unitAliases: { bunch: 450 }, packages: [{ label: 'bunch (~1 lb)', qty: 450 }], shelfLife: { fridge: 5 } }),
   I('green-beans', 'Green beans', 'produce', 'g', { aliases: ['string beans', 'haricots verts'], density: 0.46, packages: [{ label: '12 oz bag', qty: oz(12) }, { label: '1 lb bag', qty: lb(1) }], shelfLife: { fridge: 7 } }),
   I('zucchini', 'Zucchini', 'produce', 'ea', { gramsPerEach: 200, density: 0.53, shelfLife: { fridge: 7 } }),
+  I('sauerkraut', 'Sauerkraut', 'canned', 'g', { aliases: ['sauerkraut', 'kraut'], density: 0.6, packages: [{ label: '32 oz jar', qty: oz(32) }], shelfLife: { pantry: 540, fridge: 120 } }),
+  I('prunes', 'Prunes', 'baking', 'g', { aliases: ['prunes', 'dried plums'], density: 0.6, packages: [{ label: '12 oz bag', qty: oz(12) }], shelfLife: { pantry: 365 } }),
   I('mushrooms', 'Mushrooms', 'produce', 'g', { aliases: ['cremini mushrooms', 'baby bella mushrooms', 'white mushrooms', 'mushroom'], density: 0.3, packages: [{ label: '8 oz pack', qty: oz(8) }], shelfLife: { fridge: 7 } }),
   I('spinach', 'Baby spinach', 'produce', 'g', { aliases: ['spinach', 'fresh spinach'], density: 0.127, packages: [{ label: '5 oz bag', qty: oz(5) }, { label: '10 oz bag', qty: oz(10) }], shelfLife: { fridge: 5 } }),
   I('romaine-hearts', 'Romaine hearts', 'produce', 'ea', { aliases: ['romaine', 'romaine lettuce', 'lettuce', 'romaine heart'], gramsPerEach: 280, density: 0.2, unitAliases: { heart: 1, head: 1 }, packages: [{ label: '3-pack', qty: 3 }], shelfLife: { fridge: 10 } }),
@@ -330,6 +332,7 @@ const CATALOG: Ingredient[] = [
   I('mayonnaise', 'Mayonnaise', 'oils-condiments', 'g', { aliases: ['mayo'], density: 0.92, trackMode: 'loose', packages: [{ label: '30 oz jar', qty: oz(30) }], defaultLocation: 'fridge', shelfLife: { fridge: 60 } }),
   I('pickle-relish', 'Sweet pickle relish', 'oils-condiments', 'g', { aliases: ['relish', 'sweet relish'], density: 1.1, trackMode: 'loose', packages: [{ label: '10 oz jar', qty: oz(10) }], defaultLocation: 'fridge', shelfLife: { fridge: 180 } }),
   I('ketchup', 'Ketchup', 'oils-condiments', 'g', { density: 1.15, trackMode: 'loose', packages: [{ label: '32 oz bottle', qty: oz(32) }], defaultLocation: 'fridge', shelfLife: { fridge: 180 } }),
+  I('dry-red-wine', 'Dry red wine', 'beverages', 'ml', { aliases: ['red wine', 'merlot', 'cabernet', 'pinot noir'], density: 0.99, packages: [{ label: '750 ml bottle', qty: 750 }], shelfLife: { pantry: 730 } }),
   I('dry-white-wine', 'Dry white wine', 'beverages', 'ml', { aliases: ['white wine', 'sauvignon blanc', 'pinot grigio'], density: 0.99, packages: [{ label: '750 ml bottle', qty: 750 }], shelfLife: { pantry: 365 } }),
   I('coffee', 'Coffee', 'beverages', 'g', { aliases: ['ground coffee', 'coffee beans'], density: 0.4, trackMode: 'loose', packages: [{ label: '12 oz bag', qty: oz(12) }], shelfLife: { pantry: 90 } }),
 
