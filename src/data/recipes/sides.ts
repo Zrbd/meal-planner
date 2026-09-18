@@ -1271,4 +1271,25 @@ export const SIDES = [
     ],
     notes: 'The authentic cheese is Bulgarian sirene, a firm cow\'s-milk brine cheese; feta is the usual substitute. Dress it only just before serving or the vegetables go limp.',
   }),
+  defineRecipe({
+    id: 'side-sadza', title: 'Sadza',
+    credit: { name: 'Great Zimbabwe Guide', author: 'Beth', url: 'https://www.greatzimbabweguide.com/classic-sadza-recipe/' },
+    description: 'Zimbabwe\'s staple: white cornmeal cooked stiff and smooth, eaten by hand with stew.',
+    servings: 4, prep: 5, cook: 25, cuisine: 'Zimbabwean', diet: ['vegetarian', 'vegan', 'gluten-free', 'dairy-free'], role: 'side',
+    tags: ['side', 'budget', 'staple'],
+    ingredients: [
+      [300, 'g', 'cornmeal', 'white'],
+      [1, 'cup', 'water', 'cold'],
+      [4, 'cup', 'water', 'boiling'],
+      [0.5, 'tsp', 'salt', 'optional'],
+    ],
+    steps: [
+      'Whisk about half the cornmeal into the cold water to a smooth, lump-free paste. Starting cold is the trick — cornmeal dropped straight into boiling water seizes into lumps you cannot beat out.',
+      'Stir the paste into the boiling water and simmer 5 to 10 minutes, until it thickens into a loose porridge.',
+      'Sprinkle in the remaining cornmeal a little at a time, beating hard with a wooden spoon after each addition.',
+      'Keep working it against the side of the pot until it is stiff, glossy, and pulls away cleanly, then cover and cook on low 5 minutes more.',
+      'Scoop into wet bowls to shape and turn out alongside stew or greens.',
+    ],
+    notes: 'The same dish is pap in South Africa, nsima in Malawi, and ugali in Kenya and Tanzania. It is eaten with the right hand, pinched into a scoop for the stew.',
+  }),
 ];

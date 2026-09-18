@@ -97,7 +97,8 @@ Living handoff log. Newest notes at the top of each section.
 - Dal makhani and Louisiana red beans and rice added; black lentils and dry kidney beans added to the catalog.
 - Chicken and sausage gumbo and Basque burnt cheesecake added.
 - Chicken paella and shopska salad side added.
-- SEED_VERSION 131.
+- Ugandan rolex and Zimbabwean sadza side added.
+- SEED_VERSION 132.
 - Later in the same session: more world mains (arepas de queso, tteokbokki, chicken katsu, chicken congee, pancit bihon, borscht, moussaka with ground turkey, japchae, mapo tofu, palak paneer, chicken biryani, pozole verde, vegetarian shepherd's pie, misir wat), more desserts (no-bake cheesecake, churros, tiramisu, baklava, carrot cake, bread pudding, cut-out sugar cookies, panna cotta) and ten more sides (gomen, cilantro lime rice, cumin lime coleslaw, roasted cauliflower, street corn salad, roasted brussels sprouts, glazed carrots, braised red cabbage, creamed corn, macaroni salad).
 - Bundle: the recipe catalog and ingredient catalog are now dynamic imports inside `seedIfNeeded`, and the six screens you only reach by navigating (cook mode, recipe editor, settings, stock check, prep, pantry item) are `React.lazy` behind a `Suspense` fallback. Launch JS went from 1,953 kB (545 kB gzip) to ~735 kB (229 kB gzip).
 
