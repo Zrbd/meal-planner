@@ -18,6 +18,8 @@ const FILTERS: { id: string; label: string; test: (r: Recipe, canMake: boolean) 
   { id: 'breakfast', label: 'Breakfast', test: (r) => r.slots.includes('breakfast') },
   { id: 'lunch', label: 'Lunch', test: (r) => r.slots.includes('lunch') },
   { id: 'veg', label: 'Vegetarian', test: (r) => r.diet.includes('vegetarian') },
+  { id: 'sides', label: 'Sides', test: (r) => r.role === 'side' },
+  { id: 'smoker', label: '🔥 Smoker', test: (r) => !!r.tags?.includes('smoker') },
 ];
 
 export function Recipes() {

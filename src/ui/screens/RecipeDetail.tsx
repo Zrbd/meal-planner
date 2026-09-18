@@ -83,6 +83,8 @@ export function RecipeDetail() {
               <span className="inline-flex items-center gap-1"><Clock size={14} /> {totalTime(recipe)} min</span>
               <span>{recipe.cuisine}</span>
               <span>{'●'.repeat(recipe.difficulty)}{'○'.repeat(3 - recipe.difficulty)}</span>
+              {recipe.role === 'side' && <span className="rounded-full bg-stone-100 px-2 text-xs font-semibold text-stone-600">Side dish</span>}
+              {recipe.tags?.includes('smoker') && <span className="rounded-full bg-amber-100 px-2 text-xs font-semibold text-amber-800">🔥 Smoker</span>}
             </div>
             <div className="mt-2 flex gap-0.5" aria-label="Rating">
               {[1, 2, 3, 4, 5].map((n) => (
