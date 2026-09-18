@@ -108,6 +108,7 @@ const CATALOG: Ingredient[] = [
   I('mango', 'Mango', 'produce', 'ea', { aliases: ['mangoes'], gramsPerEach: 200, defaultLocation: 'pantry', shelfLife: { pantry: 5, fridge: 7 } }),
   I('peaches', 'Peaches', 'produce', 'g', { aliases: ['peach', 'fresh peaches', 'nectarines'], gramsPerEach: 150, density: 0.6, packages: [{ label: '2 lb', qty: lb(2) }], defaultLocation: 'pantry', shelfLife: { pantry: 4, fridge: 7 } }),
   I('arugula', 'Arugula', 'produce', 'g', { aliases: ['rocket', 'mixed greens', 'spring mix', 'salad greens'], density: 0.08, packages: [{ label: '5 oz clamshell', qty: oz(5) }], shelfLife: { fridge: 5 } }),
+  I('daikon', 'Daikon radish', 'produce', 'g', { aliases: ['daikon', 'white radish', 'labanos'], density: 0.6, packages: [{ label: '1 lb root', qty: 450 }], shelfLife: { fridge: 21 } }),
   I('radishes', 'Radishes', 'produce', 'ea', { aliases: ['radish'], gramsPerEach: 10, unitAliases: { bunch: 12 }, packages: [{ label: 'bunch', qty: 12 }], shelfLife: { fridge: 10 } }),
 
   // ---------- Meat & seafood ----------

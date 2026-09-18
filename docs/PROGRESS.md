@@ -79,7 +79,8 @@ Living handoff log. Newest notes at the top of each section.
   chicken rendang and okonomiyaki mains; naan and succotash sides; basbousa and gulab jamun desserts;
   smoked pork tenderloin and smoked spatchcock chicken.
 - New catalog ingredients: semolina, milk powder, lima beans, whole chicken, galangal, makrut lime leaves.
-- SEED_VERSION 113.
+- Hainanese chicken rice and sinigang na baboy added; daikon added to the catalog.
+- SEED_VERSION 114.
 - Later in the same session: more world mains (arepas de queso, tteokbokki, chicken katsu, chicken congee, pancit bihon, borscht, moussaka with ground turkey, japchae, mapo tofu, palak paneer, chicken biryani, pozole verde, vegetarian shepherd's pie, misir wat), more desserts (no-bake cheesecake, churros, tiramisu, baklava, carrot cake, bread pudding, cut-out sugar cookies, panna cotta) and ten more sides (gomen, cilantro lime rice, cumin lime coleslaw, roasted cauliflower, street corn salad, roasted brussels sprouts, glazed carrots, braised red cabbage, creamed corn, macaroni salad).
 - Bundle: the recipe catalog and ingredient catalog are now dynamic imports inside `seedIfNeeded`, and the six screens you only reach by navigating (cook mode, recipe editor, settings, stock check, prep, pantry item) are `React.lazy` behind a `Suspense` fallback. Launch JS went from 1,953 kB (545 kB gzip) to ~735 kB (229 kB gzip).
 
