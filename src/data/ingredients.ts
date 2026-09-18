@@ -311,6 +311,7 @@ const CATALOG: Ingredient[] = [
   I('ghee', 'Ghee', 'oils-condiments', 'g', { aliases: ['clarified butter'], density: 0.9, trackMode: 'loose', packages: [{ label: '7.5 oz jar', qty: 212 }], shelfLife: { pantry: 180 } }),
   looseLiquid('marsala-wine', 'Marsala wine', 'beverages', 1.02, '750 ml bottle', 750, { aliases: ['marsala', 'dry marsala'] }),
   looseLiquid('worcestershire', 'Worcestershire sauce', 'oils-condiments', 1.1, '10 oz bottle', floz(10), { aliases: ['worcestershire'] }),
+  looseLiquid('chili-oil', 'Chili oil', 'international', 0.92, '6 oz jar', floz(6), { aliases: ['chili crisp', 'chile oil', 'lao gan ma'] }),
   looseLiquid('sriracha', 'Sriracha', 'international', 1.1, '17 oz bottle', 500, { aliases: ['hot sauce', 'chili garlic sauce'] }),
   I('dijon-mustard', 'Dijon mustard', 'oils-condiments', 'g', { aliases: ['dijon', 'mustard'], density: 1, trackMode: 'loose', packages: [{ label: '8 oz jar', qty: oz(8) }], defaultLocation: 'fridge', shelfLife: { fridge: 180 } }),
   I('mayonnaise', 'Mayonnaise', 'oils-condiments', 'g', { aliases: ['mayo'], density: 0.92, trackMode: 'loose', packages: [{ label: '30 oz jar', qty: oz(30) }], defaultLocation: 'fridge', shelfLife: { fridge: 60 } }),
