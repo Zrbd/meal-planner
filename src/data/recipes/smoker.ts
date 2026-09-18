@@ -287,4 +287,27 @@ export const SMOKER = [
     ],
     notes: 'The pink ring under the skin is smoke, not undercooked meat. If the skin is rubbery at the end, finish them for 10 minutes at 400°F (205°C).',
   }),
+  defineRecipe({
+    id: 'smoked-jalapeno-poppers', title: 'Smoked Jalapeño Poppers', credit: hgh('smoked-jalapeno-poppers'),
+    description: 'Jalapeño halves stuffed with sausage and cream cheese, wrapped in bacon and smoked until the bacon renders.',
+    servings: 6, prep: 25, cook: 60, cuisine: 'American', protein: 'pork', difficulty: 1,
+    diet: ['gluten-free'], tags: ['smoker', 'bbq', 'party', 'appetizer'], pairsWith: ['side-creamy-coleslaw'],
+    ingredients: [
+      [9, 'ea', 'jalapeno', 'halved lengthwise, seeded'],
+      [18, 'slice', 'bacon'],
+      [450, 'g', 'italian-sausage', 'casings removed'],
+      [225, 'g', 'cream-cheese', 'softened'],
+      [115, 'g', 'cheddar', 'shredded'],
+      [3, 'tbsp', 'bbq-rub'],
+    ],
+    steps: [
+      'Heat the smoker to 275°F (135°C) with a mild fruit wood.',
+      'Brown and crumble the sausage in a skillet, then let it cool a few minutes.',
+      'Mix the sausage with the cream cheese, cheddar, and a tablespoon of the rub.',
+      'Halve the jalapeños and scrape out the seeds and white ribs — that is where nearly all the heat sits — then fill each half.',
+      'Wrap each popper in a slice of bacon and dust with the rest of the rub.',
+      'Smoke on a rack 45 to 60 minutes, until the bacon is rendered and browned and the filling bubbles. Let them cool 5 minutes before serving.',
+    ],
+    notes: 'Wear gloves when you seed a batch this size. Use thin-cut bacon; thick cut will not crisp in the time the peppers need.',
+  }),
 ];
