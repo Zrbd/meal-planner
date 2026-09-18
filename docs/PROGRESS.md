@@ -56,6 +56,20 @@ Living handoff log. Newest notes at the top of each section.
 - Prep ahead (`domain/prep.ts`): marinate/soak/rise/chill/rest steps with ≥15 min are read from recipe text (overnight = 8 h, ranges use the low end). Cooking is assumed to start at breakfast 7:30, lunch 11:30, dinner 17:00. Home "Prep ahead" timeline lists thaw and prep with start times. Alerts: a heads-up up to 24 h before (≥30 min steps), then a "now" alert 30 min before, and thaw-now at 18:00 the night before. The .ics export includes prep events. A 2-minute clock tick re-evaluates while the app is open.
 - Auto backup (`db/autobackup.ts`): every launch and every time the app is backgrounded, a compact copy (no plain built-in recipes) goes to localStorage + Cache Storage. On launch, if the DB has no user data but the copy does, it's imported and re-seeded, and Home shows a "restored" banner. "Start over" clears the copy first. Real files can't be written silently on iOS, so manual backup files are still recommended.
 
+## Session: serving-size scaling, smoker, sides and a bigger recipe book (2026-09-18)
+- Instructions scale with servings: step text amounts are rewritten from the scaled ingredient lines, so a 1-can batch of pinto bean soup no longer says "3 cans". The recipe unit toggle (US/metric) and per-line amount cycling apply inside steps too.
+- Scale to one ingredient: pick any ingredient line and set the amount you actually want to use (1 can of beans, 1 lb of ground turkey) and the whole recipe, including servings and step text, scales to it.
+- Temperatures convert like measurements: oven and internal temps cycle F/C with the same tap, following the recipe-level unit setting.
+- Auto-plan availability: picking is weighted by how much of each recipe is already on hand relative to a threshold, so a pantry holding only rice no longer returns only rice. Individual meals can be kept and the rest re-planned.
+- Shopping list items link out to a Walmart search for that item (opens the app when installed).
+- Stock check (`/stock-check`, Settings -> Stock check): walks every ingredient any recipe calls for, one at a time, asking for on-hand info. Skip sends the item to the back of the queue; "Don't track" sets `alwaysOnHand`.
+- Search ranks whole-phrase matches first, so "honey chicken" surfaces honey chicken before other chicken dishes.
+- Smoker recipes are tagged `smoker` and configurable in Settings: include in auto-plan or not, weekends only, and whether to confirm before a smoker meal is planned.
+- Sides: `role: 'side'` recipes are excluded from the entree slot and are the pool for the side slot; auto-plan gives an entree plus at least one side that suits it (`pairsWith`, then cuisine, then availability). 37 existing standalone dishes were re-tagged as sides, plus new dedicated side recipes.
+- Ingredient names always use the American term (corn starch, not cornflour); UK names are kept as aliases so search still finds them.
+- New recipes: smoker (Hey Grill Hey), African and Caribbean (jollof, chicken yassa, doro wat, peanut stew, tagine, Jamaican curry chicken), global mains (oyakodon, nasi goreng, dak bulgogi, chicken tinola, tavuk sis), and more desserts. No fish (canned tuna is fine); ground turkey replaces ground beef where it works. Every built-in recipe still credits a named human source with a verified link.
+- SEED_VERSION 52.
+
 ## Known gaps / ideas for next session
 - Notifications only fire while the app is open (iOS web app limit). Calendar export covers timed reminders.
 - The auto-backup copy lives in the same site storage iOS may evict; it protects against DB corruption/partial loss, not against deleting the app.
