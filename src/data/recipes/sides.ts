@@ -1372,4 +1372,27 @@ export const SIDES = [
     ],
     notes: 'Pumpkin leaves or sweet potato leaves are the traditional greens; spinach, collards, or kale all work. Unsweetened peanut butter is the shortcut for the ground peanuts.',
   }),
+  defineRecipe({
+    id: 'side-rosti', title: 'Swiss Rösti',
+    credit: { name: 'International Cuisine', author: 'Darlene Longacre', url: 'https://www.internationalcuisine.com/rosti/' },
+    description: 'A single golden potato cake, crisp outside and soft within.',
+    servings: 4, prep: 10, cook: 25, cuisine: 'Swiss', diet: ['vegetarian', 'gluten-free'], role: 'side',
+    tags: ['side', 'potatoes', 'skillet', 'breakfast'],
+    ingredients: [
+      [700, 'g', 'potato', 'russet or Yukon gold, peeled'],
+      [1.5, 'tsp', 'salt'],
+      [0.25, 'tsp', 'black-pepper'],
+      [2, 'tbsp', 'butter'],
+      [2, 'tbsp', 'vegetable-oil'],
+    ],
+    steps: [
+      'Grate the potatoes on the large holes of a box grater.',
+      'Toss with the salt and pepper, let them sit 5 minutes, then squeeze them dry in a towel. Wet shreds steam instead of browning and the cake never crisps.',
+      'Heat an 8-inch skillet over medium-high with the oil and half the butter.',
+      'Add the potatoes and press them into an even cake, then cook without disturbing until the underside is deep golden, about 10 minutes.',
+      'Slide the cake onto a plate or board, invert it back into the pan, add the rest of the butter, and cook another 10 minutes.',
+      'Blot, cut into wedges, and serve right away — rösti softens as it sits.',
+    ],
+    notes: 'Parboiled potatoes chilled overnight grate more easily and hold together better, which is the traditional Bernese method. Bacon, cheese, or onion can go in the mix.',
+  }),
 ];
