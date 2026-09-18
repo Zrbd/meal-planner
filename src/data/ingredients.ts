@@ -87,6 +87,7 @@ const CATALOG: Ingredient[] = [
   I('kale', 'Kale', 'produce', 'g', { aliases: ['lacinato kale', 'curly kale', 'tuscan kale'], density: 0.09, unitAliases: { bunch: 250 }, packages: [{ label: 'bunch', qty: 250 }], shelfLife: { fridge: 7 } }),
   I('collard-greens', 'Collard greens', 'produce', 'g', { aliases: ['collards', 'collard'], density: 0.09, unitAliases: { bunch: 350 }, packages: [{ label: 'bunch', qty: 350 }], shelfLife: { fridge: 7 } }),
   I('habanero', 'Habanero pepper', 'produce', 'ea', { aliases: ['scotch bonnet', 'habanero chile', 'scotch bonnet pepper'], gramsPerEach: 9, density: 0.6, shelfLife: { fridge: 14 } }),
+  I('brussels-sprouts', 'Brussels sprouts', 'produce', 'g', { aliases: ['brussel sprouts', 'sprouts'], density: 0.5, packages: [{ label: '1 lb bag', qty: lb(1) }], shelfLife: { fridge: 10 } }),
   I('cauliflower', 'Cauliflower', 'produce', 'g', { aliases: ['cauliflower florets'], density: 0.42, unitAliases: { head: 800 }, packages: [{ label: 'head (~1.75 lb)', qty: 800 }], shelfLife: { fridge: 10 } }),
   I('beets', 'Beets', 'produce', 'ea', { aliases: ['beet', 'red beets'], gramsPerEach: 150, density: 0.7, packages: [{ label: 'bunch of 3', qty: 3 }], defaultLocation: 'fridge', shelfLife: { fridge: 21 } }),
   I('leek', 'Leeks', 'produce', 'ea', { aliases: ['leek'], gramsPerEach: 250, density: 0.37, shelfLife: { fridge: 14 } }),
@@ -174,6 +175,7 @@ const CATALOG: Ingredient[] = [
   I('brown-lentils', 'Brown/green lentils (dry)', 'pasta-grains', 'g', { aliases: ['lentils', 'green lentils', 'brown lentils', 'french lentils'], density: 0.8, packages: [{ label: '1 lb bag', qty: lb(1) }] }),
   I('red-lentils', 'Red lentils (dry)', 'pasta-grains', 'g', { aliases: ['red lentils', 'split red lentils', 'yellow lentils'], density: 0.82, packages: [{ label: '1 lb bag', qty: lb(1) }] }),
 
+  I('elbow-macaroni', 'Elbow macaroni', 'pasta-grains', 'g', { aliases: ['macaroni', 'elbows', 'small shells'], density: 0.45, packages: [{ label: '1 lb box', qty: lb(1) }] }),
   I('penne', 'Penne', 'pasta-grains', 'g', { aliases: ['ziti', 'rigatoni', 'penne pasta'], packages: [{ label: '1 lb box', qty: lb(1) }] }),
   I('egg-noodles', 'Egg noodles', 'pasta-grains', 'g', { aliases: ['wide egg noodles'], density: 0.16, packages: [{ label: '12 oz bag', qty: oz(12) }] }),
   I('rice-noodles', 'Rice noodles', 'international', 'g', { aliases: ['pad thai noodles', 'rice stick noodles'], packages: [{ label: '14 oz pack', qty: oz(14) }], shelfLife: { pantry: 365 } }),
@@ -288,6 +290,7 @@ const CATALOG: Ingredient[] = [
   looseLiquid('sriracha', 'Sriracha', 'international', 1.1, '17 oz bottle', 500, { aliases: ['hot sauce', 'chili garlic sauce'] }),
   I('dijon-mustard', 'Dijon mustard', 'oils-condiments', 'g', { aliases: ['dijon', 'mustard'], density: 1, trackMode: 'loose', packages: [{ label: '8 oz jar', qty: oz(8) }], defaultLocation: 'fridge', shelfLife: { fridge: 180 } }),
   I('mayonnaise', 'Mayonnaise', 'oils-condiments', 'g', { aliases: ['mayo'], density: 0.92, trackMode: 'loose', packages: [{ label: '30 oz jar', qty: oz(30) }], defaultLocation: 'fridge', shelfLife: { fridge: 60 } }),
+  I('pickle-relish', 'Sweet pickle relish', 'oils-condiments', 'g', { aliases: ['relish', 'sweet relish'], density: 1.1, trackMode: 'loose', packages: [{ label: '10 oz jar', qty: oz(10) }], defaultLocation: 'fridge', shelfLife: { fridge: 180 } }),
   I('ketchup', 'Ketchup', 'oils-condiments', 'g', { density: 1.15, trackMode: 'loose', packages: [{ label: '32 oz bottle', qty: oz(32) }], defaultLocation: 'fridge', shelfLife: { fridge: 180 } }),
   I('dry-white-wine', 'Dry white wine', 'beverages', 'ml', { aliases: ['white wine', 'sauvignon blanc', 'pinot grigio'], density: 0.99, packages: [{ label: '750 ml bottle', qty: 750 }], shelfLife: { pantry: 365 } }),
   I('coffee', 'Coffee', 'beverages', 'g', { aliases: ['ground coffee', 'coffee beans'], density: 0.4, trackMode: 'loose', packages: [{ label: '12 oz bag', qty: oz(12) }], shelfLife: { pantry: 90 } }),
