@@ -296,6 +296,7 @@ const CATALOG: Ingredient[] = [
   I('panko', 'Panko breadcrumbs', 'baking', 'g', { aliases: ['panko', 'breadcrumbs', 'bread crumbs'], density: 0.25, packages: [{ label: '8 oz box', qty: oz(8) }], shelfLife: { pantry: 180 } }),
   I('chia-seeds', 'Chia seeds', 'baking', 'g', { aliases: ['chia'], density: 0.65, trackMode: 'loose', packages: [{ label: '12 oz bag', qty: oz(12) }] }),
   I('semolina', 'Semolina flour', 'pasta-grains', 'g', { aliases: ['farina', 'semolina', 'coarse semolina', 'suji', 'rava'], density: 0.68, packages: [{ label: '24 oz box', qty: oz(24) }], shelfLife: { pantry: 365 } }),
+  I('dulce-de-leche', 'Dulce de leche', 'baking', 'g', { aliases: ['dulce de leche', 'milk caramel', 'cajeta'], density: 1.3, packages: [{ label: '13.4 oz jar', qty: oz(13.4) }], shelfLife: { pantry: 540, fridge: 30 } }),
   I('milk-powder', 'Nonfat dry milk powder', 'baking', 'g', { aliases: ['dry milk', 'powdered milk', 'full fat milk powder'], density: 0.45, packages: [{ label: '1 lb bag', qty: lb(1) }], shelfLife: { pantry: 540 } }),
   I('masa-harina', 'Masa harina', 'pasta-grains', 'g', { aliases: ['corn masa flour', 'instant corn masa', 'maseca'], density: 0.55, packages: [{ label: '2 lb bag', qty: lb(2) }], shelfLife: { pantry: 365 } }),
   I('grits', 'Grits', 'pasta-grains', 'g', { aliases: ['quick grits', 'stone ground grits', 'hominy grits'], density: 0.68, packages: [{ label: '24 oz bag', qty: oz(24) }] }),
