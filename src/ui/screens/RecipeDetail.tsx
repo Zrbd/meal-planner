@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { recipeCoverage } from '../../domain/coverage';
 import { addDaysISO, relativeDayLabel } from '../../domain/dates';
-import { SLOTS, type Slot } from '../../domain/types';
+import { SLOTS, type Ingredient, type Recipe, type Slot } from '../../domain/types';
 import { tipIngredients, tipsByStep } from '../../domain/freshness';
 import { ExternalLink, Lightbulb, RotateCcw } from 'lucide-react';
 import { FlipAmount, StorageTip, useRecipeUnits } from '../amounts';
@@ -13,10 +13,13 @@ import { EmptyState, PageHeader, RecipeThumb, Segmented, Sheet, totalTime } from
 import { useAppData } from '../data';
 import { useAvailability, usePrices } from '../hooks';
 import { money, recipeCost } from '../../domain/prices';
-import { displayStep, swapSuggestions } from '../../domain/substitute';
+import { scaleChoices } from '../../domain/scaleto';
+import { renderStep } from '../../domain/steptext';
+import { swapSuggestions } from '../../domain/substitute';
+import { formatAmount, formatNumber } from '../../domain/units';
 import { substituteIngredient } from '../../services/recipes';
 import { IngredientPicker } from '../components';
-import { ArrowLeftRight } from 'lucide-react';
+import { ArrowLeftRight, Scale } from 'lucide-react';
 import { useToast } from '../toast';
 
 export function RecipeDetail() {
@@ -25,6 +28,8 @@ export function RecipeDetail() {
   const toast = useToast();
   const { recipeById, ingById, ingredients, settings, today } = useAppData();
   const [swapIdx, setSwapIdx] = useState<number | null>(null);
+  const [scaleIdx, setScaleIdx] = useState<number | null>(null);
+  const [scaleOpen, setScaleOpen] = useState(false);
   const [swapSearch, setSwapSearch] = useState(false);
   const { available, looseLevel } = useAvailability();
   const recipe = recipeById.get(id);
@@ -110,12 +115,15 @@ export function RecipeDetail() {
             <button className="icon-btn h-8 w-8 bg-stone-100" aria-label="Fewer servings" onClick={() => setServings(Math.max(1, servings - 1))}>
               <Minus size={16} />
             </button>
-            <span className="w-6 text-center font-semibold" aria-live="polite">{servings}</span>
+            <span className="w-8 text-center font-semibold" aria-live="polite">{formatNumber(servings)}</span>
             <button className="icon-btn h-8 w-8 bg-stone-100" aria-label="More servings" onClick={() => setServings(servings + 1)}>
               <Plus size={16} />
             </button>
           </div>
         </div>
+        <button className="btn btn-ghost mt-2 px-2 py-1 text-xs" onClick={() => { setScaleIdx(null); setScaleOpen(true); }}>
+          <Scale size={13} /> Scale to one ingredient
+        </button>
         {coverage && (
           <p className="mt-1 text-sm text-stone-500">
             {coverage.canMake ? '✅ You have everything you need.' : `You're missing ${coverage.missing.length} ingredient${coverage.missing.length === 1 ? '' : 's'}.`}
@@ -180,7 +188,7 @@ export function RecipeDetail() {
             <li key={i} className="flex gap-3">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-white">{i + 1}</span>
               <div className="min-w-0 flex-1 space-y-2">
-                <p className="pt-0.5 leading-relaxed">{displayStep(s, recipe, ingById)}</p>
+                <p className="pt-0.5 leading-relaxed">{renderStep(s, { scale, system: units.system, recipe, ingById })}</p>
                 {stepTips.get(i)?.map((ing) => <StorageTip key={ing.id} ing={ing} compact />)}
               </div>
             </li>
@@ -288,6 +296,15 @@ export function RecipeDetail() {
               )}
               <button className="btn btn-primary mt-4 w-full" onClick={() => setSwapSearch(true)}>Search all ingredients</button>
             </Sheet>
+            <ScaleSheet
+              open={scaleOpen}
+              onClose={() => setScaleOpen(false)}
+              recipe={recipe}
+              ingById={ingById}
+              idx={scaleIdx}
+              onPickLine={setScaleIdx}
+              onScale={(servingsAt) => { setServings(servingsAt); setScaleOpen(false); }}
+            />
             <IngredientPicker
               open={swapSearch}
               onClose={() => setSwapSearch(false)}
@@ -336,6 +353,59 @@ function AddToPlanSheet(props: {
           </button>
         ))}
       </div>
+    </Sheet>
+  );
+}
+
+/** "I want to use one can of beans": pick a line, pick an amount, and the recipe scales to it. */
+function ScaleSheet(props: {
+  open: boolean;
+  onClose: () => void;
+  recipe: Recipe;
+  ingById: Map<string, Ingredient>;
+  idx: number | null;
+  onPickLine: (idx: number) => void;
+  onScale: (servings: number) => void;
+}) {
+  const { recipe, ingById, idx } = props;
+  const lines = recipe.ingredients
+    .map((ri, i) => ({ ri, i, ing: ingById.get(ri.ingredientId) }))
+    .filter((l) => l.ing && l.ri.qty > 0);
+  const chosen = idx === null ? undefined : lines.find((l) => l.i === idx);
+  const choices = chosen ? scaleChoices(recipe, chosen.ri, chosen.ing!) : [];
+  return (
+    <Sheet open={props.open} onClose={props.onClose} title="Scale to one ingredient">
+      {!chosen ? (
+        <>
+          <p className="pb-2 text-sm text-stone-500">Cook to what you have — pick the ingredient you want to use up.</p>
+          <ul className="card divide-y divide-stone-100">
+            {lines.map((l) => (
+              <li key={l.i}>
+                <button className="flex w-full items-center justify-between p-3 text-left" onClick={() => props.onPickLine(l.i)}>
+                  <span>{l.ing!.name.toLowerCase()}</span>
+                  <span className="text-sm text-stone-500">{formatAmount(l.ri.qty, l.ri.unit)}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : (
+        <>
+          <p className="pb-2 text-sm text-stone-500">
+            How much {chosen.ing!.name.toLowerCase()} do you want to use? The recipe calls for {formatAmount(chosen.ri.qty, chosen.ri.unit)}.
+          </p>
+          <div className="grid grid-cols-2 gap-2">
+            {choices.map((c) => (
+              <button key={`${c.qty}:${c.unit}`} className="btn btn-secondary flex-col items-start py-2" onClick={() => props.onScale(c.servings)}>
+                <span className="font-semibold">{c.label}</span>
+                <span className="text-xs text-stone-500">makes {formatNumber(c.servings)} serving{c.servings === 1 ? '' : 's'}</span>
+              </button>
+            ))}
+          </div>
+          {choices.length === 0 && <p className="text-sm text-stone-500">This one can't be scaled on its own.</p>}
+          <button className="btn btn-ghost mt-3 w-full" onClick={() => props.onPickLine(-1)}>Pick a different ingredient</button>
+        </>
+      )}
     </Sheet>
   );
 }
