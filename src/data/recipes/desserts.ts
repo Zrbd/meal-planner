@@ -130,4 +130,28 @@ export const DESSERTS = [
     ],
     notes: 'Frozen or well-drained canned peaches work out of season.',
   }),
+  defineRecipe({
+    id: 'apple-crisp', title: 'Easy Apple Crisp', credit: bb('easy-apple-crisp'),
+    description: 'Spiced apple slices under a buttery oat crumble, baked until the topping is crisp and the fruit is bubbling.',
+    servings: 6, prep: 15, cook: 45, cuisine: 'American', difficulty: 1, diet: ['vegetarian'],
+    role: 'dessert', tags: ['dessert', 'baking'],
+    ingredients: [
+      'Apples',
+      [2, 'lb', 'apple', 'cored and sliced 1/4 to 1/2 inch thick'],
+      [3, 'tbsp', 'sugar'], [1, 'tbsp', 'all-purpose-flour'],
+      [1, 'tsp', 'ground-cinnamon'], [0.25, 'tsp', 'ground-ginger'], [0.125, 'tsp', 'ground-cloves'],
+      [0.5, 'tsp', 'vanilla-extract'],
+      'Oat topping',
+      [0.25, 'cup', 'all-purpose-flour'], [0.33, 'cup', 'rolled-oats'], [0.5, 'cup', 'brown-sugar'],
+      [0.125, 'tsp', 'salt'], [0.25, 'tsp', 'ground-cinnamon'], [0.25, 'cup', 'butter', 'room temperature'],
+    ],
+    steps: [
+      'Heat the oven to 350°F (175°C) and slice the apples 1/4 to 1/2 inch thick. Peel them or not, as you like.',
+      'Toss the apples with the sugar, flour, cinnamon, ginger, cloves, and vanilla until evenly coated, then spread them in a 2-quart baking dish.',
+      'Stir the topping flour, oats, brown sugar, salt, and cinnamon together, then rub the butter in with your fingers until the mixture is crumbly and looks damp.',
+      'Scatter the crumble over the apples and bake 45 minutes, until the topping is browned and the fruit bubbles at the edges.',
+      'Serve hot, with ice cream if you have it.',
+    ],
+    notes: 'Sweet apples like Gala or Fuji need no adjustment; with tart ones like Granny Smith, add another spoonful of sugar. Old-fashioned rolled oats stay crisp where quick oats go soft.',
+  }),
 ];

@@ -95,4 +95,4 @@ export const RECIPES: Recipe[] = [
 ];
 
 /** Bump when built-in ingredients/recipes change so seeding upserts them (user-edited recipes are kept). */
-export const SEED_VERSION = 52;
+export const SEED_VERSION = 53;
