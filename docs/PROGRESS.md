@@ -68,13 +68,13 @@ Living handoff log. Newest notes at the top of each section.
 - Sides: `role: 'side'` recipes are excluded from the entree slot and are the pool for the side slot; auto-plan gives an entree plus at least one side that suits it (`pairsWith`, then cuisine, then availability). 37 existing standalone dishes were re-tagged as sides, plus new dedicated side recipes.
 - Ingredient names always use the American term (corn starch, not cornflour); UK names are kept as aliases so search still finds them.
 - New recipes: smoker (Hey Grill Hey), African and Caribbean (jollof, chicken yassa, doro wat, peanut stew, tagine, Jamaican curry chicken), global mains (oyakodon, nasi goreng, dak bulgogi, chicken tinola, tavuk sis), and more desserts. No fish (canned tuna is fine); ground turkey replaces ground beef where it works. Every built-in recipe still credits a named human source with a verified link.
-- SEED_VERSION 52.
+- SEED_VERSION 77.
+- Later in the same session: more world mains (arepas de queso, tteokbokki, chicken katsu, chicken congee, pancit bihon, borscht, moussaka with ground turkey, japchae, mapo tofu, palak paneer, chicken biryani, pozole verde, vegetarian shepherd's pie, misir wat), more desserts (no-bake cheesecake, churros, tiramisu, baklava, carrot cake, bread pudding, cut-out sugar cookies, panna cotta) and ten more sides (gomen, cilantro lime rice, cumin lime coleslaw, roasted cauliflower, street corn salad, roasted brussels sprouts, glazed carrots, braised red cabbage, creamed corn, macaroni salad).
+- Bundle: the recipe catalog and ingredient catalog are now dynamic imports inside `seedIfNeeded`, and the six screens you only reach by navigating (cook mode, recipe editor, settings, stock check, prep, pantry item) are `React.lazy` behind a `Suspense` fallback. Launch JS went from 1,953 kB (545 kB gzip) to ~735 kB (229 kB gzip).
 
 ## Known gaps / ideas for next session
 - Notifications only fire while the app is open (iOS web app limit). Calendar export covers timed reminders.
 - The auto-backup copy lives in the same site storage iOS may evict; it protects against DB corruption/partial loss, not against deleting the app.
-- JS bundle is ~700 kB (216 kB gzip) — could code-split screens with `React.lazy`.
-- Auto-fill can put similar proteins on back-to-back days; consider a variety penalty for same protein on adjacent days in `autoplan.ts`.
 - No UI tests yet (only domain/services). Consider Playwright smoke tests.
 - Hosting: any static host works (`base: './'` + HashRouter). Must be HTTPS for install/offline on iPhone.
 
