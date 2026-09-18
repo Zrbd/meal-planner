@@ -253,6 +253,7 @@ const CATALOG: Ingredient[] = [
   I('powdered-sugar', 'Powdered sugar', 'baking', 'g', { aliases: ['confectioners sugar', 'icing sugar'], density: 0.56, trackMode: 'loose', packages: [{ label: '2 lb bag', qty: lb(2) }] }),
   I('graham-crackers', 'Graham crackers', 'snacks', 'g', { aliases: ['honey graham crackers', 'graham cracker crumbs'], density: 0.5, packages: [{ label: '14.4 oz box', qty: oz(14.4) }], shelfLife: { pantry: 180 } }),
   I('ladyfingers', 'Ladyfingers (savoiardi)', 'snacks', 'ea', { aliases: ['savoiardi', 'sponge fingers'], gramsPerEach: 10, packages: [{ label: '7 oz pack (~24)', qty: 24 }], shelfLife: { pantry: 180 } }),
+  I('gelatin', 'Unflavored gelatin', 'baking', 'g', { aliases: ['gelatine', 'powdered gelatin', 'gelatin powder'], density: 0.65, trackMode: 'loose', packages: [{ label: '4-envelope box', qty: 28 }], shelfLife: { pantry: 730 } }),
   I('baking-powder', 'Baking powder', 'baking', 'g', { density: 0.9, trackMode: 'loose', packages: [{ label: '8 oz can', qty: oz(8) }] }),
   I('baking-soda', 'Baking soda', 'baking', 'g', { density: 1.1, trackMode: 'loose', packages: [{ label: '1 lb box', qty: lb(1) }] }),
   I('cornstarch', 'Cornstarch', 'baking', 'g', { aliases: ['corn starch', 'corn starch'], density: 0.54, trackMode: 'loose', packages: [{ label: '16 oz box', qty: lb(1) }] }),
