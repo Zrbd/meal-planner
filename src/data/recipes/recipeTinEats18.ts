@@ -163,7 +163,7 @@ export const RECIPETIN_EATS_18 = [
       'Pasta sauce',
       [1, 'tbsp', 'olive-oil'],
       [2, 'clove', 'garlic', 'minced'],
-      [24, 'oz', 'tomato-sauce', 'or tomato passata'],
+      [24, 'oz', 'tomato-sauce', 'smooth, e.g. tomato sauce'],
       [1, 'tsp', 'onion-powder'],
       [1, 'tsp', 'garlic-powder'],
       [2, 'tsp', 'italian-seasoning'],

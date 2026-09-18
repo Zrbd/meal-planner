@@ -19,7 +19,7 @@ export const RECIPETIN_EATS_15 = [
       [2, 'tbsp', 'olive-oil'],
       [2, 'clove', 'garlic', 'finely minced'],
       [0.5, 'ea', 'yellow-onion', 'small, very finely chopped'],
-      [24, 'oz', 'tomato-sauce', 'or tomato passata'],
+      [24, 'oz', 'tomato-sauce', 'smooth, e.g. tomato sauce'],
       [0.25, 'cup', 'water'],
       [1, 'tsp', 'italian-seasoning', 'or dried oregano'],
       [0.5, 'tsp', 'red-pepper-flakes', '', 'optional'],

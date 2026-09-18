@@ -68,7 +68,7 @@ export const RECIPETIN_EATS_10 = [
       [2, 'clove', 'garlic', 'minced'],
       [1, 'lb', 'italian-sausage', 'pork, squeezed out of casings'],
       [0.25, 'cup', 'chicken-broth', 'instead of white wine, or water'],
-      [1, 'cup', 'tomato-sauce', 'passata / tomato purée'],
+      [1, 'cup', 'tomato-sauce', 'smooth tomato sauce (tomato sauce)'],
       [0.75, 'cup', 'heavy-cream'],
       [0.75, 'cup', 'milk'],
       [0.33, 'cup', 'parmesan', 'finely grated, plus extra to serve'],
@@ -85,7 +85,7 @@ export const RECIPETIN_EATS_10 = [
       'Add the pasta and kale and toss 1 minute until the sauce thickens and coats everything, loosening with pasta water as needed.',
       'Serve right away with extra Parmesan.',
     ],
-    notes: 'Raw sausage keeps only 1–2 days in the fridge but freezes well for 2 months. Freeze links individually on a tray and bag them, then squeeze the meat from casings while still half-frozen. Leftover passata freezes in ice cube trays or zip-top bags.',
+    notes: 'Raw sausage keeps only 1–2 days in the fridge but freezes well for 2 months. Freeze links individually on a tray and bag them, then squeeze the meat from casings while still half-frozen. Leftover tomato sauce freezes in ice cube trays or zip-top bags.',
   }),
   defineRecipe({
     id: 'sausage-vegetable-bake-gravy', title: 'Oven Baked Sausages with Vegetables and Gravy', credit: rte('one-pan-sausage-and-vegetable-bake-with-gravy'),

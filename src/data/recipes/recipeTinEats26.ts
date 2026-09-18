@@ -7,7 +7,7 @@ const rte = (slug: string) => ({ name: 'RecipeTin Eats', author: 'Nagi Maehashi'
 export const RECIPETIN_EATS_26 = [
   defineRecipe({
     id: 'honey-bacon-wrapped-pork-tenderloin', title: 'Bacon Wrapped Pork Tenderloin', credit: rte('bacon-wrapped-pork-tenderloin'),
-    description: 'A seared pork tenderloin rolled in streaky bacon, brushed with honey, and roasted until the bacon is sticky and golden and the pork is blushing and juicy.',
+    description: 'A seared pork tenderloin rolled in bacon, brushed with honey, and roasted until the bacon is sticky and golden and the pork is blushing and juicy.',
     servings: 4, prep: 5, cook: 30, cuisine: 'American', protein: 'pork', diet: [], difficulty: 2,
     ingredients: [
       [9, 'slice', 'bacon', 'streaky, long enough to wrap 1½ times'],
@@ -211,7 +211,7 @@ export const RECIPETIN_EATS_26 = [
   }),
   defineRecipe({
     id: 'oven-chicken-doner-kebab', title: 'Chicken Doner Kebab', credit: rte('homemade-chicken-doner-kebab'),
-    description: 'Yogurt-spice marinated chicken thighs stacked on skewers and oven-roasted until charred, then thinly sliced into flatbread wraps with lettuce, tomato, cheese, and chilli sauce.',
+    description: 'Yogurt-spice marinated chicken thighs stacked on skewers and oven-roasted until charred, then thinly sliced into flatbread wraps with lettuce, tomato, cheese, and chili sauce.',
     servings: 5, prep: 20, cook: 55, cuisine: 'Turkish', protein: 'chicken', diet: [], difficulty: 2,
     ingredients: [
       [2, 'lb', 'chicken-thighs', 'boneless skinless'],
@@ -244,7 +244,7 @@ export const RECIPETIN_EATS_26 = [
       'Prop the skewers across the pan and drizzle with oil.',
       'Roast 35 minutes until golden with some char, spoon the juices over, turn, drizzle with oil, and roast 20 minutes more.',
       'Rest 5 minutes, baste again, then stand the stacks up and carve thin slices.',
-      'Spread flatbreads with hummus or a yogurt sauce, add lettuce, tomato, onion, cheese, and chicken, drizzle with chilli sauce, and roll up tightly in foil.',
+      'Spread flatbreads with hummus or a yogurt sauce, add lettuce, tomato, onion, cheese, and chicken, drizzle with chili sauce, and roll up tightly in foil.',
     ],
     notes: 'Greek yogurt keeps 1–2 weeks after opening, and this marinade is a great way to finish a tub. The marinated raw chicken freezes 3 months, so thaw it overnight in the fridge before skewering. Sliced cooked chicken keeps 4 days and freezes well. Crisp it in a hot pan to reheat. Wrap flatbreads well, or freeze them and warm from frozen.',
   }),
@@ -278,8 +278,8 @@ export const RECIPETIN_EATS_26 = [
     notes: 'Make a double batch of the spice blend. It keeps 6 months in a sealed jar and is great on chicken and shrimp too. Thin frozen fillets thaw in about 30 minutes sealed in cold water. Pat them very dry or the crust won’t form. Cooked fish keeps 2 days.',
   }),
   defineRecipe({
-    id: 'creamy-prawn-cheesy-potato-foil-packets', title: 'Creamy Garlic Prawn & Cheesy Potato Foil Packets', credit: rte('creamy-shrimp-cheesy-potato-foil-packet-recipe'),
-    description: 'Foil packets of par-boiled thyme potatoes, melty mozzarella, prawns, and asparagus drenched in garlic butter cream, baked or grilled for 10 minutes.',
+    id: 'creamy-prawn-cheesy-potato-foil-packets', title: 'Creamy Garlic Shrimp & Cheesy Potato Foil Packets', credit: rte('creamy-shrimp-cheesy-potato-foil-packet-recipe'),
+    description: 'Foil packets of par-boiled thyme potatoes, melty mozzarella, shrimp, and asparagus drenched in garlic butter cream, baked or grilled for 10 minutes.',
     servings: 4, prep: 10, cook: 10, cuisine: 'Australian', protein: 'shrimp', diet: [], difficulty: 1,
     ingredients: [
       [1.2, 'lb', 'potato', 'peeled, in ½-inch cubes'],
@@ -298,9 +298,9 @@ export const RECIPETIN_EATS_26 = [
       'Boil the potatoes about 5 minutes until just cooked, drain, and toss with salt, pepper, and thyme.',
       'Microwave the cream, butter, and garlic 30–40 seconds until the butter melts, then cool if you have time.',
       'Heat the oven to 390°F (350°F fan), or heat the grill to medium-high.',
-      'Tear 4 large sheets of heavy-duty foil. Divide the potatoes among them, then top with cheese, prawns, and asparagus. Drizzle with the cream sauce and sprinkle with salt, pepper, and parsley.',
+      'Tear 4 large sheets of heavy-duty foil. Divide the potatoes among them, then top with cheese, shrimp, and asparagus. Drizzle with the cream sauce and sprinkle with salt, pepper, and parsley.',
       'Fold the long ends together over the filling, then fold in the sides to seal.',
-      'Bake or grill 10–12 minutes, then open and serve right away so the prawns don’t overcook.',
+      'Bake or grill 10–12 minutes, then open and serve right away so the shrimp don’t overcook.',
     ],
     notes: 'Asparagus lasts longest (up to a week) standing upright in a jar with an inch of water, loosely covered with a bag in the fridge. Frozen raw shrimp thaw in about 5 minutes under cold running water. You can assemble the packets a few hours ahead and keep them cold. Best eaten fresh.',
   }),

@@ -67,8 +67,8 @@ export const RECIPETIN_EATS_24 = [
     notes: 'The original adds ¾ cup chopped walnuts to the filling for crunch. This is a great way to use up a rotisserie chicken, which keeps 3–4 days once home. Pull the meat off while warm, and freeze what you won’t use within 3 days. The filling keeps 3 days in the fridge. Fresh dill lasts about a week wrapped in a damp paper towel inside a bag, and it freezes well chopped.',
   }),
   defineRecipe({
-    id: 'garlic-prawns-white-wine-butter', title: 'Garlic Prawns', credit: rte('garlic-prawns-shrimp'),
-    description: 'A 15-minute restaurant-style classic: prawns seared hard and fast, then tossed in garlic, a splash of white wine, butter, and lemon, with bread for mopping.',
+    id: 'garlic-prawns-white-wine-butter', title: 'Garlic Shrimp', credit: rte('garlic-prawns-shrimp'),
+    description: 'A 15-minute restaurant-style classic: shrimp seared hard and fast, then tossed in garlic, a splash of white wine, butter, and lemon, with bread for mopping.',
     servings: 4, prep: 10, cook: 6, cuisine: 'Spanish', protein: 'shrimp', diet: [], difficulty: 1,
     ingredients: [
       [1, 'lb', 'shrimp', 'peeled and deveined, tails on'],
@@ -83,13 +83,13 @@ export const RECIPETIN_EATS_24 = [
       [1, 'ea', 'baguette', 'for mopping up the sauce', 'optional'],
     ],
     steps: [
-      'Toss the prawns with 1 tbsp oil and the pepper and let them sit 20 minutes (no longer, because salt draws out moisture).',
-      'Heat 1 tbsp oil in a large non-stick pan over high. Sear half the prawns just 45 seconds per side, then move them to a plate.',
+      'Toss the shrimp with 1 tbsp oil and the pepper and let them sit 20 minutes (no longer, because salt draws out moisture).',
+      'Heat 1 tbsp oil in a large non-stick pan over high. Sear half the shrimp just 45 seconds per side, then move them to a plate.',
       'Add the last tablespoon of oil and sear the rest the same way, then return the first batch to the pan.',
       'Add the garlic and stir 30 seconds. Pour in the wine and stir, scraping the pan, about 30 seconds until mostly evaporated.',
       'Scatter in the butter with the lemon juice, swirl until melted, and toss with parsley. Pour everything onto a plate and serve with lemon wedges and bread.',
     ],
-    notes: 'Buy frozen raw prawns and keep them on hand for months. Thaw overnight in the fridge, or in a colander under cold running water for about 5 minutes. Cook thawed prawns within 1–2 days. Mince garlic with a knife, not a press, so it doesn’t burn. Opened wine keeps 3–5 days corked in the fridge, or freeze it in ice cube trays for cooking.',
+    notes: 'Buy frozen raw shrimp and keep them on hand for months. Thaw overnight in the fridge, or in a colander under cold running water for about 5 minutes. Cook thawed shrimp within 1–2 days. Mince garlic with a knife, not a press, so it doesn’t burn. Opened wine keeps 3–5 days corked in the fridge, or freeze it in ice cube trays for cooking.',
   }),
   defineRecipe({
     id: 'oven-roasted-eggplant-cubes', title: 'Oven Roasted Eggplant', credit: rte('roasted-eggplant'),
@@ -114,8 +114,8 @@ export const RECIPETIN_EATS_24 = [
     notes: 'Eggplant only lasts about a week and gets bitter and spongy in the cold, so keep it in a cool spot or the warmest part of the fridge and use it early in your plan. Roasted cubes keep 4 days and freeze well for up to 3 months, so roast extras if your eggplant is getting soft. Toss them into pasta sauce or curry straight from frozen.',
   }),
   defineRecipe({
-    id: 'prawn-mango-avocado-orzo-salad', title: 'Prawn Mango Avocado Summer Salad', credit: rte('prawn-mango-avocado-summer-salad'),
-    description: 'A fresh summer salad of cooked prawns, juicy mango, avocado, cherry tomatoes, arugula, and orzo in a zingy lime and olive oil dressing.',
+    id: 'prawn-mango-avocado-orzo-salad', title: 'Shrimp Mango Avocado Summer Salad', credit: rte('prawn-mango-avocado-summer-salad'),
+    description: 'A fresh summer salad of cooked shrimp, juicy mango, avocado, cherry tomatoes, arugula, and orzo in a zingy lime and olive oil dressing.',
     servings: 4, prep: 15, cook: 10, cuisine: 'Australian', protein: 'shrimp', diet: [], slots: ['lunch', 'dinner'], difficulty: 1,
     ingredients: [
       'Salad',
@@ -137,7 +137,7 @@ export const RECIPETIN_EATS_24 = [
     steps: [
       'Cook the orzo per the package, rinse under cold water, and drain well.',
       'Shake the dressing ingredients in a jar.',
-      'Chop the prawns into bite-size pieces.',
+      'Chop the shrimp into bite-size pieces.',
       'Put all the salad ingredients in a bowl, pour over the dressing, and toss very gently with a rubber spatula. Add more lime to taste and serve right away.',
     ],
     notes: 'Avocados ripen on the counter. Once ripe, move them to the fridge to buy 3–5 extra days. A cut half keeps best with its pit in, face-down on a plate or brushed with lime juice. Ripen mangoes on the counter and refrigerate once soft (about 5 days). Arugula wilts quickly, so store it with a paper towel in the container and use it within 3–4 days. Dress the salad just before serving.',

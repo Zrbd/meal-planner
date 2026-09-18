@@ -178,7 +178,7 @@ export const RECIPETIN_EATS_16 = [
       [8, 'oz', 'spaghetti', 'linguine or fettuccine'],
       [1.5, 'tbsp', 'olive-oil'],
       [3, 'clove', 'garlic', 'finely minced'],
-      [0.75, 'cup', 'tomato-sauce', 'or tomato passata'],
+      [0.75, 'cup', 'tomato-sauce', 'smooth, e.g. tomato sauce'],
       [1, 'tbsp', 'parsley', 'finely chopped'],
       [2, 'tbsp', 'parmesan', 'grated, to serve'],
       'Crunchy crumbs',

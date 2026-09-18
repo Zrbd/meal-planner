@@ -111,7 +111,7 @@ const CATALOG: Ingredient[] = [
   meat('rotisserie-chicken', 'Cooked chicken (rotisserie)', { aliases: ['rotisserie chicken', 'cooked chicken', 'shredded chicken'], density: 0.55, unitAliases: { chicken: 900 }, packages: [{ label: 'whole rotisserie (~2 lb meat)', qty: 900 }], shelfLife: { fridge: 4, freezer: 90 } }),
   I('cod', 'White fish fillets (cod)', 'seafood', 'g', { aliases: ['cod', 'tilapia', 'white fish', 'cod fillets', 'haddock', 'pollock'], gramsPerEach: 170, valueWeight: 3, packages: [{ label: '1 lb pack', qty: lb(1) }], shelfLife: { fridge: 2, freezer: 180 } }),
   I('salmon', 'Salmon fillets', 'seafood', 'g', { aliases: ['salmon', 'salmon fillet'], gramsPerEach: 170, valueWeight: 3, shelfLife: { fridge: 2, freezer: 90 } }),
-  I('shrimp', 'Shrimp (raw, peeled)', 'seafood', 'g', { aliases: ['shrimp', 'large shrimp', 'raw shrimp', 'prawns'], valueWeight: 3, packages: [{ label: '1 lb bag', qty: lb(1) }], defaultLocation: 'freezer', shelfLife: { freezer: 180, fridge: 2 } }),
+  I('shrimp', 'Shrimp (raw, peeled)', 'seafood', 'g', { aliases: ['shrimp', 'large shrimp', 'raw shrimp', 'shrimp'], valueWeight: 3, packages: [{ label: '1 lb bag', qty: lb(1) }], defaultLocation: 'freezer', shelfLife: { freezer: 180, fridge: 2 } }),
 
   // ---------- Dairy & eggs ----------
   I('eggs', 'Eggs', 'dairy', 'ea', { aliases: ['egg', 'large eggs', 'large egg'], gramsPerEach: 50, unitAliases: { egg: 1 }, packages: [{ label: 'dozen', qty: 12 }, { label: '18-count', qty: 18 }], shelfLife: { fridge: 35 }, keepStocked: true }),
@@ -178,7 +178,7 @@ const CATALOG: Ingredient[] = [
   can('refried-beans', 'Refried beans', 454, { aliases: ['canned refried beans'], density: 1.1 }),
   can('corn-can', 'Canned corn', 432, { aliases: ['canned corn', 'corn kernels'], density: 0.72 }),
   can('green-chiles', 'Diced green chiles (4 oz)', 113, { aliases: ['green chiles', 'diced green chiles', 'chopped green chiles'], density: 1 }),
-  can('tomato-sauce', 'Tomato sauce (15 oz)', 425, { aliases: ['tomato sauce', 'passata', 'tomato puree', 'canned tomato sauce'], density: 1.03 }),
+  can('tomato-sauce', 'Tomato sauce (15 oz)', 425, { aliases: ['tomato sauce', 'smooth tomato sauce', 'tomato puree', 'canned tomato sauce'], density: 1.03 }),
   can('chipotle-adobo', 'Chipotles in adobo (7 oz)', 198, { aliases: ['chipotle peppers in adobo', 'chipotle in adobo', 'chipotle pepper'], unitAliases: { can: 1, pepper: 0.07 } }),
   I('capers', 'Capers', 'canned', 'g', { density: 0.6, trackMode: 'loose', packages: [{ label: '3.5 oz jar', qty: 100 }], defaultLocation: 'fridge', shelfLife: { fridge: 365 } }),
   I('roasted-red-peppers', 'Roasted red peppers', 'canned', 'g', { aliases: ['jarred roasted red peppers'], density: 0.7, packages: [{ label: '12 oz jar', qty: oz(12) }], shelfLife: { pantry: 365 } }),
@@ -220,7 +220,7 @@ const CATALOG: Ingredient[] = [
   I('brown-sugar', 'Brown sugar', 'baking', 'g', { aliases: ['light brown sugar', 'dark brown sugar', 'packed brown sugar'], density: 0.93, trackMode: 'loose', packages: [{ label: '2 lb bag', qty: lb(2) }] }),
   I('baking-powder', 'Baking powder', 'baking', 'g', { density: 0.9, trackMode: 'loose', packages: [{ label: '8 oz can', qty: oz(8) }] }),
   I('baking-soda', 'Baking soda', 'baking', 'g', { density: 1.1, trackMode: 'loose', packages: [{ label: '1 lb box', qty: lb(1) }] }),
-  I('cornstarch', 'Cornstarch', 'baking', 'g', { aliases: ['corn starch', 'cornflour'], density: 0.54, trackMode: 'loose', packages: [{ label: '16 oz box', qty: lb(1) }] }),
+  I('cornstarch', 'Cornstarch', 'baking', 'g', { aliases: ['corn starch', 'corn starch'], density: 0.54, trackMode: 'loose', packages: [{ label: '16 oz box', qty: lb(1) }] }),
   looseLiquid('vanilla-extract', 'Vanilla extract', 'baking', 0.88, '2 oz bottle', floz(2), { aliases: ['vanilla', 'pure vanilla extract'] }),
   I('panko', 'Panko breadcrumbs', 'baking', 'g', { aliases: ['panko', 'breadcrumbs', 'bread crumbs'], density: 0.25, packages: [{ label: '8 oz box', qty: oz(8) }], shelfLife: { pantry: 180 } }),
   I('chia-seeds', 'Chia seeds', 'baking', 'g', { aliases: ['chia'], density: 0.65, trackMode: 'loose', packages: [{ label: '12 oz bag', qty: oz(12) }] }),

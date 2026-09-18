@@ -111,7 +111,7 @@ export const RECIPETIN_EATS_4 = [
       [2, 'tsp', 'ginger', 'grated'],
       [5, 'clove', 'garlic', 'minced'],
       [3, 'tsp', 'garam-masala'],
-      [1.5, 'tbsp', 'paprika', 'in place of Kashmiri chilli powder'],
+      [1.5, 'tbsp', 'paprika', 'in place of Kashmiri chili powder'],
       [1, 'tsp', 'ground-turmeric'],
       [2, 'tsp', 'ground-cumin'],
       [2.5, 'tsp', 'ground-coriander'],

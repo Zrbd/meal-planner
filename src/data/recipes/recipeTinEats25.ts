@@ -40,11 +40,11 @@ export const RECIPETIN_EATS_25 = [
     notes: 'Squeeze lemons at room temperature for the most juice, or microwave them 10 seconds first. Extra juice freezes well in ice cube trays. Keep cherry tomatoes on the counter for flavor, and use them within a week. You can freeze drumsticks in the marinade and thaw them overnight in the fridge. Leftovers keep 3–4 days.',
   }),
   defineRecipe({
-    id: 'creamy-garlic-prawns-parmesan', title: 'Creamy Garlic Prawns', credit: rte('creamy-garlic-prawns-shrimp'),
-    description: 'Seared prawns in a rich, restaurant-style sauce of garlic, white wine, reduced broth, cream, and Parmesan, great over mashed potato, pasta, or rice.',
+    id: 'creamy-garlic-prawns-parmesan', title: 'Creamy Garlic Shrimp', credit: rte('creamy-garlic-prawns-shrimp'),
+    description: 'Seared shrimp in a rich, restaurant-style sauce of garlic, white wine, reduced broth, cream, and Parmesan, great over mashed potato, pasta, or rice.',
     servings: 4, prep: 5, cook: 12, cuisine: 'Australian', protein: 'shrimp', diet: [], difficulty: 1,
     ingredients: [
-      'Prawns',
+      'Shrimp',
       [1, 'lb', 'shrimp', 'peeled, large or jumbo'],
       [1, 'clove', 'garlic', 'finely minced'],
       [1, 'tbsp', 'olive-oil'],
@@ -61,14 +61,14 @@ export const RECIPETIN_EATS_25 = [
       [2, 'tbsp', 'parsley', 'finely chopped'],
     ],
     steps: [
-      'Toss the prawns with the garlic, oil, and pepper and let them sit up to 20 minutes. Add the salt just before cooking.',
-      'Melt 1 tbsp butter in a large skillet over medium-high. Cook half the prawns 1 minute per side, remove, and repeat with the rest. Scrape any loose garlic into the prawn bowl.',
+      'Toss the shrimp with the garlic, oil, and pepper and let them sit up to 20 minutes. Add the salt just before cooking.',
+      'Melt 1 tbsp butter in a large skillet over medium-high. Cook half the shrimp 1 minute per side, remove, and repeat with the rest. Scrape any loose garlic into the shrimp bowl.',
       'Melt the second tablespoon of butter and cook the garlic 30 seconds until light golden.',
       'Add the wine, turn to high, and simmer about 1 minute, scraping up the browned bits.',
       'Add the broth and reduce until just a thin layer remains, then add the cream and simmer 2 minutes on medium until slightly thickened.',
-      'Stir in the Parmesan, return the prawns, adjust the seasoning, and serve sprinkled with parsley.',
+      'Stir in the Parmesan, return the shrimp, adjust the seasoning, and serve sprinkled with parsley.',
     ],
-    notes: 'Frozen raw prawns keep for months and thaw in about 5 minutes under cold running water. Cook thawed prawns within 1–2 days. Heavy cream often lasts 1–2 weeks past opening if kept cold at the back of the fridge, and it freezes in ice cube trays for sauces. Grate Parmesan fresh from a block for a smooth sauce.',
+    notes: 'Frozen raw shrimp keep for months and thaw in about 5 minutes under cold running water. Cook thawed shrimp within 1–2 days. Heavy cream often lasts 1–2 weeks past opening if kept cold at the back of the fridge, and it freezes in ice cube trays for sauces. Grate Parmesan fresh from a block for a smooth sauce.',
   }),
   defineRecipe({
     id: 'slow-cooker-honey-butter-pork-loin', title: 'Slow Cooker Pork Loin Roast', credit: rte('slow-cooker-pork-loin-roast'),

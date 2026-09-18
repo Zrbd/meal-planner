@@ -20,7 +20,7 @@ export const RECIPETIN_EATS = [
       'Sauce',
       [5, 'tbsp', 'vegetable-oil', 'divided'], [5, 'tbsp', 'butter', 'or ghee, divided'], [1, 'ea', 'yellow-onion', 'finely chopped'], [1, 'tsp', 'salt'],
       [2, 'tbsp', 'ginger', 'grated'], [6, 'clove', 'garlic', 'grated'], [1, 'tbsp', 'paprika'],
-      [1.66, 'cup', 'tomato-sauce', 'passata / tomato purée'], [1.66, 'cup', 'water'], [100, 'ml', 'heavy-cream'], [1, 'tsp', 'sugar'],
+      [1.66, 'cup', 'tomato-sauce', 'smooth tomato sauce (tomato sauce)'], [1.66, 'cup', 'water'], [100, 'ml', 'heavy-cream'], [1, 'tsp', 'sugar'],
       [1.5, 'cup', 'white-rice', 'basmati, for serving', 'optional'], [2, 'tbsp', 'cilantro', 'for garnish', 'optional'],
     ],
     steps: [
@@ -28,7 +28,7 @@ export const RECIPETIN_EATS = [
       'Get 1 tbsp oil smoking hot in a non-stick pan. Add half the chicken in a single layer and leave it 2 minutes to char, then turn and char the other side — it doesn’t need to be cooked through. Repeat with the rest, discarding any burnt bits between batches.',
       'Wipe the pan (or switch to a lidded pot) and lower to medium-high. Add 3 tbsp oil and 2 tbsp butter, then the onion, ginger, and salt. Stir constantly for 5–7 minutes, until the ginger turns golden and the onion smells sweet.',
       'Drop to medium, add the garlic and paprika for 2 minutes, then all the curry sauce spices for 2 more minutes.',
-      'Pour in the passata and water, bring to a simmer, cover, and cook on low 15 minutes, stirring now and then.',
+      'Pour in the tomato sauce and water, bring to a simmer, cover, and cook on low 15 minutes, stirring now and then.',
       'Blend the sauce until silky (a stick blender is easiest), return it to the pan, and stir in the cream, sugar, and remaining 3 tbsp butter.',
       'Add the chicken and simmer a few minutes until cooked through. Serve over basmati with a sprinkle of cilantro and an extra pinch of garam masala.',
     ],

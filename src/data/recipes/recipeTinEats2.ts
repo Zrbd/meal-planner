@@ -73,7 +73,7 @@ export const RECIPETIN_EATS_2 = [
       [0.125, 'tsp', 'dried-thyme', 'or ¼ tsp fresh'],
       [0.125, 'tsp', 'dried-rosemary', 'or ¼ tsp fresh'],
       [1, 'leaf', 'bay-leaves'],
-      [0.33, 'cup', 'tomato-sauce', 'passata / tomato purée'],
+      [0.33, 'cup', 'tomato-sauce', 'smooth tomato sauce (tomato sauce)'],
       [4, 'can', 'cannellini-beans', 'drained'],
       [3, 'cup', 'vegetable-broth'],
       'Picada',
@@ -86,7 +86,7 @@ export const RECIPETIN_EATS_2 = [
     steps: [
       'Make the picada: toast the nuts in a dry skillet until golden in spots and fragrant (rub hazelnuts in a towel to remove most skins). Chop and blitz with the parsley, garlic, oil, and salt into a coarse pesto.',
       'Cook the oil, garlic, onion, and herbs in a heavy pot over medium, stirring often, about 8 minutes until deep golden.',
-      'Add the passata and cook on low about 8 minutes, until it turns from red and watery to dark and very thick. This builds most of the flavor, so give it the full time.',
+      'Add the tomato sauce and cook on low about 8 minutes, until it turns from red and watery to dark and very thick. This builds most of the flavor, so give it the full time.',
       'Stir in the beans and broth and simmer gently, uncovered, for 15 minutes.',
       'Blend about ⅔ cup of the soup until smooth and stir it back in to thicken.',
       'Just before serving, stir in 2 tablespoons picada and adjust salt. Top each bowl with a teaspoon more. Crusty bread is great alongside.',
@@ -95,14 +95,14 @@ export const RECIPETIN_EATS_2 = [
   }),
   defineRecipe({
     id: 'creamy-tomato-pasta', title: 'Pasta with Tomato Cream Sauce', credit: rte('creamy-tomato-pasta'),
-    description: 'A 20-minute pantry pasta with a silky sauce of tomato passata, cream, garlic, basil, and Parmesan.',
+    description: 'A 20-minute pantry pasta with a silky sauce of tomato tomato sauce, cream, garlic, basil, and Parmesan.',
     servings: 4, prep: 5, cook: 15, cuisine: 'Italian', protein: 'vegetarian', diet: ['vegetarian'], difficulty: 1,
     ingredients: [
       [10, 'oz', 'spaghetti'],
       [2, 'tbsp', 'butter', 'unsalted'],
       [3, 'clove', 'garlic', 'minced'],
       [0.5, 'ea', 'yellow-onion', 'finely chopped'],
-      [1, 'cup', 'tomato-sauce', 'passata / tomato purée'],
+      [1, 'cup', 'tomato-sauce', 'smooth tomato sauce (tomato sauce)'],
       [0.75, 'cup', 'heavy-cream'],
       [0.5, 'cup', 'milk'],
       [0.75, 'cup', 'parmesan', 'finely grated, plus more to serve'],
@@ -113,14 +113,14 @@ export const RECIPETIN_EATS_2 = [
     steps: [
       'Cook the pasta for 2 minutes less than the package says. Save a mug of cooking water before draining.',
       'Melt the butter in a large skillet over medium and cook the garlic and onion about 2 minutes, until translucent.',
-      'Add the passata, cream, milk, Parmesan, basil, and broth or stock powder. Stir until the cheese melts, then simmer 2 minutes and season.',
+      'Add the tomato sauce, cream, milk, Parmesan, basil, and broth or stock powder. Stir until the cheese melts, then simmer 2 minutes and season.',
       'Add the pasta and toss 1–2 minutes, until the sauce clings instead of pooling. Loosen with pasta water if needed.',
       'Serve right away with extra Parmesan.',
     ],
     notes: 'Opened cream lasts about a week and milk up to 7 days past opening, so this is a good way to finish both before they turn. A wedge of Parmesan wrapped in wax paper, then loosely in foil, keeps for a month or more.',
   }),
   defineRecipe({
-    id: 'asian-chilli-chicken', title: 'Asian Chilli Chicken', credit: rte('asian-chilli-chicken'),
+    id: 'asian-chilli-chicken', title: 'Asian Chili Chicken', credit: rte('asian-chilli-chicken'),
     description: 'Quick-seared thin chicken cutlets glazed in a sticky, spicy-sweet sauce of sriracha, honey, garlic, ginger, and lime.',
     servings: 4, prep: 5, cook: 8, cuisine: 'Asian', protein: 'chicken', diet: ['dairy-free'], difficulty: 1,
     ingredients: [

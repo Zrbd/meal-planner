@@ -75,7 +75,7 @@ export const RECIPETIN_EATS_6 = [
       [1, 'ea', 'yellow-onion', 'small, diced'],
       [3, 'clove', 'garlic', 'crushed'],
       [1, 'ea', 'bell-pepper', 'red, diced'],
-      [24, 'oz', 'crushed-tomatoes', 'or tomato passata'],
+      [24, 'oz', 'crushed-tomatoes', 'smooth, e.g. tomato sauce'],
       [3, 'cup', 'chicken-broth', 'or water'],
       [1.5, 'cup', 'frozen-corn'],
       'Enchilada spices',

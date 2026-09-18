@@ -199,15 +199,15 @@ export const RECIPETIN_EATS_23 = [
     notes: 'Frozen cod works perfectly. Thaw it overnight in the fridge, or seal it in a bag in cold water for about an hour. Fresh fish should be cooked within 1–2 days. The broth (without fish) keeps 4 days or freezes 3 months, so make it ahead and add freshly seared fish when reheating. Leftover coconut milk freezes well in an ice cube tray.',
   }),
   defineRecipe({
-    id: 'thai-chilli-basil-chicken', title: 'Thai Chilli Basil Chicken', credit: rte('thai-basil-chicken-stir-fry'),
-    description: 'A 15-minute Thai street-food classic: chicken stir-fried with garlic and chilli in a glossy oyster-soy sauce and tossed with a big handful of basil.',
+    id: 'thai-chilli-basil-chicken', title: 'Thai Chili Basil Chicken', credit: rte('thai-basil-chicken-stir-fry'),
+    description: 'A 15-minute Thai street-food classic: chicken stir-fried with garlic and chili in a glossy oyster-soy sauce and tossed with a big handful of basil.',
     servings: 2, prep: 10, cook: 5, cuisine: 'Thai', protein: 'chicken', diet: [], difficulty: 1,
     ingredients: [
       [7, 'oz', 'chicken-thighs', 'boneless skinless, bite-size pieces'],
       [1, 'ea', 'green-onion', 'cut into 2-inch lengths'],
       [1, 'cup', 'basil', 'Thai or holy basil if you can find it, loosely packed'],
       [2, 'clove', 'garlic', 'large, finely chopped'],
-      [1, 'ea', 'jalapeno', 'or 1 Thai chilli, deseeded and finely chopped'],
+      [1, 'ea', 'jalapeno', 'or 1 Thai chili, deseeded and finely chopped'],
       [1.5, 'tbsp', 'vegetable-oil'],
       'Sauce',
       [2, 'tsp', 'oyster-sauce'],
@@ -218,12 +218,12 @@ export const RECIPETIN_EATS_23 = [
     ],
     steps: [
       'Mix the sauce ingredients in a small bowl.',
-      'Heat the oil in a wok or pan over high. Add the garlic and chilli for 10 seconds (don’t lean over the fumes).',
+      'Heat the oil in a wok or pan over high. Add the garlic and chili for 10 seconds (don’t lean over the fumes).',
       'Add the green onion whites and chicken and stir-fry about 2 minutes until cooked.',
       'Pour in the sauce and cook 1 minute until it reduces to a glossy coating.',
       'Toss in the green onion tops and basil just until wilted and serve with jasmine rice.',
     ],
-    notes: 'Basil hates the cold, because it turns black in the fridge. Trim the stems and keep it in a glass of water on the counter with a loose bag over the top, and it lasts about a week. Past its best? Blend it with oil and freeze in ice cube trays. Thai chillies freeze whole for months and chop easily from frozen.',
+    notes: 'Basil hates the cold, because it turns black in the fridge. Trim the stems and keep it in a glass of water on the counter with a loose bag over the top, and it lasts about a week. Past its best? Blend it with oil and freeze in ice cube trays. Thai chiles freeze whole for months and chop easily from frozen.',
   }),
   defineRecipe({
     id: 'crispy-parmesan-crusted-chicken', title: 'Crispy Parmesan Crusted Chicken', credit: rte('parmesan-crusted-chicken-breast'),
@@ -274,7 +274,7 @@ export const RECIPETIN_EATS_23 = [
     notes: 'Marinate raw chicken no longer than 24 hours. For longer, freeze it in the marinade for up to 3 months and thaw overnight in the fridge. Soak wooden skewers 30 minutes first if grilling. Cooked skewers keep 3 days and are good cold in lunch bowls.',
   }),
   defineRecipe({
-    id: 'prawn-shrimp-risotto', title: 'Prawn Risotto', credit: rte('prawn-risotto-shrimp'),
+    id: 'prawn-shrimp-risotto', title: 'Shrimp Risotto', credit: rte('prawn-risotto-shrimp'),
     description: 'Creamy weeknight shrimp risotto with white wine, milk, peas, and Parmesan, and no endless stirring.',
     servings: 4, prep: 10, cook: 25, cuisine: 'Italian', protein: 'shrimp', diet: [], difficulty: 2,
     ingredients: [
