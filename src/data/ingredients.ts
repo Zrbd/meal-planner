@@ -230,6 +230,7 @@ const CATALOG: Ingredient[] = [
   I('pepitas', 'Pepitas / seeds', 'snacks', 'g', { aliases: ['pumpkin seeds', 'sunflower seeds', 'hemp seeds'], density: 0.55, packages: [{ label: '8 oz bag', qty: oz(8) }], shelfLife: { pantry: 180 } }),
 
   I('curry-roux', 'Japanese curry roux', 'international', 'g', { aliases: ['japanese curry roux', 'curry block', 'golden curry'], density: 1, packages: [{ label: '7.8 oz box', qty: oz(7.8) }], shelfLife: { pantry: 540 } }),
+  I('aji-amarillo-paste', 'Aji amarillo paste', 'international', 'g', { aliases: ['aji amarillo', 'yellow chili paste', 'peruvian yellow pepper paste'], density: 1.05, trackMode: 'loose', packages: [{ label: '7.5 oz jar', qty: oz(7.5) }], defaultLocation: 'fridge', shelfLife: { fridge: 90 } }),
   I('sofrito', 'Sofrito', 'international', 'g', { aliases: ['recaito', 'puerto rican sofrito'], density: 1, trackMode: 'loose', packages: [{ label: '12 oz jar', qty: oz(12) }], defaultLocation: 'fridge', shelfLife: { fridge: 14, freezer: 180 } }),
   I('tomato-paste', 'Tomato paste', 'canned', 'g', { density: 1.1, unitAliases: { can: 170 }, packages: [{ label: '6 oz can', qty: 170 }], shelfLife: { pantry: 730 } }),
   I('marinara', 'Marinara sauce', 'canned', 'g', { aliases: ['marinara', 'pasta sauce', 'spaghetti sauce'], density: 1.05, unitAliases: { jar: 680 }, packages: [{ label: '24 oz jar', qty: 680 }], shelfLife: { pantry: 365 } }),
