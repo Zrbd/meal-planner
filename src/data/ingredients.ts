@@ -125,6 +125,7 @@ const CATALOG: Ingredient[] = [
   meat('chicken-drumsticks', 'Chicken drumsticks / bone-in thighs', { aliases: ['drumsticks', 'bone-in chicken thighs', 'chicken legs', 'bone-in skin-on chicken thighs'], gramsPerEach: 150, packages: [{ label: 'family pack (~3 lb)', qty: lb(3) }] }),
   meat('pork-tenderloin', 'Pork tenderloin', { aliases: ['pork loin'], packages: [{ label: '1.25 lb tenderloin', qty: lb(1.25) }] }),
   meat('baby-back-ribs', 'Baby back ribs', { aliases: ['pork ribs', 'back ribs', 'rack of ribs'], gramsPerEach: 1400, packages: [{ label: '1 rack (~3 lb)', qty: lb(3) }], shelfLife: { fridge: 4, freezer: 180 } }),
+  meat('ground-chicken', 'Ground chicken', { aliases: ['chicken mince', 'ground chicken thigh'], packages: [{ label: '1 lb pack', qty: lb(1) }] }),
   meat('ground-pork', 'Ground pork', { aliases: ['pork mince'], packages: [{ label: '1 lb pack', qty: lb(1) }] }),
   meat('italian-sausage', 'Italian sausage', { aliases: ['sweet italian sausage', 'hot italian sausage', 'chicken sausage', 'turkey sausage'], gramsPerEach: 100, unitAliases: { link: 1 }, packages: [{ label: '1 lb pack', qty: lb(1) }] }),
   meat('whole-chicken', 'Whole chicken', { aliases: ['fryer chicken', 'roasting chicken', 'whole fryer'], gramsPerEach: lb(4), packages: [{ label: '4 lb bird', qty: lb(4) }] }),
@@ -167,6 +168,8 @@ const CATALOG: Ingredient[] = [
   I('orange-juice', 'Orange juice', 'beverages', 'ml', { aliases: ['oj'], density: 1.04, packages: [{ label: '52 oz bottle', qty: floz(52) }], defaultLocation: 'fridge', shelfLife: { fridge: 10 } }),
 
   // ---------- Bakery ----------
+  I('spring-roll-wrappers', 'Spring roll wrappers', 'frozen', 'ea', { aliases: ['lumpia wrappers', 'spring roll pastry'], gramsPerEach: 15, unitAliases: { wrapper: 1, sheet: 1 }, packages: [{ label: '25-count pack', qty: 25 }], shelfLife: { fridge: 21, freezer: 365 } }),
+  I('wonton-wrappers', 'Wonton wrappers', 'frozen', 'ea', { aliases: ['dumpling wrappers', 'gyoza wrappers', 'momo wrappers'], gramsPerEach: 8, unitAliases: { wrapper: 1 }, packages: [{ label: '50-count pack', qty: 50 }], shelfLife: { fridge: 21, freezer: 365 } }),
   I('flour-tortillas', 'Flour tortillas', 'bakery', 'ea', { aliases: ['tortillas', 'flour tortilla', 'burrito tortillas'], gramsPerEach: 45, unitAliases: { tortilla: 1 }, packages: [{ label: '10-count', qty: 10 }], shelfLife: { pantry: 14 } }),
   I('corn-tortillas', 'Corn tortillas', 'bakery', 'ea', { aliases: ['corn tortilla'], gramsPerEach: 25, unitAliases: { tortilla: 1 }, packages: [{ label: '30-count', qty: 30 }], shelfLife: { pantry: 14 } }),
   I('hamburger-buns', 'Hamburger buns', 'bakery', 'ea', { aliases: ['burger buns', 'buns'], gramsPerEach: 50, unitAliases: { bun: 1 }, packages: [{ label: '8-pack', qty: 8 }], shelfLife: { pantry: 6 } }),
