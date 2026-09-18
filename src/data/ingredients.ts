@@ -90,6 +90,7 @@ const CATALOG: Ingredient[] = [
   I('collard-greens', 'Collard greens', 'produce', 'g', { aliases: ['collards', 'collard'], density: 0.09, unitAliases: { bunch: 350 }, packages: [{ label: 'bunch', qty: 350 }], shelfLife: { fridge: 7 } }),
   I('habanero', 'Habanero pepper', 'produce', 'ea', { aliases: ['scotch bonnet', 'habanero chile', 'scotch bonnet pepper'], gramsPerEach: 9, density: 0.6, shelfLife: { fridge: 14 } }),
   I('brussels-sprouts', 'Brussels sprouts', 'produce', 'g', { aliases: ['brussel sprouts', 'sprouts'], density: 0.5, packages: [{ label: '1 lb bag', qty: lb(1) }], shelfLife: { fridge: 10 } }),
+  I('bok-choy', 'Bok choy', 'produce', 'g', { aliases: ['baby bok choy', 'pak choi', 'chinese cabbage'], density: 0.35, packages: [{ label: '1 lb bunch', qty: lb(1) }], shelfLife: { fridge: 7 } }),
   I('cauliflower', 'Cauliflower', 'produce', 'g', { aliases: ['cauliflower florets'], density: 0.42, unitAliases: { head: 800 }, packages: [{ label: 'head (~1.75 lb)', qty: 800 }], shelfLife: { fridge: 10 } }),
   I('beets', 'Beets', 'produce', 'ea', { aliases: ['beet', 'red beets'], gramsPerEach: 150, density: 0.7, packages: [{ label: 'bunch of 3', qty: 3 }], defaultLocation: 'fridge', shelfLife: { fridge: 21 } }),
   I('leek', 'Leeks', 'produce', 'ea', { aliases: ['leek'], gramsPerEach: 250, density: 0.37, shelfLife: { fridge: 14 } }),
