@@ -626,4 +626,28 @@ export const DESSERTS = [
     ],
     notes: 'The apricot jam is what makes it malva pudding, not a generic sponge — do not swap it. Often compared to sticky toffee pudding, but lighter and more tangy.',
   }),
+  defineRecipe({
+    id: 'mango-sticky-rice', title: 'Mango Sticky Rice',
+    credit: { name: "Marion's Kitchen", author: 'Marion Grasby', url: 'https://www.marionskitchen.com/thai-mango-sticky-rice/' },
+    description: 'Steamed sticky rice folded with sweet coconut milk, served with ripe mango and a salty coconut sauce.',
+    servings: 4, prep: 15, cook: 40, cuisine: 'Thai', role: 'dessert', difficulty: 2,
+    diet: ['vegetarian', 'vegan', 'gluten-free', 'dairy-free'], tags: ['dessert', 'make-ahead'],
+    ingredients: [
+      [400, 'g', 'glutinous-rice', 'soaked overnight'],
+      [1, 'cup', 'coconut-milk'],
+      [3, 'tbsp', 'sugar'],
+      [0.75, 'tsp', 'salt'],
+      [1.5, 'tbsp', 'cornstarch', 'or rice flour'],
+      [2, 'ea', 'mango', 'ripe, peeled and sliced'],
+      [1, 'tbsp', 'sesame-seeds', 'toasted', 'optional'],
+    ],
+    steps: [
+      'Soak the rice overnight in plenty of cold water. There is no shortcut here — unsoaked sticky rice steams unevenly.',
+      'Drain it very well and steam it 30 minutes over boiling water in a cheesecloth-lined steamer, until translucent and tender.',
+      'Warm half the coconut milk with the sugar and half a teaspoon of salt, stir it through the hot rice, and let it stand covered for an hour to absorb.',
+      'For the sauce, simmer the rest of the coconut milk with the remaining salt and the cornstarch for 3–5 minutes, until it thickens to a pourable cream.',
+      'Plate the mango beside a mound of rice, spoon the salty coconut sauce over, and finish with sesame seeds.',
+    ],
+    notes: 'The sauce is meant to taste salty against the sweet rice — do not sweeten it. Sticky (glutinous) rice is a different grain from jasmine; ordinary rice will not work.',
+  }),
 ];
