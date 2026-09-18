@@ -1,11 +1,17 @@
 // Seeds/upgrades built-in ingredients and recipes without clobbering user changes.
-import { INGREDIENTS } from '../data/ingredients';
-import { RECIPES, SEED_VERSION } from '../data/recipes';
+import { SEED_VERSION } from '../data/seedVersion';
 import { db, type MealDB } from './schema';
 
 export async function seedIfNeeded(database: MealDB = db): Promise<boolean> {
   const row = await database.kv.get('seedVersion');
   if (row && (row.value as number) >= SEED_VERSION) return false;
+
+  // The catalog is by far the biggest thing in the bundle and is only needed when seeding,
+  // so it loads as its own chunk rather than on every launch.
+  const [{ INGREDIENTS }, { RECIPES }] = await Promise.all([
+    import('../data/ingredients'),
+    import('../data/recipes'),
+  ]);
 
   const tables = [database.ingredients, database.recipes, database.lots, database.meals, database.cookLogs, database.kv];
   await database.transaction('rw', tables, async () => {
