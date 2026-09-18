@@ -1,23 +1,25 @@
 import { BookOpen, CalendarDays, House, Refrigerator, ShoppingCart } from 'lucide-react';
 import { HashRouter, NavLink, Route, Routes, useLocation } from 'react-router';
 import { useRegisterSW } from 'virtual:pwa-register/react';
-import { useEffect, useState } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import { pushNewAlerts, setBadge } from '../services/notify';
 import { AppDataProvider, useAppData } from './data';
 import { useAlerts } from './hooks';
-import { CookMode } from './screens/CookMode';
 import { Home } from './screens/Home';
 import { Pantry } from './screens/Pantry';
-import { StockCheck } from './screens/StockCheck';
-import { PantryItem } from './screens/PantryItem';
 import { Plan } from './screens/Plan';
-import { Prep } from './screens/Prep';
 import { RecipeDetail } from './screens/RecipeDetail';
-import { RecipeEditor } from './screens/RecipeEditor';
 import { Recipes } from './screens/Recipes';
-import { SettingsScreen } from './screens/Settings';
 import { Shopping } from './screens/Shopping';
 import { ToastProvider } from './toast';
+
+// Screens you reach from somewhere else, not on launch: loaded on demand to keep the first paint small.
+const CookMode = lazy(() => import('./screens/CookMode').then((m) => ({ default: m.CookMode })));
+const RecipeEditor = lazy(() => import('./screens/RecipeEditor').then((m) => ({ default: m.RecipeEditor })));
+const SettingsScreen = lazy(() => import('./screens/Settings').then((m) => ({ default: m.SettingsScreen })));
+const StockCheck = lazy(() => import('./screens/StockCheck').then((m) => ({ default: m.StockCheck })));
+const Prep = lazy(() => import('./screens/Prep').then((m) => ({ default: m.Prep })));
+const PantryItem = lazy(() => import('./screens/PantryItem').then((m) => ({ default: m.PantryItem })));
 
 const TABS = [
   { to: '/', label: 'Today', icon: House },
@@ -134,6 +136,7 @@ export function App() {
       <AppDataProvider>
         <ToastProvider>
           <main className="mx-auto min-h-dvh max-w-xl pb-[calc(env(safe-area-inset-bottom)+5rem)]">
+            <Suspense fallback={<div className="p-6 text-center text-sm text-stone-400">Loading…</div>}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/recipes" element={<Recipes />} />
@@ -151,6 +154,7 @@ export function App() {
               <Route path="/settings" element={<SettingsScreen />} />
               <Route path="*" element={<Home />} />
             </Routes>
+            </Suspense>
           </main>
           <TabBar />
           <UpdateBanner />
