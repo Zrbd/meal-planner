@@ -217,6 +217,7 @@ const CATALOG: Ingredient[] = [
   can('tuna', 'Tuna', 142, { aliases: ['canned tuna'] }),
   I('bulgur', 'Bulgur wheat', 'pasta-grains', 'g', { aliases: ['bulghur', 'cracked wheat', 'fine bulgur'], density: 0.75, packages: [{ label: '1 lb bag', qty: lb(1) }], shelfLife: { pantry: 540 } }),
   I('dry-pinto-beans', 'Pinto beans (dry)', 'pasta-grains', 'g', { aliases: ['dried pinto beans'], density: 0.8, packages: [{ label: '1 lb bag', qty: lb(1) }], shelfLife: { pantry: 540 } }),
+  I('dry-chickpeas', 'Chickpeas (dry)', 'pasta-grains', 'g', { aliases: ['dried chickpeas', 'dried garbanzo beans', 'dry garbanzos'], density: 0.8, packages: [{ label: '1 lb bag', qty: lb(1) }], shelfLife: { pantry: 540 } }),
   I('black-eyed-peas', 'Black-eyed peas (dry)', 'pasta-grains', 'g', { aliases: ['black eyed peas', 'cowpeas', 'dried black-eyed peas'], density: 0.8, packages: [{ label: '1 lb bag', qty: lb(1) }], shelfLife: { pantry: 540 } }),
   can('pinto-beans', 'Pinto beans', 425, { aliases: ['canned pinto beans'] }),
   can('cannellini-beans', 'White beans (cannellini)', 425, { aliases: ['cannellini beans', 'great northern beans', 'white beans', 'navy beans'] }),
