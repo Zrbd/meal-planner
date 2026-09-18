@@ -169,7 +169,7 @@ export const AFRICAN = [
     credit: { name: 'The Daring Gourmet', author: 'Kimberly Killebrew', url: 'https://www.daringgourmet.com/misir-wat-ethiopian-spiced-red-lentils/' },
     description: 'Red lentils simmered with deeply browned onion, tomato paste, and berbere in spiced butter until thick and soft. One of the great Ethiopian vegetarian dishes.',
     servings: 6, prep: 10, cook: 55, cuisine: 'Ethiopian', protein: 'beans', difficulty: 1,
-    diet: ['vegetarian', 'gluten-free'], tags: ['one-pot', 'budget', 'leftovers', 'spicy'],
+    diet: ['vegetarian', 'gluten-free'], tags: ['one-pot', 'budget', 'leftovers', 'spicy'], pairsWith: ['side-gomen'],
     ingredients: [
       [4, 'tbsp', 'butter', 'or ghee, divided'],
       [0.5, 'tsp', 'ground-cardamom'], [0.25, 'tsp', 'ground-cinnamon'], [0.25, 'tsp', 'ground-nutmeg'],

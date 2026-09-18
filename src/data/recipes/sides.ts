@@ -124,4 +124,27 @@ export const SIDES = [
     ],
     notes: 'Works with white rice too — use the water and time on your bag, keeping the seasonings the same.',
   }),
+  defineRecipe({
+    id: 'side-gomen', title: 'Gomen (Ethiopian Collard Greens)',
+    credit: { name: 'The Daring Gourmet', author: 'Kimberly Killebrew', url: 'https://www.daringgourmet.com/gomen-ethiopian-collard-greens/' },
+    description: 'Collard greens cooked quickly with onion, garlic, ginger, cumin, and coriander in spiced butter, so they stay bright and keep some bite.',
+    servings: 4, prep: 10, cook: 15, cuisine: 'Ethiopian', diet: ['vegetarian', 'gluten-free'], role: 'side',
+    tags: ['side', 'quick', 'vegetables'],
+    ingredients: [
+      [4, 'tbsp', 'butter', 'or ghee, divided'],
+      [1, 'ea', 'yellow-onion', 'large, halved and sliced thin'],
+      [2, 'clove', 'garlic', 'minced'],
+      [1.5, 'tsp', 'ginger', 'minced'],
+      [1, 'tsp', 'ground-cumin'], [1, 'tsp', 'ground-coriander'], [0.5, 'tsp', 'salt'],
+      [12, 'oz', 'collard-greens', 'thick stems removed, roughly chopped'],
+    ],
+    steps: [
+      'Heat 3 tablespoons of the butter in a wide pan over medium-high heat.',
+      'Cook the onion 5 to 7 minutes, until soft and translucent.',
+      'Add the garlic, ginger, cumin, coriander, and salt and cook 2 to 3 minutes.',
+      'Add the greens and the last tablespoon of butter and cook 5 to 7 minutes, until they turn bright green and wilt but still have some crispness. Stewing them further turns them army green.',
+      'Taste for salt and serve alongside any Ethiopian stew.',
+    ],
+    notes: 'Kale works just as well. Goes naturally with misir wat or doro wat.',
+  }),
 ];
