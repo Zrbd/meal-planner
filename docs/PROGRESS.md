@@ -116,7 +116,10 @@ Living handoff log. Newest notes at the top of each section.
   creamy black-eyed peas with smoked turkey, shrimp creole, five sides (candied yams, Southern potato salad, fried
   cabbage, hush puppies, fried green tomatoes) and three desserts (banana pudding, sweet potato pie, 7UP pound cake).
   New catalog entries: buttermilk, pie crust, vanilla wafers, green tomatoes, instant pudding mix, lemon-lime soda, dried sage.
-- SEED_VERSION 145.
+- Six more soul food recipes: smothered pork chops and gravy, Southern baked macaroni and cheese, Southern green beans
+  with smoked turkey, sweet potato casserole, cornbread dressing and red velvet cake. Added marshmallows and red food
+  coloring to the catalog.
+- SEED_VERSION 146.
 - Later in the same session: more world mains (arepas de queso, tteokbokki, chicken katsu, chicken congee, pancit bihon, borscht, moussaka with ground turkey, japchae, mapo tofu, palak paneer, chicken biryani, pozole verde, vegetarian shepherd's pie, misir wat), more desserts (no-bake cheesecake, churros, tiramisu, baklava, carrot cake, bread pudding, cut-out sugar cookies, panna cotta) and ten more sides (gomen, cilantro lime rice, cumin lime coleslaw, roasted cauliflower, street corn salad, roasted brussels sprouts, glazed carrots, braised red cabbage, creamed corn, macaroni salad).
 - Bundle: the recipe catalog and ingredient catalog are now dynamic imports inside `seedIfNeeded`, and the six screens you only reach by navigating (cook mode, recipe editor, settings, stock check, prep, pantry item) are `React.lazy` behind a `Suspense` fallback. Launch JS went from 1,953 kB (545 kB gzip) to ~735 kB (229 kB gzip).
 
