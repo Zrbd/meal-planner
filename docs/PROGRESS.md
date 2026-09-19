@@ -134,7 +134,9 @@ Living handoff log. Newest notes at the top of each section.
 - New ingredients for them: aji amarillo paste, tapioca flour, chicharrones, frozen french fries and adobo seasoning.
 - Added ten Central and Eastern European recipes in `src/data/recipes/centralEurope.ts`: pierogi ruskie, kotlet schabowy, chicken Kyiv, shkmeruli, pork schnitzel, Hungarian mushroom soup, placki ziemniaczane, German potato salad, syrniki and sernik (Polish, Ukrainian, German, Hungarian and Georgian).
 - New ingredient: farmers cheese (twarog).
-- SEED_VERSION 153.
+- Added `src/data/recipes/africa2.ts` with thirteen more African recipes: chicken suya, egusi soup (smoked turkey in place of the source's beef), moin moin, bobotie (rebuilt with ground turkey), harira (chicken in place of lamb), shiro wat, bunny chow and Nigerian fried rice, plus sides fufu, kelewele and atakilt wat, and desserts mandazi and chin chin.
+- New catalog ingredients: egusi, dried shrimp, chickpea flour.
+- SEED_VERSION 154.
 - Later in the same session: more world mains (arepas de queso, tteokbokki, chicken katsu, chicken congee, pancit bihon, borscht, moussaka with ground turkey, japchae, mapo tofu, palak paneer, chicken biryani, pozole verde, vegetarian shepherd's pie, misir wat), more desserts (no-bake cheesecake, churros, tiramisu, baklava, carrot cake, bread pudding, cut-out sugar cookies, panna cotta) and ten more sides (gomen, cilantro lime rice, cumin lime coleslaw, roasted cauliflower, street corn salad, roasted brussels sprouts, glazed carrots, braised red cabbage, creamed corn, macaroni salad).
 - Bundle: the recipe catalog and ingredient catalog are now dynamic imports inside `seedIfNeeded`, and the six screens you only reach by navigating (cook mode, recipe editor, settings, stock check, prep, pantry item) are `React.lazy` behind a `Suspense` fallback. Launch JS went from 1,953 kB (545 kB gzip) to ~735 kB (229 kB gzip).
 
