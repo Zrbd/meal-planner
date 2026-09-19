@@ -210,6 +210,8 @@ const CATALOG: Ingredient[] = [
   I('elbow-macaroni', 'Elbow macaroni', 'pasta-grains', 'g', { aliases: ['macaroni', 'elbows', 'small shells'], density: 0.45, packages: [{ label: '1 lb box', qty: lb(1) }] }),
   I('penne', 'Penne', 'pasta-grains', 'g', { aliases: ['ziti', 'rigatoni', 'penne pasta'], packages: [{ label: '1 lb box', qty: lb(1) }] }),
   I('egg-noodles', 'Egg noodles', 'pasta-grains', 'g', { aliases: ['wide egg noodles'], density: 0.16, packages: [{ label: '12 oz bag', qty: oz(12) }] }),
+  I('aji-amarillo', 'Aji amarillo paste', 'international', 'g', { aliases: ['yellow chili paste', 'aji amarillo', 'peruvian yellow pepper paste'], density: 1.0, packages: [{ label: '7.5 oz jar', qty: oz(7.5) }], defaultLocation: 'pantry', shelfLife: { pantry: 540, fridge: 60 } }),
+  I('tapioca-flour', 'Tapioca flour', 'international', 'g', { aliases: ['tapioca starch', 'manioc starch', 'polvilho'], density: 0.6, packages: [{ label: '16 oz bag', qty: oz(16) }], shelfLife: { pantry: 540 } }),
   I('rice-paper', 'Rice paper wrappers', 'international', 'ea', { aliases: ['spring roll wrappers', 'banh trang', 'rice paper'], gramsPerEach: 11, packages: [{ label: '12 oz pack', qty: 30 }], shelfLife: { pantry: 730 } }),
   I('rice-flour', 'Rice flour', 'international', 'g', { aliases: ['white rice flour'], density: 0.6, packages: [{ label: '16 oz bag', qty: oz(16) }], shelfLife: { pantry: 365 } }),
   I('coconut-water', 'Coconut water', 'beverages', 'ml', { aliases: ['coconut juice', 'coconut soda'], packages: [{ label: '33 oz carton', qty: 1000 }], shelfLife: { pantry: 365, fridge: 7 } }),
@@ -262,6 +264,7 @@ const CATALOG: Ingredient[] = [
   I('massaman-curry-paste', 'Massaman curry paste', 'international', 'g', { aliases: ['massaman paste', 'matsaman curry paste'], density: 1.1, trackMode: 'loose', packages: [{ label: '4 oz jar', qty: oz(4) }], defaultLocation: 'fridge', shelfLife: { fridge: 180 } }),
   I('red-curry-paste', 'Thai red curry paste', 'international', 'g', { aliases: ['red curry paste', 'thai curry paste', 'green curry paste'], density: 1.1, trackMode: 'loose', packages: [{ label: '4 oz jar', qty: oz(4) }], defaultLocation: 'fridge', shelfLife: { fridge: 180 } }),
   I('pine-nuts', 'Pine nuts', 'snacks', 'g', { aliases: ['pignoli', 'pine nut'], density: 0.55, packages: [{ label: '4 oz bag', qty: oz(4) }], shelfLife: { pantry: 90 } }),
+  I('chicharrones', 'Chicharrones', 'snacks', 'g', { aliases: ['pork rinds', 'pork cracklings', 'fried pork skin'], density: 0.15, packages: [{ label: '3 oz bag', qty: oz(3) }], shelfLife: { pantry: 90 } }),
   I('tortilla-chips', 'Tortilla chips', 'snacks', 'g', { aliases: ['corn chips'], density: 0.25, packages: [{ label: '11 oz bag', qty: oz(11) }], shelfLife: { pantry: 90 } }),
   I('almonds', 'Almonds', 'snacks', 'g', { aliases: ['sliced almonds', 'slivered almonds', 'cashews', 'walnuts', 'nuts'], density: 0.45, packages: [{ label: '6 oz bag', qty: oz(6) }], shelfLife: { pantry: 180 } }),
   I('pecans', 'Pecans', 'snacks', 'g', { aliases: ['pecan halves', 'chopped pecans', 'pecan'], density: 0.45, packages: [{ label: '8 oz bag', qty: oz(8) }], shelfLife: { pantry: 120, fridge: 270 } }),
@@ -299,6 +302,7 @@ const CATALOG: Ingredient[] = [
   I('peanut-butter', 'Peanut butter', 'snacks', 'g', { density: 1.08, trackMode: 'loose', packages: [{ label: '16 oz jar', qty: lb(1) }], shelfLife: { pantry: 180 } }),
 
   // ---------- Frozen ----------
+  I('frozen-french-fries', 'Frozen french fries', 'frozen', 'g', { aliases: ['french fries', 'fries', 'potato fries'], density: 0.5, packages: [{ label: '32 oz bag', qty: lb(2) }], defaultLocation: 'freezer', shelfLife: { freezer: 300 } }),
   I('frozen-peas', 'Frozen peas', 'frozen', 'g', { aliases: ['peas', 'green peas'], density: 0.6, packages: [{ label: '12 oz bag', qty: oz(12) }], shelfLife: { freezer: 240 } }),
   I('frozen-broccoli', 'Frozen broccoli', 'frozen', 'g', { density: 0.38, packages: [{ label: '12 oz bag', qty: oz(12) }], shelfLife: { freezer: 240 } }),
   I('lima-beans', 'Frozen lima beans', 'frozen', 'g', { aliases: ['lima beans', 'butter beans', 'baby limas'], density: 0.6, packages: [{ label: '12 oz bag', qty: oz(12) }], shelfLife: { freezer: 240 } }),
@@ -389,6 +393,7 @@ const CATALOG: Ingredient[] = [
   spice('ground-cumin', 'Ground cumin', 0.48, ['cumin']),
   spice('paprika', 'Paprika', 0.46, ['sweet paprika']),
   spice('bbq-rub', 'BBQ rub', 0.55, ['sweet rub', 'barbecue rub', 'bbq seasoning', 'pork rub', 'chicken rub'], { packages: [{ label: '12 oz shaker', qty: oz(12) }] }),
+  spice('adobo-seasoning', 'Adobo seasoning', 0.5, ['adobo', 'all purpose seasoning']),
   spice('sumac', 'Sumac', 0.5, ['ground sumac']),
   spice('aleppo-pepper', 'Aleppo pepper', 0.45, ['pul biber', 'turkish red pepper flakes']),
   spice('zaatar', 'Zaatar', 0.35, ['zaatar seasoning', 'zatar']),

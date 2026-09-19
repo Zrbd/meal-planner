@@ -130,7 +130,9 @@ Living handoff log. Newest notes at the top of each section.
 - New catalog ingredients: rice paper, rice flour, coconut water.
 - Added `src/data/recipes/middleEast.ts`: eleven Levantine, Turkish and Persian recipes from The Mediterranean Dish, Unicorns in the Kitchen and Feel Good Foodie, with four sides and knafeh.
 - New catalog ingredients: Aleppo pepper, zaatar, dried mint, kataifi, rose water.
-- SEED_VERSION 151.
+- Added ten Latin American and Caribbean recipes in `src/data/recipes/latinAmerica.ts`: pollo saltado, causa limena, Cuban turkey picadillo, pernil, mofongo, coxinha, tostones, frijoles negros, pao de queijo and quindim (Peruvian, Cuban, Puerto Rican and Brazilian, each credited to a named developer).
+- New ingredients for them: aji amarillo paste, tapioca flour, chicharrones, frozen french fries and adobo seasoning.
+- SEED_VERSION 152.
 - Later in the same session: more world mains (arepas de queso, tteokbokki, chicken katsu, chicken congee, pancit bihon, borscht, moussaka with ground turkey, japchae, mapo tofu, palak paneer, chicken biryani, pozole verde, vegetarian shepherd's pie, misir wat), more desserts (no-bake cheesecake, churros, tiramisu, baklava, carrot cake, bread pudding, cut-out sugar cookies, panna cotta) and ten more sides (gomen, cilantro lime rice, cumin lime coleslaw, roasted cauliflower, street corn salad, roasted brussels sprouts, glazed carrots, braised red cabbage, creamed corn, macaroni salad).
 - Bundle: the recipe catalog and ingredient catalog are now dynamic imports inside `seedIfNeeded`, and the six screens you only reach by navigating (cook mode, recipe editor, settings, stock check, prep, pantry item) are `React.lazy` behind a `Suspense` fallback. Launch JS went from 1,953 kB (545 kB gzip) to ~735 kB (229 kB gzip).
 
