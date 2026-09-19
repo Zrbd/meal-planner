@@ -287,6 +287,7 @@ export function AddStockSheet({ ing, onClose }: { ing: Ingredient; onClose: () =
   const [expires, setExpires] = useState<string>(defaultExpiry(ing, ing.defaultLocation, today) ?? '');
   const [smart, setSmart] = useState(false);
   const [openedPkg, setOpenedPkg] = useState(false);
+  const [added, setAdded] = useState(0);
   const smartDays = (loc: Location) => ing.tipShelfLife?.[loc];
   const expiryFor = (loc: Location, useTip: boolean) => {
     const days = useTip ? smartDays(loc) : undefined;
@@ -310,17 +311,36 @@ export function AddStockSheet({ ing, onClose }: { ing: Ingredient; onClose: () =
       onClose={onClose}
       title={`Add ${ing.name.toLowerCase()}`}
       footer={
-        <button
-          className="btn btn-primary w-full"
-          disabled={qty <= 0}
-          onClick={async () => {
-            await addStock(ing.id, qty, { location, expiresOn: expires || null, reason: 'adjust', opened: openedPkg });
-            onClose();
-            toast(`Added ${formatQty(qty, ing, settings.units)} ${ing.name.toLowerCase()}`);
-          }}
-        >
-          Add to pantry
-        </button>
+        <div className="space-y-2">
+          <button
+            className="btn btn-primary w-full"
+            disabled={qty <= 0}
+            onClick={async () => {
+              await addStock(ing.id, qty, { location, expiresOn: expires || null, reason: 'adjust', opened: openedPkg });
+              onClose();
+              toast(`Added ${formatQty(qty, ing, settings.units)} ${ing.name.toLowerCase()}`);
+            }}
+          >
+            Add to pantry
+          </button>
+          <button
+            className="btn btn-secondary w-full"
+            disabled={qty <= 0}
+            onClick={async () => {
+              await addStock(ing.id, qty, { location, expiresOn: expires || null, reason: 'adjust', opened: openedPkg });
+              toast(`Added ${formatQty(qty, ing, settings.units)} to the ${location}`);
+              setAdded((n) => n + 1);
+              setQty(0);
+            }}
+          >
+            <Plus size={18} /> Save and add another package
+          </button>
+          {added > 0 && (
+            <p className="text-center text-xs text-stone-500">
+              {added} package{added === 1 ? '' : 's'} added so far. Change the amount or the place and save again.
+            </p>
+          )}
+        </div>
       }
     >
       <div className="space-y-4">

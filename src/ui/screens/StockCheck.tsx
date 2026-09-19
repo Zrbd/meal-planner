@@ -1,13 +1,22 @@
 // A guided pass through your kitchen: one ingredient at a time, answer how much you have or skip it.
 // Skipped items go to the back of the queue so you can come back to them in the same sitting.
-import { Check, SkipForward, X } from 'lucide-react';
+import { Check, Plus, Ruler, SkipForward, Trash2, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import type { Ingredient } from '../../domain/types';
+import { formatQty } from '../../domain/units';
+import type { Ingredient, Location } from '../../domain/types';
 import { addStock, setLooseLevel, updateIngredient } from '../../services/pantry';
 import { markStockChecked, resetStockCheck } from '../../services/stockcheck';
-import { AmountInput, EmptyState, PageHeader } from '../components';
+import { AmountInput, EmptyState, PageHeader, Segmented } from '../components';
 import { useAppData } from '../data';
 import { useToast } from '../toast';
+import { UnitsEditor } from './UnitsEditor';
+
+/** One package staged in the walkthrough, before it is written to the pantry. */
+interface Pack {
+  key: number;
+  qty: number;
+  location: Location;
+}
 
 export function StockCheck() {
   const d = useAppData();
@@ -15,6 +24,9 @@ export function StockCheck() {
   const [skipped, setSkipped] = useState<string[]>([]);
   const [qty, setQty] = useState(0);
   const [answered, setAnswered] = useState(0);
+  const [packs, setPacks] = useState<Pack[]>([]);
+  const [location, setLocation] = useState<Location | null>(null);
+  const [units, setUnits] = useState(false);
 
   // Everything the recipe book calls for, most-used first — the things worth knowing about.
   const queue = useMemo(() => {
@@ -41,8 +53,13 @@ export function StockCheck() {
 
   const ing = order[0];
   const left = order.length;
+  const here: Location = location ?? ing?.defaultLocation ?? 'pantry';
 
-  const next = () => setQty(0);
+  const next = () => {
+    setQty(0);
+    setPacks([]);
+    setLocation(null);
+  };
   const done = async (id: string, msg: string) => {
     await markStockChecked([id]);
     setAnswered((n) => n + 1);
@@ -80,19 +97,72 @@ export function StockCheck() {
 
         {ing.trackMode === 'exact' ? (
           <div className="card space-y-3 p-4">
-            <AmountInput ing={ing} value={qty} onChange={setQty} autoFocus />
+            {packs.length > 0 && (
+              <ul className="divide-y divide-stone-100 rounded-xl bg-stone-50">
+                {packs.map((p) => (
+                  <li key={p.key} className="flex items-center gap-2 px-3 py-2 text-sm">
+                    <span className="font-semibold">{formatQty(p.qty, ing, d.settings.units)}</span>
+                    <span className="capitalize text-stone-500">in the {p.location}</span>
+                    <button
+                      className="icon-btn ml-auto h-8 w-8 text-red-600"
+                      aria-label="Remove package"
+                      onClick={() => setPacks(packs.filter((x) => x.key !== p.key))}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {ing.packages.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {ing.packages.map((p) => (
+                  <button key={p.label} className={`chip ${qty === p.qty ? 'chip-on' : ''}`} onClick={() => setQty(p.qty)}>
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <AmountInput key={qty === 0 ? 'blank' : 'typed'} ing={ing} value={qty} onChange={setQty} autoFocus />
+
+            <div>
+              <span className="label">Where?</span>
+              <Segmented<Location>
+                value={here}
+                options={[{ value: 'fridge', label: 'Fridge' }, { value: 'freezer', label: 'Freezer' }, { value: 'pantry', label: 'Pantry' }]}
+                onChange={setLocation}
+              />
+            </div>
+
             <button
-              className="btn btn-primary w-full"
+              className="btn btn-secondary w-full"
               disabled={qty <= 0}
-              onClick={async () => {
-                await addStock(ing.id, qty, { reason: 'adjust' });
-                await done(ing.id, `${ing.name} added`);
+              onClick={() => {
+                setPacks([...packs, { key: Date.now(), qty, location: here }]);
+                setQty(0);
               }}
             >
-              <Check size={18} /> I have this much
+              <Plus size={18} /> Another package somewhere else
+            </button>
+
+            <button
+              className="btn btn-primary w-full"
+              disabled={qty <= 0 && packs.length === 0}
+              onClick={async () => {
+                const all = qty > 0 ? [...packs, { key: 0, qty, location: here }] : packs;
+                for (const p of all) await addStock(ing.id, p.qty, { location: p.location, reason: 'adjust' });
+                await done(ing.id, all.length > 1 ? `${ing.name}: ${all.length} packages added` : `${ing.name} added`);
+              }}
+            >
+              <Check size={18} /> {packs.length > 0 ? "That's all of it" : 'I have this much'}
             </button>
             <button className="btn btn-secondary w-full" onClick={() => done(ing.id, `${ing.name} marked out`)}>
               I'm out of it
+            </button>
+            <button className="btn btn-ghost w-full text-sm" onClick={() => setUnits(true)}>
+              <Ruler size={16} /> Units &amp; sizes for {ing.name.toLowerCase()}
             </button>
           </div>
         ) : (
@@ -133,6 +203,7 @@ export function StockCheck() {
           Skipped items come back at the end of the list.
         </p>
       </div>
+      {units && <UnitsEditor ing={ing} onClose={() => setUnits(false)} />}
     </>
   );
 }
