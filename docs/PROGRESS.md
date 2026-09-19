@@ -111,7 +111,12 @@ Living handoff log. Newest notes at the top of each section.
 - Twelve more smoker recipes from Hey Grill Hey: pork loin, whole chicken, chicken legs, chicken breast, al pastor, twice smoked ham, chicken gyros, armadillo eggs, plus smoked baked potatoes, sweet potatoes, corn on the cob and bacon wrapped carrots as smoker sides. New ingredients: pork loin, ham, pineapple.
 - Six more smoker recipes: whole turkey, BBQ pork belly, split chicken with Kansas City sauce, and smoked chantilly potatoes, mashed potatoes and bacon wrapped onion rings as sides. New ingredients: whole turkey, apple juice.
 - Four smoker recipes from Vindulge (Mary Cressler): smoked cream cheese, smoked tomatillo salsa verde, smoked buffalo chicken dip and smoked chicken chili — the last two built on leftover smoked chicken. New ingredients: blue cheese, ranch dressing, crackers.
-- SEED_VERSION 144.
+- Added a soul food collection (`src/data/recipes/soulFood.ts`, 13 recipes) from Grandbaby Cakes (Jocelyn Delk Adams),
+  Coop Can Cook and Divas Can Cook: buttermilk fried chicken, smothered chicken and gravy, smothered turkey wings,
+  creamy black-eyed peas with smoked turkey, shrimp creole, five sides (candied yams, Southern potato salad, fried
+  cabbage, hush puppies, fried green tomatoes) and three desserts (banana pudding, sweet potato pie, 7UP pound cake).
+  New catalog entries: buttermilk, pie crust, vanilla wafers, green tomatoes, instant pudding mix, lemon-lime soda, dried sage.
+- SEED_VERSION 145.
 - Later in the same session: more world mains (arepas de queso, tteokbokki, chicken katsu, chicken congee, pancit bihon, borscht, moussaka with ground turkey, japchae, mapo tofu, palak paneer, chicken biryani, pozole verde, vegetarian shepherd's pie, misir wat), more desserts (no-bake cheesecake, churros, tiramisu, baklava, carrot cake, bread pudding, cut-out sugar cookies, panna cotta) and ten more sides (gomen, cilantro lime rice, cumin lime coleslaw, roasted cauliflower, street corn salad, roasted brussels sprouts, glazed carrots, braised red cabbage, creamed corn, macaroni salad).
 - Bundle: the recipe catalog and ingredient catalog are now dynamic imports inside `seedIfNeeded`, and the six screens you only reach by navigating (cook mode, recipe editor, settings, stock check, prep, pantry item) are `React.lazy` behind a `Suspense` fallback. Launch JS went from 1,953 kB (545 kB gzip) to ~735 kB (229 kB gzip).
 
