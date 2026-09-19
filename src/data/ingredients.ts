@@ -119,6 +119,7 @@ const CATALOG: Ingredient[] = [
   meat('chicken-breast', 'Chicken breasts', { aliases: ['chicken breast', 'boneless skinless chicken breast', 'boneless skinless chicken breasts'], gramsPerEach: 225, packages: [{ label: '1.5 lb pack', qty: lb(1.5) }, { label: '3 lb pack', qty: lb(3) }] }),
   meat('chicken-thighs', 'Chicken thighs (boneless)', { aliases: ['chicken thighs', 'boneless skinless chicken thighs', 'chicken thigh'], gramsPerEach: 115, packages: [{ label: '1.5 lb pack', qty: lb(1.5) }, { label: '3 lb pack', qty: lb(3) }] }),
   meat('pork-chops', 'Pork chops (boneless)', { aliases: ['pork chops', 'boneless pork chops', 'pork chop'], gramsPerEach: 200, packages: [{ label: '4-pack (~1.75 lb)', qty: lb(1.75) }] }),
+  meat('pork-sausage', 'Pork sausages', { aliases: ['bangers', 'british sausages', 'breakfast sausage', 'pork sausage links'], gramsPerEach: 70, unitAliases: { link: 1 }, packages: [{ label: '1 lb pack', qty: lb(1) }], shelfLife: { fridge: 5, freezer: 90 } }),
   meat('smoked-turkey-wings', 'Smoked turkey wings', { aliases: ['smoked turkey', 'smoked turkey leg', 'smoked turkey necks'], gramsPerEach: 250, packages: [{ label: '2-pack (~1.5 lb)', qty: lb(1.5) }], shelfLife: { fridge: 7, freezer: 120 } }),
   meat('chorizo', 'Chorizo', { aliases: ['spanish chorizo', 'mexican chorizo', 'cured chorizo'], packages: [{ label: '9 oz pack', qty: oz(9) }], shelfLife: { fridge: 21, freezer: 90 } }),
   meat('smoked-sausage', 'Smoked sausage', { aliases: ['kielbasa', 'polish sausage'], packages: [{ label: '14 oz rope', qty: oz(14) }], shelfLife: { fridge: 14, freezer: 60 } }),
@@ -269,6 +270,8 @@ const CATALOG: Ingredient[] = [
   I('pine-nuts', 'Pine nuts', 'snacks', 'g', { aliases: ['pignoli', 'pine nut'], density: 0.55, packages: [{ label: '4 oz bag', qty: oz(4) }], shelfLife: { pantry: 90 } }),
   I('chicharrones', 'Chicharrones', 'snacks', 'g', { aliases: ['pork rinds', 'pork cracklings', 'fried pork skin'], density: 0.15, packages: [{ label: '3 oz bag', qty: oz(3) }], shelfLife: { pantry: 90 } }),
   I('tortilla-chips', 'Tortilla chips', 'snacks', 'g', { aliases: ['corn chips'], density: 0.25, packages: [{ label: '11 oz bag', qty: oz(11) }], shelfLife: { pantry: 90 } }),
+  I('dates', 'Medjool dates', 'snacks', 'g', { aliases: ['pitted dates', 'dried dates', 'date'], gramsPerEach: 24, density: 0.65, packages: [{ label: '8 oz tub', qty: oz(8) }], shelfLife: { pantry: 180, fridge: 365 } }),
+  I('meringue-cookies', 'Meringue cookies', 'snacks', 'g', { aliases: ['meringues', 'meringue nests'], density: 0.2, packages: [{ label: '4 oz box', qty: oz(4) }], shelfLife: { pantry: 120 } }),
   I('almonds', 'Almonds', 'snacks', 'g', { aliases: ['sliced almonds', 'slivered almonds', 'cashews', 'walnuts', 'nuts'], density: 0.45, packages: [{ label: '6 oz bag', qty: oz(6) }], shelfLife: { pantry: 180 } }),
   I('pecans', 'Pecans', 'snacks', 'g', { aliases: ['pecan halves', 'chopped pecans', 'pecan'], density: 0.45, packages: [{ label: '8 oz bag', qty: oz(8) }], shelfLife: { pantry: 120, fridge: 270 } }),
   I('walnuts', 'Walnuts', 'snacks', 'g', { aliases: ['walnut halves', 'chopped walnuts'], density: 0.5, packages: [{ label: '8 oz bag', qty: oz(8) }], shelfLife: { pantry: 180 } }),
@@ -291,6 +294,7 @@ const CATALOG: Ingredient[] = [
   I('tomato-paste', 'Tomato paste', 'canned', 'g', { density: 1.1, unitAliases: { can: 170 }, packages: [{ label: '6 oz can', qty: 170 }], shelfLife: { pantry: 730 } }),
   I('marinara', 'Marinara sauce', 'canned', 'g', { aliases: ['marinara', 'pasta sauce', 'spaghetti sauce'], density: 1.05, unitAliases: { jar: 680 }, packages: [{ label: '24 oz jar', qty: 680 }], shelfLife: { pantry: 365 } }),
   I('chickpea-flour', 'Chickpea flour', 'baking', 'g', { aliases: ['besan', 'gram flour', 'garbanzo bean flour', 'shiro powder'], density: 0.6, packages: [{ label: '16 oz bag', qty: oz(16) }], shelfLife: { pantry: 365 } }),
+  I('golden-syrup', 'Golden syrup', 'baking', 'ml', { aliases: ['light treacle', 'cane syrup'], density: 1.43, trackMode: 'loose', packages: [{ label: '11 oz tin', qty: 325 }], shelfLife: { pantry: 730 } }),
   I('shredded-coconut', 'Shredded coconut', 'baking', 'g', { aliases: ['desiccated coconut', 'unsweetened shredded coconut', 'coconut flakes'], density: 0.35, packages: [{ label: '7 oz bag', qty: oz(7) }], shelfLife: { pantry: 365 } }),
   I('coconut-milk', 'Coconut milk', 'international', 'ea', { aliases: ['canned coconut milk', 'full-fat coconut milk'], gramsPerEach: 400, density: 0.97, unitAliases: { can: 1 }, displayUnit: 'can', shelfLife: { pantry: 730 } }),
   I('chicken-broth', 'Chicken broth', 'canned', 'ml', { aliases: ['chicken stock', 'low-sodium chicken broth'], density: 1, packages: [{ label: '32 oz carton', qty: 946 }], shelfLife: { pantry: 365 } }),
@@ -307,6 +311,7 @@ const CATALOG: Ingredient[] = [
 
   // ---------- Frozen ----------
   I('frozen-french-fries', 'Frozen french fries', 'frozen', 'g', { aliases: ['french fries', 'fries', 'potato fries'], density: 0.5, packages: [{ label: '32 oz bag', qty: lb(2) }], defaultLocation: 'freezer', shelfLife: { freezer: 300 } }),
+  I('puff-pastry', 'Puff pastry', 'frozen', 'ea', { aliases: ['puff pastry sheets', 'frozen puff pastry'], gramsPerEach: 245, unitAliases: { sheet: 1 }, packages: [{ label: '17 oz box (2 sheets)', qty: 2 }], defaultLocation: 'freezer', shelfLife: { freezer: 365, fridge: 3 } }),
   I('frozen-peas', 'Frozen peas', 'frozen', 'g', { aliases: ['peas', 'green peas'], density: 0.6, packages: [{ label: '12 oz bag', qty: oz(12) }], shelfLife: { freezer: 240 } }),
   I('frozen-broccoli', 'Frozen broccoli', 'frozen', 'g', { density: 0.38, packages: [{ label: '12 oz bag', qty: oz(12) }], shelfLife: { freezer: 240 } }),
   I('lima-beans', 'Frozen lima beans', 'frozen', 'g', { aliases: ['lima beans', 'butter beans', 'baby limas'], density: 0.6, packages: [{ label: '12 oz bag', qty: oz(12) }], shelfLife: { freezer: 240 } }),

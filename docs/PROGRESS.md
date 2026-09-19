@@ -137,6 +137,13 @@ Living handoff log. Newest notes at the top of each section.
 - Added `src/data/recipes/africa2.ts` with thirteen more African recipes: chicken suya, egusi soup (smoked turkey in place of the source's beef), moin moin, bobotie (rebuilt with ground turkey), harira (chicken in place of lamb), shiro wat, bunny chow and Nigerian fried rice, plus sides fufu, kelewele and atakilt wat, and desserts mandazi and chin chin.
 - New catalog ingredients: egusi, dried shrimp, chickpea flour.
 - SEED_VERSION 154.
+- Added 14 British and Irish recipes (`src/data/recipes/britishIsles.ts`): toad in the hole, bangers and mash,
+  scotch eggs, coronation chicken, Dublin coddle, chicken and leek pie, plus Yorkshire pudding and mushy peas
+  as sides and sticky toffee pudding, treacle tart, Yorkshire parkin, Bakewell tart, Eton mess and scones as desserts.
+  Sources credited to Kimberly Killebrew, Billy Parisi, Caroline (Caroline's Cooking) and Christina Conte.
+  New catalog ingredients: pork sausages, Medjool dates, meringue cookies, golden syrup, puff pastry.
+  Beef drippings/bouillon swapped out of the Yorkshire pudding and toad in the hole, disclosed in each recipe's notes.
+- SEED_VERSION 155.
 - Later in the same session: more world mains (arepas de queso, tteokbokki, chicken katsu, chicken congee, pancit bihon, borscht, moussaka with ground turkey, japchae, mapo tofu, palak paneer, chicken biryani, pozole verde, vegetarian shepherd's pie, misir wat), more desserts (no-bake cheesecake, churros, tiramisu, baklava, carrot cake, bread pudding, cut-out sugar cookies, panna cotta) and ten more sides (gomen, cilantro lime rice, cumin lime coleslaw, roasted cauliflower, street corn salad, roasted brussels sprouts, glazed carrots, braised red cabbage, creamed corn, macaroni salad).
 - Bundle: the recipe catalog and ingredient catalog are now dynamic imports inside `seedIfNeeded`, and the six screens you only reach by navigating (cook mode, recipe editor, settings, stock check, prep, pantry item) are `React.lazy` behind a `Suspense` fallback. Launch JS went from 1,953 kB (545 kB gzip) to ~735 kB (229 kB gzip).
 
