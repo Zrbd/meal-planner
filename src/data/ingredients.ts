@@ -152,6 +152,7 @@ const CATALOG: Ingredient[] = [
   I('greek-yogurt', 'Greek yogurt (plain)', 'dairy', 'g', { aliases: ['greek yogurt', 'plain greek yogurt', 'plain yogurt', 'yogurt'], density: 1.05, packages: [{ label: '5.3 oz cup', qty: 150 }, { label: '32 oz tub', qty: oz(32) }], shelfLife: { fridge: 14 } }),
   I('smoked-gouda', 'Smoked gouda (shredded)', 'dairy', 'g', { aliases: ['gouda', 'smoked cheese'], density: 0.42, packages: [{ label: '8 oz block', qty: oz(8) }], defaultLocation: 'fridge', shelfLife: { fridge: 21 } }),
   I('melting-cheese', 'American melting cheese', 'dairy', 'g', { aliases: ['velveeta', 'processed cheese', 'cheese loaf'], density: 1, packages: [{ label: '32 oz block', qty: oz(32) }], defaultLocation: 'fridge', shelfLife: { fridge: 60 } }),
+  I('blue-cheese', 'Blue cheese crumbles', 'dairy', 'g', { aliases: ['blue cheese', 'gorgonzola', 'crumbled blue cheese'], density: 0.5, packages: [{ label: '4 oz tub', qty: oz(4) }], shelfLife: { fridge: 21 } }),
   I('cream-cheese', 'Cream cheese', 'dairy', 'g', { density: 0.97, packages: [{ label: '8 oz block', qty: oz(8) }], shelfLife: { fridge: 21 }, valueWeight: 2 }),
   I('mascarpone', 'Mascarpone', 'dairy', 'g', { aliases: ['mascarpone cheese'], density: 1, packages: [{ label: '8 oz tub', qty: oz(8) }], shelfLife: { fridge: 14 }, valueWeight: 2 }),
   I('parmesan', 'Parmesan', 'dairy', 'g', { aliases: ['parmesan cheese', 'grated parmesan', 'parmigiano reggiano', 'parmigiano-reggiano'], density: 0.42, packages: [{ label: '5 oz tub', qty: oz(5) }, { label: '8 oz wedge', qty: oz(8) }], shelfLife: { fridge: 30 }, valueWeight: 2 }),
@@ -177,6 +178,7 @@ const CATALOG: Ingredient[] = [
   I('spring-roll-wrappers', 'Spring roll wrappers', 'frozen', 'ea', { aliases: ['lumpia wrappers', 'spring roll pastry'], gramsPerEach: 15, unitAliases: { wrapper: 1, sheet: 1 }, packages: [{ label: '25-count pack', qty: 25 }], shelfLife: { fridge: 21, freezer: 365 } }),
   I('wonton-wrappers', 'Wonton wrappers', 'frozen', 'ea', { aliases: ['dumpling wrappers', 'gyoza wrappers', 'momo wrappers'], gramsPerEach: 8, unitAliases: { wrapper: 1 }, packages: [{ label: '50-count pack', qty: 50 }], shelfLife: { fridge: 21, freezer: 365 } }),
   I('flour-tortillas', 'Flour tortillas', 'bakery', 'ea', { aliases: ['tortillas', 'flour tortilla', 'burrito tortillas'], gramsPerEach: 45, unitAliases: { tortilla: 1 }, packages: [{ label: '10-count', qty: 10 }], shelfLife: { pantry: 14 } }),
+  I('crackers', 'Crackers', 'snacks', 'g', { aliases: ['saltines', 'butter crackers', 'water crackers'], density: 0.4, packages: [{ label: '9 oz box', qty: oz(9) }], shelfLife: { pantry: 180 } }),
   I('corn-tortillas', 'Corn tortillas', 'bakery', 'ea', { aliases: ['corn tortilla'], gramsPerEach: 25, unitAliases: { tortilla: 1 }, packages: [{ label: '30-count', qty: 30 }], shelfLife: { pantry: 14 } }),
   I('hamburger-buns', 'Hamburger buns', 'bakery', 'ea', { aliases: ['burger buns', 'buns'], gramsPerEach: 50, unitAliases: { bun: 1 }, packages: [{ label: '8-pack', qty: 8 }], shelfLife: { pantry: 6 } }),
   I('baguette', 'Baguette', 'bakery', 'ea', { aliases: ['french bread', 'crusty bread'], gramsPerEach: 250, shelfLife: { pantry: 2 } }),
@@ -325,6 +327,7 @@ const CATALOG: Ingredient[] = [
   looseLiquid('honey', 'Honey', 'oils-condiments', 1.42, '12 oz bottle', 240),
   looseLiquid('molasses', 'Molasses', 'oils-condiments', 1.4, '12 oz bottle', floz(12), { aliases: ['dark molasses', 'unsulphured molasses'] }),
   I('apple-juice', 'Apple juice', 'beverages', 'ml', { aliases: ['apple cider', 'unfiltered apple juice'], density: 1.04, packages: [{ label: '64 oz jug', qty: floz(64) }], shelfLife: { pantry: 270, fridge: 10 } }),
+  looseLiquid('ranch-dressing', 'Ranch dressing', 'oils-condiments', 1.0, '16 oz bottle', floz(16), { aliases: ['ranch', 'buttermilk ranch'] }),
   looseLiquid('maple-syrup', 'Maple syrup', 'oils-condiments', 1.32, '12 oz bottle', floz(12), { aliases: ['pure maple syrup', 'syrup'] }),
 
   // ---------- Oils, vinegars & condiments ----------
