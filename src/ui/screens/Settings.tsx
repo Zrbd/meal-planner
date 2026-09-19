@@ -139,8 +139,20 @@ export function SettingsScreen() {
               />
             </div>
           </Row>
+          <Row title="Shopping by store" hint="Split one list across the two or three places you shop">
+            <Link className="btn btn-secondary px-3 py-1.5" to="/settings/stores">{s.multiStore ? 'On' : 'Set up'}</Link>
+          </Row>
           <Row title="Price book" hint="Every price you've typed in, and what's gone up">
             <Link className="btn btn-secondary px-3 py-1.5" to="/prices">Open</Link>
+          </Row>
+          <Row title="Text size" hint="Scales the whole app, not just the recipe">
+            <div className="w-44">
+              <Segmented
+                value={(s.textScale ?? 1) >= 1.25 ? 'xl' : (s.textScale ?? 1) >= 1.1 ? 'lg' : 'md'}
+                options={[{ value: 'md', label: 'Normal' }, { value: 'lg', label: 'Large' }, { value: 'xl', label: 'Largest' }]}
+                onChange={(v) => set({ textScale: v === 'md' ? 1 : v === 'lg' ? 1.15 : 1.3 })}
+              />
+            </div>
           </Row>
           <Row title="Units">
             <div className="w-36">
@@ -181,6 +193,15 @@ export function SettingsScreen() {
         <div className="card divide-y divide-stone-100">
           <Row title="Stock check" hint="Go through your kitchen one ingredient at a time">
             <Link className="btn btn-secondary px-3 py-1.5" to="/pantry/check">Start</Link>
+          </Row>
+          <Row title="Staples" hint="Things that should always be in the house">
+            <Link className="btn btn-secondary px-3 py-1.5" to="/settings/staples">Open</Link>
+          </Row>
+          <Row title="Use it up" hint="Three weeks of use-by dates, and what to cook to beat them">
+            <Link className="btn btn-secondary px-3 py-1.5" to="/pantry/expiry">Open</Link>
+          </Row>
+          <Row title="Freezer" hint="Cooked portions waiting for a night off">
+            <Link className="btn btn-secondary px-3 py-1.5" to="/freezer">Open</Link>
           </Row>
         </div>
 

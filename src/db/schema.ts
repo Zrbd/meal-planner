@@ -8,6 +8,19 @@ export interface KV {
   value: unknown;
 }
 
+/**
+ * A photo of a dish you actually cooked. Stored as data URLs rather than Blobs so the JSON
+ * backup carries them along with everything else; both are already downscaled JPEG.
+ */
+export interface RecipePhoto {
+  recipeId: string;
+  /** ~240px, shown on cards and lists. */
+  thumb: string;
+  /** ~1000px, shown on the recipe screen. */
+  full: string;
+  at: number;
+}
+
 export class MealDB extends Dexie {
   ingredients!: EntityTable<Ingredient, 'id'>;
   recipes!: EntityTable<Recipe, 'id'>;
@@ -19,6 +32,7 @@ export class MealDB extends Dexie {
   shopping!: EntityTable<ShoppingState, 'key'>;
   trips!: EntityTable<Trip, 'id'>;
   kv!: EntityTable<KV, 'key'>;
+  photos!: EntityTable<RecipePhoto, 'recipeId'>;
 
   constructor(name = 'meal-planner') {
     super(name);
@@ -34,12 +48,14 @@ export class MealDB extends Dexie {
       trips: 'id, finishedAt',
       kv: 'key',
     });
+    // v2 adds your own photos of finished dishes.
+    this.version(2).stores({ photos: 'recipeId, at' });
   }
 }
 
 export const db = new MealDB();
 
 export const ALL_TABLES = [
-  'ingredients', 'recipes', 'lots', 'loose', 'txns', 'meals', 'cookLogs', 'shopping', 'trips', 'kv',
+  'ingredients', 'recipes', 'lots', 'loose', 'txns', 'meals', 'cookLogs', 'shopping', 'trips', 'kv', 'photos',
 ] as const;
 export type TableName = (typeof ALL_TABLES)[number];

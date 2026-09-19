@@ -61,9 +61,9 @@ const personalRecipe = (r: Row) => r.source !== 'builtin' || !!r.userEdited || !
 /** Anything the user made: stock, plans, history, own/edited/rated recipes, settings. */
 export function hasUserData(b: Backup): boolean {
   return (
-    USER_TABLES.some((t) => b.tables[t].length > 0) ||
-    b.tables.recipes.some(personalRecipe) ||
-    b.tables.kv.some((r) => r.key === 'settings')
+    USER_TABLES.some((t) => (b.tables[t] ?? []).length > 0) ||
+    (b.tables.recipes ?? []).some(personalRecipe) ||
+    (b.tables.kv ?? []).some((r) => r.key === 'settings')
   );
 }
 
@@ -73,8 +73,8 @@ export function compactBackup(b: Backup): Backup {
     ...b,
     tables: {
       ...b.tables,
-      recipes: b.tables.recipes.filter(personalRecipe),
-      kv: b.tables.kv.filter((r) => r.key !== 'seedVersion' && r.key !== 'autoBackupAt'),
+      recipes: (b.tables.recipes ?? []).filter(personalRecipe),
+      kv: (b.tables.kv ?? []).filter((r) => r.key !== 'seedVersion' && r.key !== 'autoBackupAt'),
     },
   };
 }
@@ -91,7 +91,7 @@ export async function autoBackup(database: MealDB = db, store: MirrorStore = dev
       if (!hasUserData(parsed)) return 'empty';
       await importBackup(saved, database);
       // importBackup stamps "last backup"; keep the real date of the last file backup instead
-      const fileBackup = parsed.tables.kv.find((r) => r.key === 'lastBackupAt');
+      const fileBackup = (parsed.tables.kv ?? []).find((r) => r.key === 'lastBackupAt');
       if (fileBackup) await database.kv.put({ key: 'lastBackupAt', value: fileBackup.value });
       else await database.kv.delete('lastBackupAt');
       await database.kv.put({ key: 'autoRestoredAt', value: Date.now() });

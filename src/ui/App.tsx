@@ -24,6 +24,12 @@ const Stats = lazy(() => import('./screens/Stats').then((m) => ({ default: m.Sta
 const PriceBook = lazy(() => import('./screens/PriceBook').then((m) => ({ default: m.PriceBook })));
 const FindByIngredient = lazy(() => import('./screens/FindByIngredient').then((m) => ({ default: m.FindByIngredient })));
 const Collections = lazy(() => import('./screens/Collections').then((m) => ({ default: m.Collections })));
+const Freezer = lazy(() => import('./screens/Freezer').then((m) => ({ default: m.Freezer })));
+const MenuCard = lazy(() => import('./screens/MenuCard').then((m) => ({ default: m.MenuCard })));
+const Timeline = lazy(() => import('./screens/Timeline').then((m) => ({ default: m.Timeline })));
+const ExpiryCalendar = lazy(() => import('./screens/ExpiryCalendar').then((m) => ({ default: m.ExpiryCalendar })));
+const Staples = lazy(() => import('./screens/Staples').then((m) => ({ default: m.Staples })));
+const StorePlan = lazy(() => import('./screens/StorePlan').then((m) => ({ default: m.StorePlan })));
 
 const TABS = [
   { to: '/', label: 'Today', icon: House },
@@ -95,6 +101,17 @@ function TabBar() {
 }
 
 /** Badge the app icon and send a notification digest for new alerts whenever the app is open. */
+/** Feature 14: the whole app scales with one number, because rem sizes everything. */
+function TextScale() {
+  const { settings } = useAppData();
+  const scale = settings.textScale ?? 1;
+  useEffect(() => {
+    document.documentElement.style.fontSize = scale === 1 ? '' : `${Math.round(16 * scale)}px`;
+    return () => { document.documentElement.style.fontSize = ''; };
+  }, [scale]);
+  return null;
+}
+
 function NotificationBridge() {
   const { settings } = useAppData();
   const alerts = useAlerts();
@@ -160,7 +177,13 @@ export function App() {
               <Route path="/find" element={<FindByIngredient />} />
               <Route path="/collections" element={<Collections />} />
               <Route path="/collections/:id" element={<Collections />} />
+              <Route path="/freezer" element={<Freezer />} />
+              <Route path="/menu" element={<MenuCard />} />
+              <Route path="/timeline/:date" element={<Timeline />} />
+              <Route path="/pantry/expiry" element={<ExpiryCalendar />} />
               <Route path="/settings" element={<SettingsScreen />} />
+              <Route path="/settings/staples" element={<Staples />} />
+              <Route path="/settings/stores" element={<StorePlan />} />
               <Route path="*" element={<Home />} />
             </Routes>
             </Suspense>
@@ -168,6 +191,7 @@ export function App() {
           <TabBar />
           <UpdateBanner />
           <NotificationBridge />
+          <TextScale />
         </ToastProvider>
       </AppDataProvider>
     </HashRouter>

@@ -1,5 +1,5 @@
 import { CalendarPlus, Check, ChefHat, Clock, Copy, EyeOff, Heart, Minus, MoreHorizontal, Pencil, Plus, Star, Trash2, Users } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { recipeCoverage } from '../../domain/coverage';
 import { addDaysISO, relativeDayLabel, toISODate } from '../../domain/dates';
@@ -28,6 +28,11 @@ import { recipeToText } from '../../domain/recipetext';
 import { createCollection, toggleInCollection } from '../../services/collections';
 import { addJournalEntry, deleteJournalEntry } from '../../services/journal';
 import { shareText } from '../share';
+import { Camera, ImageOff, Sprout } from 'lucide-react';
+import { inSeason } from '../../domain/seasons';
+import { removePhoto, savePhoto } from '../../services/photos';
+import { rememberServings, touchRecipe } from '../../services/prefs';
+import { SeasonBadge } from '../components';
 
 export function RecipeDetail() {
   const { id = '' } = useParams();
@@ -41,13 +46,40 @@ export function RecipeDetail() {
   const [swapSearch, setSwapSearch] = useState(false);
   const { available, looseLevel } = useAvailability();
   const recipe = recipeById.get(id);
-  const [servings, setServings] = useState(settings.householdSize);
+  const [servings, setServings] = useState(settings.recipeServings?.[id] ?? settings.householdSize);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [photoBusy, setPhotoBusy] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [planOpen, setPlanOpen] = useState(false);
   const [collOpen, setCollOpen] = useState(false);
   const [journalOpen, setJournalOpen] = useState(false);
   const units = useRecipeUnits(id, settings.units);
   const prices = usePrices();
+
+  // Opening a recipe is what "recently viewed" means, so record it here and nowhere else.
+  useEffect(() => {
+    if (id) void touchRecipe(id);
+  }, [id]);
+
+  /** Servings stick per recipe — you almost always cook it for the same number of people. */
+  const changeServings = (n: number) => {
+    const next = Math.max(1, n);
+    setServings(next);
+    if (id) void rememberServings(id, next);
+  };
+
+  const pickPhoto = async (file: File | undefined) => {
+    if (!file || !id) return;
+    setPhotoBusy(true);
+    try {
+      await savePhoto(id, file);
+      toast('Photo saved');
+    } catch (e) {
+      toast(e instanceof Error ? e.message : "That image couldn't be saved");
+    } finally {
+      setPhotoBusy(false);
+    }
+  };
 
   const coverage = useMemo(
     () => recipe && recipeCoverage(recipe, servings, available, looseLevel, ingById),
@@ -69,6 +101,8 @@ export function RecipeDetail() {
   const cost = recipeCost(recipe, servings, ingById, prices);
   const inCollections = collectionsOf(d.collections, recipe.id);
   const journal = entriesFor(d.journal, recipe.id);
+  const photo = d.photoByRecipe.get(recipe.id);
+  const peaking = recipe.ingredients.filter((ri) => !ri.optional && inSeason(ri.ingredientId, today)).map((ri) => ri.ingredientId);
 
   return (
     <>
@@ -90,8 +124,28 @@ export function RecipeDetail() {
         }
       />
       <article className="px-4 pb-28">
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            void pickPhoto(e.target.files?.[0]);
+            e.target.value = '';
+          }}
+        />
         <div className="flex items-start gap-4">
-          <RecipeThumb recipe={recipe} className="h-24 w-24 text-5xl" />
+          <button
+            className="relative shrink-0"
+            aria-label={photo ? 'Replace photo' : 'Add a photo'}
+            disabled={photoBusy}
+            onClick={() => fileRef.current?.click()}
+          >
+            <RecipeThumb recipe={recipe} className="h-24 w-24 text-5xl" />
+            <span className="absolute -right-1 -bottom-1 flex h-7 w-7 items-center justify-center rounded-full bg-white text-brand shadow ring-1 ring-stone-200">
+              <Camera size={15} />
+            </span>
+          </button>
           <div className="min-w-0 flex-1">
             <h1 className="text-2xl leading-tight font-bold">{recipe.title}</h1>
             <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-stone-500">
@@ -116,6 +170,27 @@ export function RecipeDetail() {
             Adapted from {recipe.credit.author ? `${recipe.credit.author}, ` : ''}{recipe.credit.name} <ExternalLink size={13} />
           </a>
         )}
+        {peaking.length > 0 && (
+          <p className="mt-2 flex flex-wrap items-center gap-1.5 text-sm text-stone-600">
+            <Sprout size={15} className="text-lime-700" />
+            At its best right now:{' '}
+            {[...new Set(peaking)].map((pid) => ingById.get(pid)?.name.toLowerCase() ?? pid).join(', ')}.
+          </p>
+        )}
+        {photo && (
+          <figure className="mt-4">
+            <img src={photo.full} alt={`${recipe.title}, as you made it`} className="w-full rounded-2xl object-cover" />
+            <figcaption className="mt-1 flex items-center justify-between text-xs text-stone-500">
+              <span>Your photo</span>
+              <button
+                className="inline-flex items-center gap-1 font-medium text-stone-500"
+                onClick={() => void removePhoto(recipe.id).then(() => toast('Photo removed'))}
+              >
+                <ImageOff size={13} /> Remove
+              </button>
+            </figcaption>
+          </figure>
+        )}
         {(recipe.diet.length > 0 || recipe.source === 'user') && (
           <div className="mt-3 flex flex-wrap gap-1.5">
             {recipe.source === 'user' && <span className="rounded-full bg-sky-100 px-2 py-0.5 text-xs font-medium text-sky-800">My recipe</span>}
@@ -129,11 +204,11 @@ export function RecipeDetail() {
           <h2 className="text-lg font-bold">Ingredients</h2>
           <div className="flex items-center gap-2">
             <Users size={16} className="text-stone-400" />
-            <button className="icon-btn h-8 w-8 bg-stone-100" aria-label="Fewer servings" onClick={() => setServings(Math.max(1, servings - 1))}>
+            <button className="icon-btn h-8 w-8 bg-stone-100" aria-label="Fewer servings" onClick={() => changeServings(servings - 1)}>
               <Minus size={16} />
             </button>
             <span className="w-8 text-center font-semibold" aria-live="polite">{formatNumber(servings)}</span>
-            <button className="icon-btn h-8 w-8 bg-stone-100" aria-label="More servings" onClick={() => setServings(servings + 1)}>
+            <button className="icon-btn h-8 w-8 bg-stone-100" aria-label="More servings" onClick={() => changeServings(servings + 1)}>
               <Plus size={16} />
             </button>
           </div>
@@ -181,6 +256,7 @@ export function RecipeDetail() {
                     </button>
                     {ri.prep && <span className="text-stone-500">, {ri.prep}</span>}
                     {ri.optional && <span className="text-stone-400"> (optional)</span>}
+                    {ing && inSeason(ing.id, today) && <SeasonBadge className="ml-2 align-middle" />}
                     {ri.swappedFrom && (
                       <div className="mt-0.5 flex items-center gap-1 text-xs text-sky-700">
                         <ArrowLeftRight size={12} /> Swapped in for {ingById.get(ri.swappedFrom.ingredientId)?.name.toLowerCase() ?? 'the original'}

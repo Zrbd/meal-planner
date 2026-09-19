@@ -7,7 +7,8 @@ const BackupSchema = z.object({
   app: z.literal('meal-planner'),
   version: z.number(),
   exportedAt: z.number(),
-  tables: z.object(Object.fromEntries(ALL_TABLES.map((t) => [t, z.array(z.record(z.string(), z.unknown()))]))),
+  // Tables are optional so a backup taken before a table existed still restores.
+  tables: z.object(Object.fromEntries(ALL_TABLES.map((t) => [t, z.array(z.record(z.string(), z.unknown())).optional()]))),
 });
 export type Backup = z.infer<typeof BackupSchema>;
 
@@ -30,7 +31,7 @@ export async function importBackup(json: string, database: MealDB = db): Promise
   await database.transaction('rw', ALL_TABLES.map((t) => database.table(t)), async () => {
     for (const t of ALL_TABLES) {
       await database.table(t).clear();
-      await database.table(t).bulkAdd(backup.tables[t]);
+      await database.table(t).bulkAdd(backup.tables[t] ?? []);
     }
   });
   await database.kv.put({ key: 'lastBackupAt', value: backup.exportedAt });

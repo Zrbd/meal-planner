@@ -186,6 +186,21 @@ share as text), Settings (budget, price book, looking-back links), CookMode (las
 `data.tsx` now loads all cook logs (was capped at 200) so all-time stats are right.
 Covered by `tests/stats.test.ts` (53 cases).
 
+## Second fifteen-feature batch (photos, leftovers, seasons, stores)
+New screens: Freezer (`/freezer`), Menu card (`/menu`), Dinner timeline (`/timeline/:date`),
+Use it up (`/pantry/expiry`), Staples (`/settings/staples`), Shopping by store (`/settings/stores`).
+New pure modules: `data/seasons.ts` plus `domain/seasons.ts`, `balance.ts`, `leftovers.ts`,
+`smartcollections.ts`, `mealtimeline.ts`, `storeplan.ts`, `recent.ts`, `menucard.ts`, `expirycalendar.ts`.
+New services: `services/photos.ts`, `leftovers.ts`, `staples.ts`, `prefs.ts`.
+Schema: a `freezer` table and photo data-URLs on recipes; every backup table is optional so older
+backup files still restore. Store assignments, text scale, serve time and recently-viewed live in
+settings/kv, so nothing else needed a version bump.
+Touched screens: Home (jump back in, in the freezer, good right now), Plan (batch cook, freeze
+portions, timeline link, week balance meter, fill a week from a collection), Recipes (season filter),
+RecipeDetail (photo capture, season badges, remembered servings), Shopping (per-store sections),
+Pantry (use-it-up link), Collections (smart shelves), Settings (staples, stores, text size).
+Covered by `tests/features.test.ts` (41 cases).
+
 ## Known gaps / ideas for next session
 - Notifications only fire while the app is open (iOS web app limit). Calendar export covers timed reminders.
 - The auto-backup copy lives in the same site storage iOS may evict; it protects against DB corruption/partial loss, not against deleting the app.

@@ -2,12 +2,14 @@
 // writes go through src/services and the query re-runs automatically.
 import { useLiveQuery } from 'dexie-react-hooks';
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { db } from '../db/schema';
+import { db, type RecipePhoto } from '../db/schema';
 import { withDefaults } from '../db/settings';
 import { todayISO } from '../domain/dates';
 import { usageRate } from '../domain/forecast';
 import { parseCollections, type Collection } from '../domain/collections';
 import { parseJournal, type JournalEntry } from '../domain/journal';
+import { parseFreezer, type FreezerMeal } from '../domain/leftovers';
+import { parseRecent } from '../domain/recent';
 import type {
   CookLog, Ingredient, InventoryTxn, ISODate, LooseStock, PlannedMeal, Recipe, Settings, ShoppingState, StockLot, Trip,
 } from '../domain/types';
@@ -44,6 +46,12 @@ export interface AppData {
   collections: Collection[];
   /** Notes you left after cooking. */
   journal: JournalEntry[];
+  /** Your own photos of finished dishes, by recipe id. */
+  photoByRecipe: Map<string, RecipePhoto>;
+  /** Cooked portions waiting in the freezer. */
+  freezer: FreezerMeal[];
+  /** Recipe ids you opened lately, most recent first. */
+  recent: string[];
 }
 
 const Ctx = createContext<AppData | null>(null);
@@ -62,7 +70,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
 
   const raw = useLiveQuery(async () => {
     const since = Date.now() - 60 * DAY;
-    const [ingredients, recipes, lots, loose, txns, meals, cookLogs, shopping, trips, settingsRow, backupRow, autoRow, restoredRow, checksRow, stockCheckRow, collectionsRow, journalRow] =
+    const [ingredients, recipes, lots, loose, txns, meals, cookLogs, shopping, trips, settingsRow, backupRow, autoRow, restoredRow, checksRow, stockCheckRow, collectionsRow, journalRow, photos, freezerRow, recentRow] =
       await Promise.all([
         db.ingredients.toArray(),
         db.recipes.toArray(),
@@ -81,6 +89,9 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         db.kv.get('stockCheck'),
         db.kv.get('collections'),
         db.kv.get('journal'),
+        db.photos.toArray(),
+        db.kv.get('freezer'),
+        db.kv.get('recent'),
       ]);
     return {
       ingredients, recipes, lots, loose, txns, meals, cookLogs, shopping, trips,
@@ -92,13 +103,16 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       stockChecked: new Set(((stockCheckRow?.value as { done?: string[] } | undefined)?.done ?? [])),
       collections: parseCollections(collectionsRow?.value),
       journal: parseJournal(journalRow?.value),
+      photos,
+      freezer: parseFreezer(freezerRow?.value),
+      recent: parseRecent(recentRow?.value),
       loadedAt: Date.now(),
     };
   }, []);
 
   const value = useMemo<AppData | null>(() => {
     if (!raw) return null;
-    const { loadedAt, ...rest } = raw;
+    const { loadedAt, photos, ...rest } = raw;
     const dailyRates = new Map<string, number>();
     for (const id of new Set(rest.txns.map((t) => t.ingredientId))) dailyRates.set(id, usageRate(rest.txns, id, loadedAt));
     return {
@@ -108,6 +122,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       ingById: new Map(rest.ingredients.map((i) => [i.id, i])),
       recipeById: new Map(rest.recipes.map((r) => [r.id, r])),
       looseById: new Map(rest.loose.map((l) => [l.ingredientId, l])),
+      photoByRecipe: new Map(photos.map((p) => [p.recipeId, p])),
       dailyRates,
     };
   }, [raw, today]);

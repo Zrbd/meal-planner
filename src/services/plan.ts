@@ -83,3 +83,45 @@ export async function copyWeek(fromStart: ISODate, toStart: ISODate, today: ISOD
     return { copied: rows.length, skipped };
   });
 }
+
+export interface FillResult {
+  added: number;
+  /** Free slots the collection couldn't fill because it ran out of recipes. */
+  unfilled: number;
+}
+
+/**
+ * Fill the free slots of a date range from a fixed pool of recipes — a collection, usually.
+ * Recipes are dealt out in order and never repeat, so a five-recipe collection fills five
+ * nights and honestly reports the sixth as unfilled rather than serving it twice.
+ */
+export async function fillFromPool(input: {
+  recipeIds: string[];
+  from: ISODate;
+  to: ISODate;
+  slot: Slot;
+  servings: number;
+  today: ISODate;
+}): Promise<FillResult> {
+  if (!input.recipeIds.length) return { added: 0, unfilled: 0 };
+  return db.transaction('rw', db.meals, async () => {
+    const existing = await db.meals.where('date').between(input.from, input.to, true, true).toArray();
+    const taken = new Set(existing.map((m) => `${m.date}:${m.slot}`));
+    const rows: PlannedMeal[] = [];
+    let unfilled = 0;
+    let next = 0;
+    for (let date = input.from; date <= input.to; date = addDaysISO(date, 1)) {
+      if (date < input.today || taken.has(`${date}:${input.slot}`)) continue;
+      if (next >= input.recipeIds.length) {
+        unfilled++;
+        continue;
+      }
+      rows.push({
+        id: newId(), recipeId: input.recipeIds[next++], date, slot: input.slot,
+        servings: input.servings, status: 'planned',
+      });
+    }
+    await db.meals.bulkAdd(rows);
+    return { added: rows.length, unfilled };
+  });
+}

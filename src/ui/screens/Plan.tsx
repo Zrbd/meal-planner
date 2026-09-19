@@ -20,6 +20,12 @@ import { useToast } from '../toast';
 import Fuse from 'fuse.js';
 import { useUpCandidates, type UseUpItem } from '../../domain/freshness';
 import { formatQty } from '../../domain/units';
+import { BookMarked, Clock3, Printer, Snowflake, Soup } from 'lucide-react';
+import { weekBalance } from '../../domain/balance';
+import { fillFromPool } from '../../services/plan';
+import { freezePortions, planBatchCook, unbatch } from '../../services/leftovers';
+import { SMART_COLLECTIONS, smartMembers } from '../../domain/smartcollections';
+import { lastCooked } from '../../domain/rotation';
 
 function planInput(d: AppData, slots: PlanSlot[], seed: number, avoid?: Map<string, string[]>, useUp?: string[], keeping: AutoPick[] = []) {
   // Meals you asked to keep are treated as already planned, so the rest of the week is picked
@@ -83,6 +89,7 @@ export function Plan() {
   const [quickDay, setQuickDay] = useState<{ date: string; slot: Slot } | null>(null);
   const [kept, setKept] = useSessionState<string[]>('plan:kept', () => []);
   const [weekMenu, setWeekMenu] = useState(false);
+  const [fromCollection, setFromCollection] = useState(false);
 
   const weekMeals = meals.filter((m) => m.date >= weekStart && m.date <= weekEnd);
   const plannedCount = weekMeals.filter((m) => m.status === 'planned' && !m.leftoverOf).length;
@@ -93,6 +100,10 @@ export function Plan() {
       const r = recipeById.get(m.recipeId);
       return r ? sum + recipeCost(r, m.servings, d.ingById, prices).total : sum;
     }, 0);
+  const balance = useMemo(
+    () => weekBalance({ meals: weekMeals, recipeById, ingById: d.ingById, weeknightMaxMin: settings.weeknightMaxMin }),
+    [weekMeals, recipeById, d.ingById, settings.weeknightMaxMin],
+  );
   const slotsShown = SLOTS.filter((s) => settings.enabledSlots.includes(s) || weekMeals.some((m) => m.slot === s));
 
   const openSlotsForAutofill = (): PlanSlot[] => {
@@ -175,6 +186,8 @@ export function Plan() {
             <ChevronRight />
           </button>
         </div>
+
+        {balance.meals >= 2 && <BalanceMeter balance={balance} />}
 
         <div className="mt-3 space-y-3">
           {days.map((day) => {
@@ -438,6 +451,19 @@ export function Plan() {
           </button>
           <button
             className="btn btn-secondary w-full justify-start"
+            onClick={() => { setWeekMenu(false); setFromCollection(true); }}
+          >
+            <BookMarked size={18} /> Fill the week from a collection
+          </button>
+          <button
+            className="btn btn-secondary w-full justify-start"
+            disabled={!weekMeals.length}
+            onClick={() => { setWeekMenu(false); navigate(`/menu?w=${weekStart}`); }}
+          >
+            <Printer size={18} /> Menu card for the fridge
+          </button>
+          <button
+            className="btn btn-secondary w-full justify-start"
             disabled={!weekMeals.length}
             onClick={async () => {
               const text = planToText({
@@ -479,7 +505,104 @@ export function Plan() {
           </p>
         </div>
       </Sheet>
+
+      {fromCollection && (
+        <FillFromCollectionSheet
+          weekStart={weekStart}
+          weekEnd={weekEnd}
+          onClose={() => setFromCollection(false)}
+        />
+      )}
     </>
+  );
+}
+
+/** How varied the week is, as one bar and a few plain-English notes. */
+function BalanceMeter({ balance }: { balance: ReturnType<typeof weekBalance> }) {
+  const tone = balance.score >= 75 ? 'bg-green-500' : balance.score >= 50 ? 'bg-amber-400' : 'bg-orange-400';
+  return (
+    <div className="card mt-3 p-3">
+      <div className="flex items-baseline justify-between">
+        <h2 className="text-sm font-semibold">Week balance</h2>
+        <span className="text-sm font-semibold text-stone-500">{balance.score}/100</span>
+      </div>
+      <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-stone-100">
+        <div className={`h-full rounded-full ${tone}`} style={{ width: `${balance.score}%` }} />
+      </div>
+      <ul className="mt-2 space-y-1 text-xs">
+        {balance.notes.slice(0, 4).map((n) => (
+          <li key={n.id} className={n.tone === 'warn' ? 'text-amber-700' : 'text-stone-500'}>
+            {n.tone === 'warn' ? '• ' : '✓ '}{n.text}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/** Deal a collection out across the week's free nights. */
+function FillFromCollectionSheet(props: { weekStart: string; weekEnd: string; onClose: () => void }) {
+  const d = useAppData();
+  const toast = useToast();
+  const cooked = useMemo(() => lastCooked(d.cookLogs), [d.cookLogs]);
+  const coverage = useCoverage();
+  const ctx = useMemo(
+    () => ({
+      date: d.today, lastCookedAt: cooked, now: d.now, weeknightMaxMin: d.settings.weeknightMaxMin,
+      coverage: new Map([...coverage].map(([id, c]) => [id, c.ratio])),
+    }),
+    [d.today, cooked, d.now, d.settings.weeknightMaxMin, coverage],
+  );
+  const slot = d.settings.enabledSlots[0] ?? 'dinner';
+
+  const fill = async (name: string, recipeIds: string[]) => {
+    const res = await fillFromPool({
+      recipeIds, from: props.weekStart, to: props.weekEnd, slot,
+      servings: d.settings.householdSize, today: d.today,
+    });
+    props.onClose();
+    toast(
+      res.added
+        ? `${res.added} night${res.added === 1 ? '' : 's'} from ${name}${res.unfilled ? ` · ${res.unfilled} left open` : ''}`
+        : 'No free nights left this week',
+    );
+  };
+
+  return (
+    <Sheet open onClose={props.onClose} title="Fill the week from…">
+      <p className="mb-3 text-sm text-stone-500">
+        Free {slot} slots get filled in order, one recipe each. Anything already planned is left alone.
+      </p>
+      <div className="space-y-2">
+        {d.collections.map((c) => (
+          <button key={c.id} className="card flex w-full items-center gap-3 p-3 text-left" onClick={() => void fill(c.name, c.recipeIds)}>
+            <span className="text-xl">{c.emoji ?? '📚'}</span>
+            <span className="min-w-0 flex-1">
+              <span className="block font-semibold">{c.name}</span>
+              <span className="block text-xs text-stone-500">{c.recipeIds.length} recipe{c.recipeIds.length === 1 ? '' : 's'}</span>
+            </span>
+          </button>
+        ))}
+        <h3 className="section-title">Smart collections</h3>
+        {SMART_COLLECTIONS.map((c) => {
+          const members = smartMembers(c, d.recipes, ctx);
+          return (
+            <button
+              key={c.id}
+              className="card flex w-full items-center gap-3 p-3 text-left disabled:opacity-50"
+              disabled={!members.length}
+              onClick={() => void fill(c.name, members.slice(0, 7).map((r) => r.id))}
+            >
+              <span className="text-xl">{c.emoji}</span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-semibold">{c.name}</span>
+                <span className="block text-xs text-stone-500">{members.length} recipe{members.length === 1 ? '' : 's'}</span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </Sheet>
   );
 }
 
@@ -654,12 +777,16 @@ function QuickAddSheet(props: { date: string; slot: Slot; onClose: () => void; o
 }
 
 function MealMenu(props: { meal: PlannedMeal; onClose: () => void; onSwap: () => void }) {
-  const { recipeById, today, settings } = useAppData();
+  const { recipeById, today, settings, meals } = useAppData();
   const toast = useToast();
   const navigate = useNavigate();
   const m = props.meal;
   const r = recipeById.get(m.recipeId);
   const [servings, setServings] = useState(m.servings);
+  const [freezeOpen, setFreezeOpen] = useState(false);
+  const [portions, setPortions] = useState(2);
+  const batched = meals.filter((x) => x.leftoverOf === m.id);
+  const sameDay = meals.filter((x) => x.date === m.date && x.status !== 'skipped');
   if (!r) return null;
   const tomorrow = addDaysISO(m.date, 1);
   const run = async (fn: () => Promise<unknown>, msg?: string) => {
@@ -694,6 +821,51 @@ function MealMenu(props: { meal: PlannedMeal; onClose: () => void; onSwap: () =>
             🥡 Plan leftovers for the next day
           </button>
         )}
+        {!m.leftoverOf && m.status === 'planned' && (
+          <div className="card p-3">
+            <div className="flex items-center gap-2 font-medium"><Soup size={16} className="text-brand" /> Cook once, eat several times</div>
+            {batched.length > 0 ? (
+              <>
+                <p className="mt-1 text-xs text-stone-500">
+                  Cooking {m.servings} servings — {batched.length} extra night{batched.length === 1 ? '' : 's'} already on the calendar.
+                </p>
+                <button className="btn btn-ghost mt-2 w-full text-sm" onClick={() => run(() => unbatch(m.id), 'Back to a single night')}>
+                  Undo the batch
+                </button>
+              </>
+            ) : (
+              <>
+                <p className="mt-1 text-xs text-stone-500">
+                  Scale this up and drop the extra portions onto the next free nights. The shopping list follows automatically.
+                </p>
+                <div className="mt-2 flex gap-2">
+                  {[1, 2, 3].map((n) => (
+                    <button
+                      key={n}
+                      className="btn btn-secondary flex-1 text-sm"
+                      onClick={() => run(async () => {
+                        const res = await planBatchCook(m.id, n);
+                        if (res && !res.nights.length) toast('No free nights to put leftovers on');
+                      }, `Cooking for ${n + 1} nights`)}
+                    >
+                      +{n} night{n === 1 ? '' : 's'}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+        {!m.leftoverOf && (
+          <button className="btn btn-secondary w-full justify-start" onClick={() => setFreezeOpen(true)}>
+            <Snowflake size={16} /> Freeze extra portions
+          </button>
+        )}
+        {sameDay.length > 1 && (
+          <button className="btn btn-secondary w-full justify-start" onClick={() => { props.onClose(); navigate(`/timeline/${m.date}`); }}>
+            <Clock3 size={16} /> Time the whole meal ({sameDay.length} dishes)
+          </button>
+        )}
         {m.status !== 'cooked' && (
           <button className="btn btn-secondary w-full justify-start" onClick={() => run(() => setSkipped(m.id, m.status !== 'skipped'))}>
             {m.status === 'skipped' ? '↩️ Un-skip' : '⏭️ Skip this meal (keeps it off the shopping list)'}
@@ -703,6 +875,32 @@ function MealMenu(props: { meal: PlannedMeal; onClose: () => void; onSwap: () =>
           🗑️ Remove from plan
         </button>
       </div>
+
+      {freezeOpen && (
+        <Sheet open onClose={() => setFreezeOpen(false)} title={`Freeze ${r.title}`}>
+          <p className="mb-3 text-sm text-stone-500">
+            Portions go into the freezer list with a best-by date three months out. Pull one back onto the plan any night you don't feel like cooking.
+          </p>
+          <div className="card flex items-center justify-between p-3">
+            <span className="font-medium">Portions</span>
+            <div className="flex items-center gap-2">
+              <button className="icon-btn h-8 w-8 bg-stone-100" aria-label="Fewer" onClick={() => setPortions(Math.max(1, portions - 1))}>−</button>
+              <span className="w-6 text-center font-semibold">{portions}</span>
+              <button className="icon-btn h-8 w-8 bg-stone-100" aria-label="More" onClick={() => setPortions(portions + 1)}>+</button>
+            </div>
+          </div>
+          <p className="mt-1 px-1 text-xs text-stone-500">Each portion serves {m.servings}.</p>
+          <button
+            className="btn btn-primary mt-3 w-full"
+            onClick={() => run(
+              () => freezePortions({ recipeId: r.id, portions, servingsEach: m.servings, today }),
+              `${portions} portion${portions === 1 ? '' : 's'} in the freezer`,
+            )}
+          >
+            Into the freezer
+          </button>
+        </Sheet>
+      )}
     </Sheet>
   );
 }

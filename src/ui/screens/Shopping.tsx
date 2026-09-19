@@ -13,6 +13,7 @@ import { addPackageSize, defaultExpiry } from '../../services/pantry';
 import { addManualItem, clearChecked, patchShoppingState, removeShoppingState, setCheckedMany, toggleChecked } from '../../services/shopping';
 import { finishTrip, undoTrip } from '../../services/trip';
 import { storeById, storeSearchUrl } from '../../domain/stores';
+import { groupByStore, storeStops } from '../../domain/storeplan';
 import { AmountInput, EmptyState, PageHeader, Sheet } from '../components';
 import { useAppData } from '../data';
 import { usePrices } from '../hooks';
@@ -145,12 +146,25 @@ export function Shopping() {
     );
   };
 
-  const groups: [string, ShoppingLine[]][] = [];
-  for (const l of buy) {
-    const last = groups[groups.length - 1];
-    if (last && last[0] === l.aisle) last[1].push(l);
-    else groups.push([l.aisle, [l]]);
-  }
+  /** Aisle runs, in the order the list already has them. */
+  const aisleGroups = (lines: ShoppingLine[]): [string, ShoppingLine[]][] => {
+    const out: [string, ShoppingLine[]][] = [];
+    for (const l of lines) {
+      const last = out[out.length - 1];
+      if (last && last[0] === l.aisle) last[1].push(l);
+      else out.push([l.aisle, [l]]);
+    }
+    return out;
+  };
+
+  const assignment = {
+    aisles: settings.storeAisles ?? {},
+    overrides: settings.storeOverrides ?? {},
+    primary: settings.store ?? 'walmart',
+  };
+  const storeGroups = settings.multiStore ? groupByStore(buy, assignment) : [];
+  const stops = storeStops(storeGroups);
+  const groups = aisleGroups(buy);
 
   const openFinish = () => {
     setPaid(Object.fromEntries(checkedLines.map((l) => [l.key, priceByKey.get(l.key)?.toFixed(2) ?? ''])));
@@ -247,7 +261,20 @@ export function Shopping() {
                 </div>
               )}
             </div>
-            {groups.map(([aisle, lines]) => (
+            {settings.multiStore && stops > 1 && (
+              <p className="px-1 text-xs font-medium text-stone-500">
+                🗺️ {stops} stops: {storeGroups.map((g) => g.label).join(' → ')}
+              </p>
+            )}
+            {(settings.multiStore
+              ? storeGroups.map((g) => ({ key: g.store, heading: g.label, groups: aisleGroups(g.lines) }))
+              : [{ key: 'all', heading: '', groups }]
+            ).map((section) => (
+              <div key={section.key} className="space-y-3">
+                {section.heading && (
+                  <h2 className="border-b border-stone-200 pt-2 pb-1 text-base font-bold">🏬 {section.heading}</h2>
+                )}
+                {section.groups.map(([aisle, lines]) => (
               <section key={aisle}>
                 <div className="flex items-center justify-between pt-2">
                   <h2 className="section-title">{aisleEmoji(lines[0].aisle)} {aisleLabel(lines[0].aisle)}</h2>
@@ -263,6 +290,8 @@ export function Shopping() {
                 </div>
                 <ul className="card divide-y divide-stone-100">{lines.map(renderLine)}</ul>
               </section>
+                ))}
+              </div>
             ))}
             {check.length > 0 && (
               <section>

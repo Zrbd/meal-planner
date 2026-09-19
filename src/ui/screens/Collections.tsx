@@ -1,8 +1,10 @@
 // Recipe collections — your own shelves. One list of all of them, or one collection's recipes.
 import { FolderPlus, Pencil, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import { COLLECTION_EMOJI } from '../../domain/collections';
+import { lastCooked } from '../../domain/rotation';
+import { SMART_COLLECTIONS, smartById, smartCounts, smartMembers, type SmartContext } from '../../domain/smartcollections';
 import { createCollection, deleteCollection, renameCollection } from '../../services/collections';
 import { EmptyState, PageHeader, RecipeCard, Sheet } from '../components';
 import { useAppData } from '../data';
@@ -49,6 +51,33 @@ export function Collections() {
   const toast = useToast();
   const [newOpen, setNewOpen] = useState(false);
   const [renaming, setRenaming] = useState(false);
+
+  const ctx: SmartContext = useMemo(() => ({
+    date: d.today,
+    lastCookedAt: lastCooked(d.cookLogs),
+    coverage: new Map([...coverage].map(([rid, c]) => [rid, c.ratio])),
+    weeknightMaxMin: d.settings.weeknightMaxMin,
+    now: d.now,
+  }), [d.today, d.cookLogs, coverage, d.settings.weeknightMaxMin, d.now]);
+
+  const smart = id?.startsWith('smart:') ? smartById(id) : undefined;
+  const counts = useMemo(() => smartCounts(d.recipes, ctx), [d.recipes, ctx]);
+
+  if (smart) {
+    const recipes = smartMembers(smart, d.recipes, ctx);
+    return (
+      <>
+        <PageHeader title={`${smart.emoji} ${smart.name}`} subtitle={smart.blurb} back="/collections" />
+        <div className="space-y-2 px-4 pb-8">
+          {recipes.length === 0 ? (
+            <EmptyState emoji={smart.emoji} title="Nothing fits right now" body="This shelf fills itself in — cook a few meals, or stock the pantry, and it will." />
+          ) : (
+            recipes.map((r) => <RecipeCard key={r.id} recipe={r} coverage={coverage.get(r.id)} />)
+          )}
+        </div>
+      </>
+    );
+  }
 
   const one = id ? d.collections.find((c) => c.id === id) : undefined;
 
@@ -108,6 +137,23 @@ export function Collections() {
         right={<button className="icon-btn" aria-label="New collection" onClick={() => setNewOpen(true)}><FolderPlus size={20} /></button>}
       />
       <div className="space-y-2 px-4 pb-8">
+        <h2 className="section-title">✨ Fills itself in</h2>
+        <ul className="card divide-y divide-stone-100">
+          {SMART_COLLECTIONS.map((c) => (
+            <li key={c.id}>
+              <Link to={`/collections/${encodeURIComponent(c.id)}`} className="flex items-center gap-3 p-3">
+                <span className="text-2xl">{c.emoji}</span>
+                <div className="min-w-0 flex-1">
+                  <div className="truncate font-medium">{c.name}</div>
+                  <div className="truncate text-xs text-stone-500">{c.blurb}</div>
+                </div>
+                <span className="text-sm font-semibold text-stone-400">{counts.get(c.id) ?? 0}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+
+        <h2 className="section-title pt-2">📚 Yours</h2>
         {d.collections.length === 0 ? (
           <EmptyState
             emoji="📚"

@@ -21,6 +21,12 @@ export const DEFAULT_SETTINGS: Settings = {
   smoker: 'weekends',
   smokerConfirm: true,
   weeklyBudget: 0,
+  multiStore: false,
+  storeAisles: {},
+  storeOverrides: {},
+  recipeServings: {},
+  textScale: 1,
+  serveTime: '18:30',
 };
 
 export function withDefaults(s: Partial<Settings> | undefined): Settings {

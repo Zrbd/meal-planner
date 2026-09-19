@@ -13,7 +13,9 @@ import { GlobalSearch } from '../GlobalSearch';
 import { kitchenStats } from '../../domain/stats';
 import { staleFavorites } from '../../domain/rotation';
 import { money } from '../../domain/prices';
-import { BarChart3, RotateCcw, Search } from 'lucide-react';
+import { BarChart3, History, RotateCcw, Search, Sprout } from 'lucide-react';
+import { seasonalPicks } from '../../domain/seasons';
+import { freezerExpiring } from '../../domain/leftovers';
 
 const DAY = 86_400_000;
 
@@ -66,6 +68,12 @@ export function Home() {
     () => staleFavorites({ recipes: d.recipes, cookLogs: d.cookLogs, meals, today, now: d.now, limit: 3 }),
     [d.recipes, d.cookLogs, meals, today, d.now],
   );
+  const seasonal = useMemo(
+    () => seasonalPicks({ recipes: d.recipes, date: today, limit: 6, exclude: new Set(meals.map((m) => m.recipeId)) }),
+    [d.recipes, today, meals],
+  );
+  const recentRecipes = d.recent.map((id) => recipeById.get(id)).filter((r): r is NonNullable<typeof r> => !!r).slice(0, 8);
+  const freezerSoon = useMemo(() => freezerExpiring(d.freezer, today, 21), [d.freezer, today]);
   const needsBackup = (d.lots.length > 0 || meals.length > 0) && (!d.lastBackupAt || d.now - d.lastBackupAt > 14 * DAY);
   const canMake = d.recipes.filter((r) => !r.archived && coverage.get(r.id)?.canMake).length;
   const [searchOpen, setSearchOpen] = useState(false);
@@ -220,6 +228,59 @@ export function Home() {
                   <ChevronRight size={18} className="text-stone-300" />
                 </Link>
               ))}
+            </div>
+          </>
+        )}
+
+        {recentRecipes.length > 0 && (
+          <>
+            <h2 className="section-title flex items-center gap-1"><History size={13} /> Jump back in</h2>
+            <div className="-mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-1">
+              {recentRecipes.map((r) => (
+                <Link key={r.id} to={`/recipes/${r.id}`} className="card w-28 shrink-0 snap-start p-2">
+                  <RecipeThumb recipe={r} className="h-24 w-full text-3xl" />
+                  <div className="mt-1 line-clamp-2 text-xs font-semibold leading-tight">{r.title}</div>
+                </Link>
+              ))}
+            </div>
+          </>
+        )}
+
+        {freezerSoon.length > 0 && (
+          <>
+            <h2 className="section-title flex items-center gap-1"><Snowflake size={13} /> In the freezer</h2>
+            <Link to="/freezer" className="card flex items-center gap-3 p-3">
+              <span className="text-xl">🧊</span>
+              <div className="min-w-0 flex-1 text-sm">
+                <div className="font-semibold">
+                  {freezerSoon.reduce((n, f) => n + f.portions, 0)} portion{freezerSoon.reduce((n, f) => n + f.portions, 0) === 1 ? '' : 's'} to eat soon
+                </div>
+                <div className="truncate text-xs text-stone-500">
+                  {freezerSoon.slice(0, 3).map((f) => recipeById.get(f.recipeId)?.title ?? 'Something').join(' · ')}
+                </div>
+              </div>
+              <ChevronRight size={18} className="shrink-0 text-stone-300" />
+            </Link>
+          </>
+        )}
+
+        {seasonal.length > 0 && (
+          <>
+            <h2 className="section-title flex items-center gap-1"><Sprout size={13} /> Good right now</h2>
+            <div className="card divide-y divide-stone-100">
+              {seasonal.slice(0, 3).map((x) => (
+                <Link key={x.recipe.id} to={`/recipes/${x.recipe.id}`} className="flex items-center gap-3 p-3">
+                  <RecipeThumb recipe={x.recipe} className="h-10 w-10 text-xl" />
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm font-semibold">{x.recipe.title}</div>
+                    <div className="truncate text-xs text-stone-500">
+                      Peak {x.peaking.map((id) => d.ingById.get(id)?.name.toLowerCase() ?? id).slice(0, 3).join(', ')}
+                    </div>
+                  </div>
+                  <ChevronRight size={18} className="text-stone-300" />
+                </Link>
+              ))}
+              <Link to="/recipes?f=season" className="block p-3 text-center text-sm font-medium text-brand">What else is in season</Link>
             </div>
           </>
         )}

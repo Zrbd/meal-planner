@@ -9,6 +9,7 @@ import { DISH_TYPES, PROTEIN_TYPES } from '../../domain/dishes';
 import { searchRecipes } from '../../domain/search';
 import { lastCooked } from '../../domain/rotation';
 import { daysBetween, toISODate } from '../../domain/dates';
+import { inSeason } from '../../domain/seasons';
 
 const FILTERS: { id: string; label: string; test: (r: Recipe, canMake: boolean) => boolean }[] = [
   { id: 'all', label: 'All', test: () => true },
@@ -21,6 +22,7 @@ const FILTERS: { id: string; label: string; test: (r: Recipe, canMake: boolean) 
   { id: 'lunch', label: 'Lunch', test: (r) => r.slots.includes('lunch') },
   { id: 'veg', label: 'Vegetarian', test: (r) => r.diet.includes('vegetarian') },
   { id: 'sides', label: 'Sides', test: (r) => r.role === 'side' },
+  { id: 'season', label: '🌿 In season', test: () => true },
   { id: 'smoker', label: '🔥 Smoker', test: (r) => !!r.tags?.includes('smoker') },
   // Handled specially in the list below — it needs the cook log, not just the recipe.
   { id: 'stale', label: '⏳ Not lately', test: () => true },
@@ -70,6 +72,7 @@ export function Recipes() {
       if (protein && info?.protein !== protein) return false;
       if (dishType && info?.dishType !== dishType) return false;
       if (inCollection && !inCollection.has(r.id)) return false;
+      if (filter === 'season' && !r.ingredients.some((ri) => !ri.optional && inSeason(ri.ingredientId, d.today))) return false;
       if (filter === 'stale') {
         const at = cooked.get(r.id);
         // Never cooked doesn't count as "not lately" — this is for things you liked and forgot.
@@ -80,6 +83,10 @@ export function Recipes() {
     });
     if (!q.trim()) out.sort((a, b) => (coverage.get(b.id)?.ratio ?? 0) - (coverage.get(a.id)?.ratio ?? 0) || Number(b.favorite) - Number(a.favorite));
     if (filter === 'stale') out.sort((a, b) => (cooked.get(a.id) ?? 0) - (cooked.get(b.id) ?? 0));
+    if (filter === 'season') {
+      const peak = (r: Recipe) => r.ingredients.filter((ri) => inSeason(ri.ingredientId, d.today)).length;
+      out.sort((a, b) => peak(b) - peak(a));
+    }
     return out;
   }, [recipes, q, ingById, filter, showHidden, coverage, dish, cuisine, protein, dishType, inCollection, cooked, d.today]);
 
@@ -160,7 +167,18 @@ export function Recipes() {
         )}
         <div className="space-y-2">
           {list.map((r) => (
-            <RecipeCard key={r.id} recipe={r} coverage={coverage.get(r.id)} />
+            <RecipeCard
+              key={r.id}
+              recipe={r}
+              coverage={coverage.get(r.id)}
+              subtitle={
+                filter === 'season' ? (
+                  <span className="truncate">
+                    🌿 {[...new Set(r.ingredients.filter((ri) => inSeason(ri.ingredientId, d.today)).map((ri) => ingById.get(ri.ingredientId)?.name.toLowerCase() ?? ri.ingredientId))].slice(0, 3).join(', ')}
+                  </span>
+                ) : undefined
+              }
+            />
           ))}
         </div>
         {list.length === 0 && (

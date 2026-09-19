@@ -225,4 +225,16 @@ export interface Settings {
   smokerConfirm?: boolean;
   /** Weekly grocery budget in dollars; 0 or undefined means no budget is being tracked. */
   weeklyBudget?: number;
+  /** Split the shopping list across more than one store. */
+  multiStore?: boolean;
+  /** Which store each aisle is bought at; anything unset goes to `store`. */
+  storeAisles?: Partial<Record<AisleId, StoreId>>;
+  /** Per-ingredient exceptions to the aisle rule. */
+  storeOverrides?: Record<string, StoreId>;
+  /** Servings you last cooked a recipe at, so it opens at your number, not the author's. */
+  recipeServings?: Record<string, number>;
+  /** Interface text scale, 1 = default. Applied as a root font size. */
+  textScale?: number;
+  /** Time you normally want dinner on the table, 'HH:MM', used by the dinner timeline. */
+  serveTime?: string;
 }

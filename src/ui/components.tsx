@@ -369,7 +369,13 @@ function hash(s: string) {
   return Math.abs(h);
 }
 
+/** Your photo of the dish if you took one, otherwise the generated emoji tile. */
 export function RecipeThumb({ recipe, className = 'h-16 w-16 text-3xl' }: { recipe: Recipe; className?: string }) {
+  const { photoByRecipe } = useAppData();
+  const photo = photoByRecipe.get(recipe.id);
+  if (photo) {
+    return <img src={photo.thumb} alt="" aria-hidden className={`shrink-0 rounded-xl object-cover ${className}`} />;
+  }
   return (
     <div
       aria-hidden
@@ -377,6 +383,15 @@ export function RecipeThumb({ recipe, className = 'h-16 w-16 text-3xl' }: { reci
     >
       {recipeEmoji(recipe)}
     </div>
+  );
+}
+
+/** "In season" marker used on recipe cards and ingredient rows. */
+export function SeasonBadge({ label = 'In season', className = '' }: { label?: string; className?: string }) {
+  return (
+    <span className={`inline-flex items-center gap-1 rounded-full bg-lime-100 px-2 py-0.5 text-[11px] font-semibold text-lime-800 ${className}`}>
+      🌿 {label}
+    </span>
   );
 }
 
