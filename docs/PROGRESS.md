@@ -156,7 +156,11 @@ Living handoff log. Newest notes at the top of each section.
 - Added 13 South American recipes (`southAmerica.ts`): seco de pollo, arepas reina pepiada, feijoada,
   tallarines verdes, arroz chaufa, cachapas, chupe de camarones, papa a la huancaina (side), arroz con coco
   (side), farofa (side), suspiro limeno, pudim de leite and picarones. New catalog ingredient: cassava flour.
-- SEED_VERSION 158.
+- Added thirteen South Asian regional recipes (`src/data/recipes/southAsia.ts`): Pakistani chicken karahi,
+  aloo keema, chapli kabab and fruit chaat; Sri Lankan parippu, pol sambol, kottu roti and watalappan;
+  Bengali chicken rezala and mishti doi; Nepali chicken sekuwa and aloo ko achar; Afghan bolani.
+  New catalog items: chaat masala, mustard seeds, fenugreek seeds.
+- SEED_VERSION 159.
 - Later in the same session: more world mains (arepas de queso, tteokbokki, chicken katsu, chicken congee, pancit bihon, borscht, moussaka with ground turkey, japchae, mapo tofu, palak paneer, chicken biryani, pozole verde, vegetarian shepherd's pie, misir wat), more desserts (no-bake cheesecake, churros, tiramisu, baklava, carrot cake, bread pudding, cut-out sugar cookies, panna cotta) and ten more sides (gomen, cilantro lime rice, cumin lime coleslaw, roasted cauliflower, street corn salad, roasted brussels sprouts, glazed carrots, braised red cabbage, creamed corn, macaroni salad).
 - Bundle: the recipe catalog and ingredient catalog are now dynamic imports inside `seedIfNeeded`, and the six screens you only reach by navigating (cook mode, recipe editor, settings, stock check, prep, pantry item) are `React.lazy` behind a `Suspense` fallback. Launch JS went from 1,953 kB (545 kB gzip) to ~735 kB (229 kB gzip).
 
