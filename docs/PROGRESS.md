@@ -144,6 +144,13 @@ Living handoff log. Newest notes at the top of each section.
   New catalog ingredients: pork sausages, Medjool dates, meringue cookies, golden syrup, puff pastry.
   Beef drippings/bouillon swapped out of the Yorkshire pudding and toad in the hole, disclosed in each recipe's notes.
 - SEED_VERSION 155.
+- Added 13 Turkish and Persian recipes (`src/data/recipes/turkeyPersia.ts`): karniyarik, lentil-stuffed eggplant,
+  tavuk sote, cheat's manti, tahchin morgh, zereshk polo ba morgh, ghormeh sabzi and kuku sabzi, plus sabzi polo,
+  kuku sibzamini and mercimek koftesi as sides and sutlac and keskul as desserts. Sources credited to Ozlem Warren,
+  Zerrin Gunaydin, Homa (Persian Mama) and Shadi HasanzadeNemati.
+  New catalog ingredients: barberries, dried limes, Turkish red pepper paste, dried fenugreek leaves.
+  Lamb and beef swapped for ground turkey and chicken thighs where the sources used them, disclosed in each recipe's notes.
+- SEED_VERSION 156.
 - Later in the same session: more world mains (arepas de queso, tteokbokki, chicken katsu, chicken congee, pancit bihon, borscht, moussaka with ground turkey, japchae, mapo tofu, palak paneer, chicken biryani, pozole verde, vegetarian shepherd's pie, misir wat), more desserts (no-bake cheesecake, churros, tiramisu, baklava, carrot cake, bread pudding, cut-out sugar cookies, panna cotta) and ten more sides (gomen, cilantro lime rice, cumin lime coleslaw, roasted cauliflower, street corn salad, roasted brussels sprouts, glazed carrots, braised red cabbage, creamed corn, macaroni salad).
 - Bundle: the recipe catalog and ingredient catalog are now dynamic imports inside `seedIfNeeded`, and the six screens you only reach by navigating (cook mode, recipe editor, settings, stock check, prep, pantry item) are `React.lazy` behind a `Suspense` fallback. Launch JS went from 1,953 kB (545 kB gzip) to ~735 kB (229 kB gzip).
 
