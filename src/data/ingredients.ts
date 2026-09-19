@@ -176,6 +176,7 @@ const CATALOG: Ingredient[] = [
   I('silken-tofu', 'Silken tofu', 'dairy', 'g', { aliases: ['soft tofu'], density: 1, unitAliases: { block: 350 }, packages: [{ label: '16 oz box', qty: oz(16) }], shelfLife: { fridge: 30 } }),
   I('goat-cheese', 'Goat cheese', 'dairy', 'g', { aliases: ['chevre'], density: 0.64, packages: [{ label: '4 oz log', qty: oz(4) }], shelfLife: { fridge: 14 }, valueWeight: 2 }),
   I('half-and-half', 'Half-and-half', 'dairy', 'ml', { aliases: ['half and half'], density: 1.02, packages: [{ label: '1 pint', qty: 473 }], shelfLife: { fridge: 10 } }),
+  I('farmers-cheese', 'Farmers cheese', 'dairy', 'g', { aliases: ['twarog', 'quark', 'tvorog', 'dry curd cheese'], density: 1.0, packages: [{ label: '16 oz tub', qty: oz(16) }], defaultLocation: 'fridge', shelfLife: { fridge: 14 } }),
   I('cottage-cheese', 'Cottage cheese', 'dairy', 'g', { density: 0.95, packages: [{ label: '16 oz tub', qty: oz(16) }], shelfLife: { fridge: 10 } }),
   I('refrigerated-tortellini', 'Cheese tortellini', 'dairy', 'g', { aliases: ['tortellini', 'cheese tortellini', 'ravioli'], packages: [{ label: '20 oz pack', qty: oz(20) }], shelfLife: { fridge: 21, freezer: 90 } }),
   I('pesto', 'Basil pesto', 'dairy', 'g', { aliases: ['pesto'], density: 1, packages: [{ label: '6 oz jar', qty: oz(6) }], shelfLife: { fridge: 7 } }),
