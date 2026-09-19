@@ -404,6 +404,7 @@ const CATALOG: Ingredient[] = [
   I('mayonnaise', 'Mayonnaise', 'oils-condiments', 'g', { aliases: ['mayo'], density: 0.92, trackMode: 'loose', packages: [{ label: '30 oz jar', qty: oz(30) }], defaultLocation: 'fridge', shelfLife: { fridge: 60 } }),
   I('pickle-relish', 'Sweet pickle relish', 'oils-condiments', 'g', { aliases: ['relish', 'sweet relish'], density: 1.1, trackMode: 'loose', packages: [{ label: '10 oz jar', qty: oz(10) }], defaultLocation: 'fridge', shelfLife: { fridge: 180 } }),
   I('ketchup', 'Ketchup', 'oils-condiments', 'g', { density: 1.15, trackMode: 'loose', packages: [{ label: '32 oz bottle', qty: oz(32) }], defaultLocation: 'fridge', shelfLife: { fridge: 180 } }),
+  I('beer', 'Beer', 'beverages', 'ml', { aliases: ['lager', 'pilsner', 'amber ale', 'pale ale'], density: 1.0, packages: [{ label: '12 oz can', qty: 355 }], shelfLife: { pantry: 180 } }),
   I('dry-red-wine', 'Dry red wine', 'beverages', 'ml', { aliases: ['red wine', 'merlot', 'cabernet', 'pinot noir'], density: 0.99, packages: [{ label: '750 ml bottle', qty: 750 }], shelfLife: { pantry: 730 } }),
   I('dry-white-wine', 'Dry white wine', 'beverages', 'ml', { aliases: ['white wine', 'sauvignon blanc', 'pinot grigio'], density: 0.99, packages: [{ label: '750 ml bottle', qty: 750 }], shelfLife: { pantry: 365 } }),
   I('coffee', 'Coffee', 'beverages', 'g', { aliases: ['ground coffee', 'coffee beans'], density: 0.4, trackMode: 'loose', packages: [{ label: '12 oz bag', qty: oz(12) }], shelfLife: { pantry: 90 } }),
