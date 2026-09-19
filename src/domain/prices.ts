@@ -65,3 +65,60 @@ export function spending(trips: Trip[], today: ISODate): Spending {
 }
 
 export const money = (n: number) => `$${n.toFixed(2)}`;
+
+export interface PricePoint {
+  at: number;
+  /** Price per base unit (g / ml / ea). */
+  unit: number;
+  /** What was actually paid for the whole amount bought. */
+  paid: number;
+  qty: number;
+}
+
+export interface PriceBookEntry {
+  ingredientId: string;
+  name: string;
+  latest: number;
+  /** Cheapest and dearest unit price ever recorded. */
+  low: number;
+  high: number;
+  /** Change from the previous recorded price, as a fraction (0.2 = 20% dearer). */
+  change?: number;
+  points: PricePoint[];
+}
+
+/** Every price you have ever paid, newest first, per ingredient. */
+export function priceHistory(trips: Trip[]): Map<string, PricePoint[]> {
+  const out = new Map<string, PricePoint[]>();
+  for (const trip of [...trips].sort((a, b) => b.finishedAt - a.finishedAt)) {
+    for (const l of trip.lines) {
+      if (!l.ingredientId || !l.price || l.price <= 0 || l.qty <= 0) continue;
+      const list = out.get(l.ingredientId) ?? [];
+      list.push({ at: trip.finishedAt, unit: l.price / l.qty, paid: l.price, qty: l.qty });
+      out.set(l.ingredientId, list);
+    }
+  }
+  return out;
+}
+
+/** The price book: what each thing costs, and whether it has gone up lately. */
+export function priceBook(trips: Trip[], ingById: Map<string, Ingredient>): PriceBookEntry[] {
+  const out: PriceBookEntry[] = [];
+  for (const [ingredientId, points] of priceHistory(trips)) {
+    const ing = ingById.get(ingredientId);
+    if (!ing || !points.length) continue;
+    const units = points.map((p) => p.unit);
+    const latest = units[0];
+    const previous = units[1];
+    out.push({
+      ingredientId,
+      name: ing.name,
+      latest,
+      low: Math.min(...units),
+      high: Math.max(...units),
+      change: previous ? (latest - previous) / previous : undefined,
+      points,
+    });
+  }
+  return out.sort((a, b) => a.name.localeCompare(b.name));
+}

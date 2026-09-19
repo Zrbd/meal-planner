@@ -7,7 +7,13 @@ import { SLOT_ORDER } from '../../domain/stock';
 import type { PlannedMeal } from '../../domain/types';
 import { EmptyState, PageHeader, RecipeThumb } from '../components';
 import { useAppData } from '../data';
-import { useAlerts, useClock, useCoverage, usePrepTimeline } from '../hooks';
+import { useAlerts, useClock, useCoverage, usePrepTimeline, usePrices } from '../hooks';
+import { useMemo, useState } from 'react';
+import { GlobalSearch } from '../GlobalSearch';
+import { kitchenStats } from '../../domain/stats';
+import { staleFavorites } from '../../domain/rotation';
+import { money } from '../../domain/prices';
+import { BarChart3, RotateCcw, Search } from 'lucide-react';
 
 const DAY = 86_400_000;
 
@@ -48,8 +54,21 @@ export function Home() {
     .sort(bySlot)
     .slice(0, 5);
   const shopDay = nextShoppingDay(addDaysISO(today, -1), settings.shoppingDay);
+  const prices = usePrices();
+  const digest = useMemo(
+    () => kitchenStats({
+      cookLogs: d.cookLogs, recipeById, ingById: d.ingById, trips: d.trips, txns: d.txns,
+      prices, today, now: d.now, days: 7,
+    }),
+    [d.cookLogs, recipeById, d.ingById, d.trips, d.txns, prices, today, d.now],
+  );
+  const stale = useMemo(
+    () => staleFavorites({ recipes: d.recipes, cookLogs: d.cookLogs, meals, today, now: d.now, limit: 3 }),
+    [d.recipes, d.cookLogs, meals, today, d.now],
+  );
   const needsBackup = (d.lots.length > 0 || meals.length > 0) && (!d.lastBackupAt || d.now - d.lastBackupAt > 14 * DAY);
   const canMake = d.recipes.filter((r) => !r.archived && coverage.get(r.id)?.canMake).length;
+  const [searchOpen, setSearchOpen] = useState(false);
 
   return (
     <>
@@ -57,9 +76,14 @@ export function Home() {
         title={greeting()}
         subtitle={formatDay(today, 'EEEE, MMMM d')}
         right={
-          <Link to="/settings" aria-label="Settings" className="icon-btn">
-            <Settings size={22} />
-          </Link>
+          <>
+            <button className="icon-btn" aria-label="Search everything" onClick={() => setSearchOpen(true)}>
+              <Search size={22} />
+            </button>
+            <Link to="/settings" aria-label="Settings" className="icon-btn">
+              <Settings size={22} />
+            </Link>
+          </>
         }
       />
       <div className="space-y-2 px-4">
@@ -179,7 +203,49 @@ export function Home() {
           })}
         </div>
 
-        <div className="grid grid-cols-4 gap-2 pt-4">
+        {stale.length > 0 && (
+          <>
+            <h2 className="section-title flex items-center gap-1"><RotateCcw size={13} /> You haven't made these in a while</h2>
+            <div className="card divide-y divide-stone-100">
+              {stale.map((x) => (
+                <Link key={x.recipe.id} to={`/recipes/${x.recipe.id}`} className="flex items-center gap-3 p-3">
+                  <RecipeThumb recipe={x.recipe} className="h-10 w-10 text-xl" />
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm font-semibold">{x.recipe.title}</div>
+                    <div className="text-xs text-stone-500">
+                      {x.daysAgo === undefined ? 'Never cooked' : `Last made ${x.daysAgo} days ago`}
+                      {x.cooks > 1 ? ` · made ${x.cooks} times` : ''}
+                    </div>
+                  </div>
+                  <ChevronRight size={18} className="text-stone-300" />
+                </Link>
+              ))}
+            </div>
+          </>
+        )}
+
+        {digest.cooks > 0 && (
+          <>
+            <h2 className="section-title">Your week</h2>
+            <Link to="/stats" className="card flex items-center gap-3 p-3">
+              <BarChart3 className="shrink-0 text-brand" />
+              <div className="min-w-0 flex-1 text-sm">
+                <div className="font-semibold">
+                  {digest.cooks} meal{digest.cooks === 1 ? '' : 's'} cooked
+                  {digest.spend > 0 ? ` · ${money(digest.spend)} on groceries` : ''}
+                </div>
+                <div className="text-xs text-stone-500">
+                  {digest.streak > 1 ? `${digest.streak}-day streak` : `${digest.distinctRecipes} different recipe${digest.distinctRecipes === 1 ? '' : 's'}`}
+                  {digest.wasteCost > 0 ? ` · ${money(digest.wasteCost)} thrown out` : ''}
+                  {digest.top[0] ? ` · most made: ${digest.top[0].title}` : ''}
+                </div>
+              </div>
+              <ChevronRight size={18} className="shrink-0 text-stone-300" />
+            </Link>
+          </>
+        )}
+
+        <div className="grid grid-cols-3 gap-2 pt-4">
           <Link to="/plan" className="card flex flex-col items-center gap-1 p-3 text-center text-xs font-semibold">
             <CalendarDays className="text-brand" /> Plan week
           </Link>
@@ -189,8 +255,14 @@ export function Home() {
           <Link to="/shop" className="card flex flex-col items-center gap-1 p-3 text-center text-xs font-semibold">
             <ShoppingCart className="text-brand" /> Shopping list
           </Link>
+          <Link to="/find" className="card flex flex-col items-center gap-1 p-3 text-center text-xs font-semibold">
+            <Search className="text-brand" /> Cook with…
+          </Link>
           <Link to="/recipes/new" className="card flex flex-col items-center gap-1 p-3 text-center text-xs font-semibold">
             <BookPlus className="text-brand" /> Add recipe
+          </Link>
+          <Link to="/stats" className="card flex flex-col items-center gap-1 p-3 text-center text-xs font-semibold">
+            <BarChart3 className="text-brand" /> Kitchen stats
           </Link>
         </div>
         <p className="px-1 pt-2 text-center text-xs text-stone-500">Next shopping day: {relativeDayLabel(shopDay, today)}</p>
@@ -205,6 +277,7 @@ export function Home() {
           </Link>
         )}
       </div>
+      <GlobalSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   );
 }

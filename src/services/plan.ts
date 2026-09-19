@@ -1,5 +1,6 @@
 import type { AutoPick } from '../domain/autoplan';
 import type { ISODate, PlannedMeal, Slot } from '../domain/types';
+import { addDaysISO, daysBetween } from '../domain/dates';
 import { db } from '../db/schema';
 import { newId } from './ids';
 
@@ -47,4 +48,38 @@ export async function clearPlanned(from: ISODate, to: ISODate): Promise<void> {
     .filter((m) => m.status === 'planned')
     .primaryKeys();
   await db.meals.bulkDelete(ids);
+}
+
+export interface CopyWeekResult {
+  copied: number;
+  skipped: number;
+}
+
+/**
+ * Copy one week of meals onto another week, day for day.
+ * Slots that already have something planned are left alone, and days in the past are skipped.
+ */
+export async function copyWeek(fromStart: ISODate, toStart: ISODate, today: ISODate): Promise<CopyWeekResult> {
+  const offset = daysBetween(fromStart, toStart);
+  if (offset === 0) return { copied: 0, skipped: 0 };
+  return db.transaction('rw', db.meals, async () => {
+    const source = await db.meals.where('date').between(fromStart, addDaysISO(fromStart, 6), true, true).toArray();
+    const target = await db.meals.where('date').between(toStart, addDaysISO(toStart, 6), true, true).toArray();
+    const taken = new Set(target.map((m) => `${m.date}:${m.slot}`));
+    const rows: PlannedMeal[] = [];
+    let skipped = 0;
+    for (const m of source) {
+      // leftovers follow their parent meal, so copying them separately would double-count
+      if (m.leftoverOf) continue;
+      const date = addDaysISO(m.date, offset);
+      if (date < today || taken.has(`${date}:${m.slot}`)) {
+        skipped++;
+        continue;
+      }
+      taken.add(`${date}:${m.slot}`);
+      rows.push({ id: newId(), recipeId: m.recipeId, date, slot: m.slot, servings: m.servings, status: 'planned' });
+    }
+    await db.meals.bulkAdd(rows);
+    return { copied: rows.length, skipped };
+  });
 }

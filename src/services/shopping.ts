@@ -28,3 +28,12 @@ export async function clearChecked(): Promise<void> {
   const keys = await db.shopping.filter((s) => s.checked).primaryKeys();
   await db.shopping.bulkDelete(keys);
 }
+
+/** Tick or untick a whole aisle at once — one transaction, so the list doesn't flicker item by item. */
+export async function setCheckedMany(keys: string[], checked: boolean): Promise<void> {
+  if (!keys.length) return;
+  await db.transaction('rw', db.shopping, async () => {
+    const existing = await db.shopping.bulkGet(keys);
+    await db.shopping.bulkPut(keys.map((key, i) => ({ ...existing[i], key, checked })));
+  });
+}

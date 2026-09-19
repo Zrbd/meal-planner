@@ -1,14 +1,16 @@
-import { Check, ChevronDown, Search, Share, ShoppingBag } from 'lucide-react';
+import { Check, ChevronDown, Search, Share, ShoppingBag, Wallet } from 'lucide-react';
+import { Link } from 'react-router';
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { aisleEmoji, aisleLabel } from '../../data/aisles';
 import { addDaysISO, formatDay, nextShoppingDay, relativeDayLabel } from '../../domain/dates';
 import { money, spending } from '../../domain/prices';
+import { budgetStatus } from '../../domain/budget';
 import { buildShoppingList, describeBuy, shoppingListText, type ShoppingLine } from '../../domain/shopping';
 import type { Ingredient, UnitSystem } from '../../domain/types';
 import { formatQty } from '../../domain/units';
 import { addPackageSize, defaultExpiry } from '../../services/pantry';
-import { addManualItem, clearChecked, patchShoppingState, removeShoppingState, toggleChecked } from '../../services/shopping';
+import { addManualItem, clearChecked, patchShoppingState, removeShoppingState, setCheckedMany, toggleChecked } from '../../services/shopping';
 import { finishTrip, undoTrip } from '../../services/trip';
 import { storeById, storeSearchUrl } from '../../domain/stores';
 import { AmountInput, EmptyState, PageHeader, Sheet } from '../components';
@@ -76,6 +78,10 @@ export function Shopping() {
     return unit !== undefined && l.buy > 0 ? unit * l.buy : undefined;
   };
   const listEstimate = buy.reduce((s, l) => s + (priceByKey.get(l.key) ?? estimate(l) ?? 0), 0);
+  const budget = useMemo(
+    () => budgetStatus({ trips: d.trips, today, budget: d.settings.weeklyBudget ?? 0, pending: listEstimate }),
+    [d.trips, today, d.settings.weeklyBudget, listEstimate],
+  );
 
   const setRange = (f: string, t: string) => {
     setParams({ from: f, to: t }, { replace: true });
@@ -192,6 +198,30 @@ export function Shopping() {
           </div>
         )}
 
+        {budget && (
+          <Link to="/settings" className="card block p-3" aria-label="Weekly grocery budget">
+            <div className="flex items-baseline justify-between text-sm">
+              <span className="flex items-center gap-1.5 font-semibold"><Wallet size={15} className="text-stone-400" /> This week's budget</span>
+              <span className={budget.over ? 'font-semibold text-red-700' : 'text-stone-500'}>
+                {money(budget.spent)} of {money(budget.budget)}
+              </span>
+            </div>
+            <div className="mt-2 h-2 overflow-hidden rounded-full bg-stone-100">
+              <div
+                className={`h-2 rounded-full ${budget.over ? 'bg-red-500' : budget.ratio > 0.8 ? 'bg-amber-500' : 'bg-brand'}`}
+                style={{ width: `${Math.min(100, budget.ratio * 100)}%` }}
+              />
+            </div>
+            <p className="mt-1.5 text-xs text-stone-500">
+              {budget.over
+                ? `${money(budget.spent - budget.budget)} over. It resets on a rolling seven days, so it eases off as older trips fall out.`
+                : budget.wouldBeOver
+                  ? `This list would put you about ${money(budget.pending - budget.left)} over.`
+                  : `${money(budget.left)} left — this list should come to about ${money(budget.pending)}.`}
+            </p>
+          </Link>
+        )}
+
         {result.errors.length > 0 && (
           <div className="card border-amber-300 bg-amber-50 p-3 text-xs text-amber-900">
             Some amounts couldn't be converted: {result.errors.slice(0, 3).join('; ')}
@@ -206,10 +236,31 @@ export function Shopping() {
           />
         ) : (
           <>
-            <p className="px-1 text-sm text-stone-500">{remaining} item{remaining === 1 ? '' : 's'} left to get</p>
+            <div className="px-1">
+              <p className="text-sm text-stone-500">
+                {remaining === 0 ? 'Everything ticked off 🎉' : `${remaining} item${remaining === 1 ? '' : 's'} left to get`}
+                {buy.length > 0 && <span className="text-stone-400"> · {buy.length - remaining}/{buy.length}</span>}
+              </p>
+              {buy.length > 0 && (
+                <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-stone-100">
+                  <div className="h-1.5 rounded-full bg-brand transition-all" style={{ width: `${((buy.length - remaining) / buy.length) * 100}%` }} />
+                </div>
+              )}
+            </div>
             {groups.map(([aisle, lines]) => (
               <section key={aisle}>
-                <h2 className="section-title pt-2">{aisleEmoji(lines[0].aisle)} {aisleLabel(lines[0].aisle)}</h2>
+                <div className="flex items-center justify-between pt-2">
+                  <h2 className="section-title">{aisleEmoji(lines[0].aisle)} {aisleLabel(lines[0].aisle)}</h2>
+                  <button
+                    className="pb-1 text-xs font-semibold text-brand"
+                    onClick={() => {
+                      const all = lines.every((l) => l.checked);
+                      void setCheckedMany(lines.map((l) => l.key), !all);
+                    }}
+                  >
+                    {lines.every((l) => l.checked) ? 'Untick all' : 'Tick all'}
+                  </button>
+                </div>
                 <ul className="card divide-y divide-stone-100">{lines.map(renderLine)}</ul>
               </section>
             ))}

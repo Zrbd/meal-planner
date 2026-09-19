@@ -1,12 +1,14 @@
-import { ClipboardPaste, PenLine, Plus } from 'lucide-react';
+import { BookMarked, ClipboardPaste, Dices, PenLine, Plus, Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { Link, useSearchParams } from 'react-router';
+import { Link, useNavigate, useSearchParams } from 'react-router';
 import type { Recipe } from '../../domain/types';
 import { EmptyState, PageHeader, RecipeCard, SearchInput, Sheet, totalTime } from '../components';
 import { useAppData } from '../data';
 import { useCoverage, useDishInfo } from '../hooks';
 import { DISH_TYPES, PROTEIN_TYPES } from '../../domain/dishes';
 import { searchRecipes } from '../../domain/search';
+import { lastCooked } from '../../domain/rotation';
+import { daysBetween, toISODate } from '../../domain/dates';
 
 const FILTERS: { id: string; label: string; test: (r: Recipe, canMake: boolean) => boolean }[] = [
   { id: 'all', label: 'All', test: () => true },
@@ -20,10 +22,14 @@ const FILTERS: { id: string; label: string; test: (r: Recipe, canMake: boolean) 
   { id: 'veg', label: 'Vegetarian', test: (r) => r.diet.includes('vegetarian') },
   { id: 'sides', label: 'Sides', test: (r) => r.role === 'side' },
   { id: 'smoker', label: '🔥 Smoker', test: (r) => !!r.tags?.includes('smoker') },
+  // Handled specially in the list below — it needs the cook log, not just the recipe.
+  { id: 'stale', label: '⏳ Not lately', test: () => true },
 ];
 
 export function Recipes() {
-  const { recipes, ingById } = useAppData();
+  const d = useAppData();
+  const { recipes, ingById } = d;
+  const navigate = useNavigate();
   const coverage = useCoverage();
   const dish = useDishInfo();
   const [params, setParams] = useSearchParams();
@@ -31,6 +37,7 @@ export function Recipes() {
   const cuisine = params.get('c') ?? '';
   const protein = params.get('p') ?? '';
   const dishType = params.get('t') ?? '';
+  const collectionId = params.get('k') ?? '';
   /** Change one filter and keep the others (the URL remembers them for the back button). */
   const setParam = (key: string, value: string) => {
     const next = new URLSearchParams(params);
@@ -47,6 +54,12 @@ export function Recipes() {
   const [showHidden, setShowHidden] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
 
+  const cooked = useMemo(() => lastCooked(d.cookLogs), [d.cookLogs]);
+  const inCollection = useMemo(
+    () => (collectionId ? new Set(d.collections.find((c) => c.id === collectionId)?.recipeIds ?? []) : null),
+    [collectionId, d.collections],
+  );
+
   const list = useMemo(() => {
     const f = FILTERS.find((x) => x.id === filter) ?? FILTERS[0];
     const base = q.trim() ? searchRecipes(recipes, q.trim(), { ingById }) : [...recipes].sort((a, b) => a.title.localeCompare(b.title));
@@ -56,11 +69,19 @@ export function Recipes() {
       if (cuisine && r.cuisine !== cuisine) return false;
       if (protein && info?.protein !== protein) return false;
       if (dishType && info?.dishType !== dishType) return false;
+      if (inCollection && !inCollection.has(r.id)) return false;
+      if (filter === 'stale') {
+        const at = cooked.get(r.id);
+        // Never cooked doesn't count as "not lately" — this is for things you liked and forgot.
+        if (at === undefined) return false;
+        if (daysBetween(toISODate(new Date(at)), d.today) < 30) return false;
+      }
       return true;
     });
     if (!q.trim()) out.sort((a, b) => (coverage.get(b.id)?.ratio ?? 0) - (coverage.get(a.id)?.ratio ?? 0) || Number(b.favorite) - Number(a.favorite));
+    if (filter === 'stale') out.sort((a, b) => (cooked.get(a.id) ?? 0) - (cooked.get(b.id) ?? 0));
     return out;
-  }, [recipes, q, ingById, filter, showHidden, coverage, dish, cuisine, protein, dishType]);
+  }, [recipes, q, ingById, filter, showHidden, coverage, dish, cuisine, protein, dishType, inCollection, cooked, d.today]);
 
   const hiddenCount = recipes.filter((r) => r.archived).length;
 
@@ -70,13 +91,29 @@ export function Recipes() {
         title="Recipes"
         subtitle={`${recipes.filter((r) => !r.archived).length} recipes`}
         right={
-          <button className="icon-btn" aria-label="Add recipe" onClick={() => setAddOpen(true)}>
-            <Plus size={24} />
-          </button>
+          <>
+            <button
+              className="icon-btn"
+              aria-label="Surprise me"
+              disabled={!list.length}
+              onClick={() => navigate(`/recipes/${list[Math.floor(Math.random() * list.length)].id}`)}
+            >
+              <Dices size={22} />
+            </button>
+            <Link className="icon-btn" aria-label="Collections" to="/collections"><BookMarked size={21} /></Link>
+            <button className="icon-btn" aria-label="Add recipe" onClick={() => setAddOpen(true)}>
+              <Plus size={24} />
+            </button>
+          </>
         }
       />
       <div className="space-y-3 px-4">
         <SearchInput value={q} onChange={setQ} placeholder="Search recipes, cuisines…" />
+        <Link to="/find" className="card flex items-center gap-2 px-3 py-2 text-sm">
+          <Search size={16} className="text-brand" />
+          <span className="flex-1">Cook with what's in the fridge</span>
+          <span className="text-stone-400">›</span>
+        </Link>
         <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4">
           {FILTERS.map((f) => (
             <button
@@ -88,6 +125,19 @@ export function Recipes() {
             </button>
           ))}
         </div>
+        {d.collections.length > 0 && (
+          <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4">
+            {d.collections.map((c) => (
+              <button
+                key={c.id}
+                className={`chip ${collectionId === c.id ? 'chip-on' : ''}`}
+                onClick={() => setParam('k', collectionId === c.id ? '' : c.id)}
+              >
+                {c.emoji ?? '📚'} {c.name}
+              </button>
+            ))}
+          </div>
+        )}
         <div className="grid grid-cols-3 gap-2">
           <select className={`input px-2 py-1.5 text-sm ${dishType ? 'border-brand text-brand' : ''}`} aria-label="Type of dish" value={dishType} onChange={(e) => setParam('t', e.target.value)}>
             <option value="">Any dish</option>
@@ -102,7 +152,7 @@ export function Recipes() {
             {cuisines.map(([c, n]) => <option key={c} value={c}>{c} ({n})</option>)}
           </select>
         </div>
-        {(cuisine || protein || dishType) && (
+        {(cuisine || protein || dishType || collectionId) && (
           <div className="flex items-center justify-between px-1 text-sm text-stone-500">
             <span>{list.length} recipe{list.length === 1 ? '' : 's'}</span>
             <button className="text-brand font-medium" onClick={() => setParams(filter === 'all' ? {} : { f: filter }, { replace: true })}>Clear filters</button>

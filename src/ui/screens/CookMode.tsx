@@ -13,6 +13,7 @@ import { cookRecipe, previewCook, undoCook } from '../../services/cook';
 import { setLooseLevel } from '../../services/pantry';
 import { AmountInput, EmptyState, PageHeader, Segmented, Sheet } from '../components';
 import { useAppData } from '../data';
+import { entriesFor } from '../../domain/journal';
 import { useToast } from '../toast';
 
 interface RunningTimer {
@@ -51,7 +52,7 @@ export function CookMode() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const toast = useToast();
-  const { recipeById, meals, ingById, lots, looseById, settings } = useAppData();
+  const { recipeById, meals, ingById, lots, looseById, settings, journal } = useAppData();
   const recipe = recipeById.get(id);
   const meal = meals.find((m) => m.id === params.get('meal'));
   const servings = meal?.servings ?? Number(params.get('servings') ?? settings.householdSize);
@@ -114,6 +115,7 @@ export function CookMode() {
   const last = step === recipe.steps.length - 1;
   const stepTips = tipsByStep(recipe, ingById).get(step) ?? [];
 
+  const myNotes = entriesFor(journal, recipe.id);
   return (
     <div className="pt-safe flex min-h-dvh flex-col bg-white">
       <div className="flex h-14 items-center gap-2 px-3">
@@ -132,6 +134,11 @@ export function CookMode() {
       </div>
 
       <div className="flex flex-1 flex-col px-6 pt-8">
+        {step === 0 && myNotes.length > 0 && (
+          <div className="card mb-4 bg-amber-50 p-3 text-sm">
+            <b>Last time you said:</b> {myNotes[0].note}
+          </div>
+        )}
         <div className="text-sm font-semibold text-brand">Step {step + 1} of {recipe.steps.length}</div>
         <p className="mt-3 text-2xl leading-snug font-medium">{text}</p>
         {timerSec && (

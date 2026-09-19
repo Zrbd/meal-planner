@@ -20,6 +20,7 @@ export const DEFAULT_SETTINGS: Settings = {
   planSides: true,
   smoker: 'weekends',
   smokerConfirm: true,
+  weeklyBudget: 0,
 };
 
 export function withDefaults(s: Partial<Settings> | undefined): Settings {

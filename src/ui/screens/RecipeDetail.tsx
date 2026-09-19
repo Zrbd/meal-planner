@@ -2,7 +2,7 @@ import { CalendarPlus, Check, ChefHat, Clock, Copy, EyeOff, Heart, Minus, MoreHo
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { recipeCoverage } from '../../domain/coverage';
-import { addDaysISO, relativeDayLabel } from '../../domain/dates';
+import { addDaysISO, relativeDayLabel, toISODate } from '../../domain/dates';
 import { SLOTS, type Ingredient, type Recipe, type Slot } from '../../domain/types';
 import { tipIngredients, tipsByStep } from '../../domain/freshness';
 import { ExternalLink, Lightbulb, RotateCcw } from 'lucide-react';
@@ -21,12 +21,20 @@ import { substituteIngredient } from '../../services/recipes';
 import { IngredientPicker } from '../components';
 import { ArrowLeftRight, Scale } from 'lucide-react';
 import { useToast } from '../toast';
+import { BookMarked, NotebookPen, Share2 } from 'lucide-react';
+import { collectionsOf } from '../../domain/collections';
+import { entriesFor } from '../../domain/journal';
+import { recipeToText } from '../../domain/recipetext';
+import { createCollection, toggleInCollection } from '../../services/collections';
+import { addJournalEntry, deleteJournalEntry } from '../../services/journal';
+import { shareText } from '../share';
 
 export function RecipeDetail() {
   const { id = '' } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
-  const { recipeById, ingById, ingredients, settings, today } = useAppData();
+  const d = useAppData();
+  const { recipeById, ingById, ingredients, settings, today } = d;
   const [swapIdx, setSwapIdx] = useState<number | null>(null);
   const [scaleIdx, setScaleIdx] = useState<number | null>(null);
   const [scaleOpen, setScaleOpen] = useState(false);
@@ -36,6 +44,8 @@ export function RecipeDetail() {
   const [servings, setServings] = useState(settings.householdSize);
   const [menuOpen, setMenuOpen] = useState(false);
   const [planOpen, setPlanOpen] = useState(false);
+  const [collOpen, setCollOpen] = useState(false);
+  const [journalOpen, setJournalOpen] = useState(false);
   const units = useRecipeUnits(id, settings.units);
   const prices = usePrices();
 
@@ -57,6 +67,8 @@ export function RecipeDetail() {
   const tips = tipIngredients(recipe, ingById);
   const stepTips = tipsByStep(recipe, ingById);
   const cost = recipeCost(recipe, servings, ingById, prices);
+  const inCollections = collectionsOf(d.collections, recipe.id);
+  const journal = entriesFor(d.journal, recipe.id);
 
   return (
     <>
@@ -67,6 +79,9 @@ export function RecipeDetail() {
           <>
             <button className="icon-btn" aria-label={recipe.favorite ? 'Unfavorite' : 'Favorite'} onClick={() => void toggleFavorite(recipe.id)}>
               <Heart size={22} className={recipe.favorite ? 'fill-red-500 text-red-500' : ''} />
+            </button>
+            <button className="icon-btn" aria-label="Add to a collection" onClick={() => setCollOpen(true)}>
+              <BookMarked size={21} className={inCollections.length ? 'fill-brand-soft text-brand' : ''} />
             </button>
             <button className="icon-btn" aria-label="More" onClick={() => setMenuOpen(true)}>
               <MoreHorizontal size={22} />
@@ -210,6 +225,32 @@ export function RecipeDetail() {
             <b>Notes:</b> {recipe.notes}
           </div>
         )}
+
+        <div className="mt-6 flex items-center justify-between">
+          <h2 className="flex items-center gap-1.5 text-lg font-bold"><NotebookPen size={18} className="text-stone-400" /> Your notes</h2>
+          <button className="text-sm font-semibold text-brand" onClick={() => setJournalOpen(true)}>Add a note</button>
+        </div>
+        {journal.length === 0 ? (
+          <p className="mt-1 text-sm text-stone-500">
+            Next time you make this, jot down what you'd change — less salt, longer in the oven, doubled it fine.
+          </p>
+        ) : (
+          <ul className="card mt-2 divide-y divide-stone-100">
+            {journal.map((e) => (
+              <li key={e.id} className="p-3">
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className="text-xs font-semibold text-stone-500">
+                    {relativeDayLabel(toISODate(new Date(e.at)), today)}
+                    {e.rating ? ` · ${'★'.repeat(e.rating)}` : ''}
+                    {e.servings ? ` · ${formatNumber(e.servings)} servings` : ''}
+                  </span>
+                  <button className="text-xs text-stone-400" onClick={() => void deleteJournalEntry(e.id)}>Delete</button>
+                </div>
+                <p className="mt-1 text-sm whitespace-pre-wrap">{e.note}</p>
+              </li>
+            ))}
+          </ul>
+        )}
       </article>
 
       <div className="fixed inset-x-0 z-20 bottom-safe-tab">
@@ -227,6 +268,17 @@ export function RecipeDetail() {
         <div className="space-y-1">
           <button className="btn btn-secondary w-full justify-start" onClick={() => navigate(`/recipes/${recipe.id}/edit`)}>
             <Pencil size={18} /> Edit recipe
+          </button>
+          <button
+            className="btn btn-secondary w-full justify-start"
+            onClick={async () => {
+              const text = recipeToText(recipe, { servings, system: units.system, ingById });
+              const res = await shareText(recipe.title, text);
+              setMenuOpen(false);
+              toast(res === 'copied' ? 'Recipe copied to the clipboard' : res === 'failed' ? "Couldn't share that" : 'Shared');
+            }}
+          >
+            <Share2 size={18} /> Share as text
           </button>
           <button
             className="btn btn-secondary w-full justify-start"
@@ -316,6 +368,22 @@ export function RecipeDetail() {
           </>
         );
       })()}
+
+      <CollectionsSheet
+        open={collOpen}
+        onClose={() => setCollOpen(false)}
+        recipeId={recipe.id}
+        onToast={toast}
+      />
+
+      <JournalSheet
+        open={journalOpen}
+        onClose={() => setJournalOpen(false)}
+        recipeId={recipe.id}
+        servings={servings}
+        currentRating={recipe.rating}
+        onToast={toast}
+      />
 
       <AddToPlanSheet
         open={planOpen}
@@ -408,6 +476,103 @@ function ScaleSheet(props: {
           <button className="btn btn-ghost mt-3 w-full" onClick={() => props.onPickLine(-1)}>Pick a different ingredient</button>
         </>
       )}
+    </Sheet>
+  );
+}
+
+/** Tick the shelves this recipe belongs on. Creating a new one from here saves a trip. */
+function CollectionsSheet(props: { open: boolean; onClose: () => void; recipeId: string; onToast: (t: string) => void }) {
+  const { collections } = useAppData();
+  const [name, setName] = useState('');
+  const mine = new Set(collectionsOf(collections, props.recipeId).map((c) => c.id));
+  return (
+    <Sheet open={props.open} onClose={props.onClose} title="Add to a collection">
+      {collections.length === 0 && (
+        <p className="pb-3 text-sm text-stone-500">
+          Collections are your own shelves — "Weeknight winners", "Cooking for a crowd". Make the first one below.
+        </p>
+      )}
+      <div className="space-y-1">
+        {collections.map((c) => (
+          <button
+            key={c.id}
+            className={`btn w-full justify-start ${mine.has(c.id) ? 'btn-primary' : 'btn-secondary'}`}
+            onClick={() => void toggleInCollection(c.id, props.recipeId)}
+          >
+            <span className="text-lg">{c.emoji ?? '📚'}</span>
+            <span className="flex-1 text-left">{c.name}</span>
+            {mine.has(c.id) && <Check size={18} />}
+          </button>
+        ))}
+      </div>
+      <div className="mt-4 flex gap-2">
+        <input className="input flex-1" placeholder="New collection…" value={name} onChange={(e) => setName(e.target.value)} />
+        <button
+          className="btn btn-primary"
+          disabled={!name.trim()}
+          onClick={async () => {
+            const id = await createCollection(name.trim(), undefined, [props.recipeId]);
+            setName('');
+            props.onToast(`Saved to ${name.trim()}`);
+            return id;
+          }}
+        >
+          Create
+        </button>
+      </div>
+    </Sheet>
+  );
+}
+
+/** A dated note about the time you actually cooked it, optionally re-rating the recipe. */
+function JournalSheet(props: {
+  open: boolean;
+  onClose: () => void;
+  recipeId: string;
+  servings: number;
+  currentRating?: number;
+  onToast: (t: string) => void;
+}) {
+  const [note, setNote] = useState('');
+  const [rating, setRating] = useState<number | undefined>(props.currentRating);
+  return (
+    <Sheet
+      open={props.open}
+      onClose={props.onClose}
+      title="How did it go?"
+      footer={
+        <button
+          className="btn btn-primary w-full"
+          disabled={!note.trim()}
+          onClick={async () => {
+            await addJournalEntry({ recipeId: props.recipeId, note: note.trim(), rating, servings: props.servings });
+            setNote('');
+            props.onToast('Note saved');
+            props.onClose();
+          }}
+        >
+          Save note
+        </button>
+      }
+    >
+      <p className="pb-2 text-sm text-stone-500">
+        Anything you'd do differently. These show on the recipe, and appear in Cook mode before you start.
+      </p>
+      <textarea
+        className="input h-28"
+        autoFocus
+        placeholder="Halved the chilli, still plenty hot. Needed 10 more minutes."
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+      />
+      <div className="label pt-3">Rating</div>
+      <div className="flex gap-0.5">
+        {[1, 2, 3, 4, 5].map((n) => (
+          <button key={n} aria-label={`${n} stars`} onClick={() => setRating(rating === n ? undefined : n)}>
+            <Star size={26} className={(rating ?? 0) >= n ? 'fill-amber-400 text-amber-400' : 'text-stone-300'} />
+          </button>
+        ))}
+      </div>
     </Sheet>
   );
 }

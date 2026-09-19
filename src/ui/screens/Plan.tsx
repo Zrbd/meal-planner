@@ -7,7 +7,11 @@ import { autoPlan, usesSmoker, eligibleRecipes, type AutoPick, type PlanSlot } f
 import { addDaysISO, formatDay, rangeDays, relativeDayLabel, startOfWeekISO } from '../../domain/dates';
 import { SLOT_ORDER } from '../../domain/stock';
 import { SLOTS, type PlannedMeal, type Slot } from '../../domain/types';
-import { addLeftovers, addMeal, applyAutoPlan, removeMeal, setSkipped, updateMeal } from '../../services/plan';
+import { addLeftovers, addMeal, applyAutoPlan, copyWeek, removeMeal, setSkipped, updateMeal } from '../../services/plan';
+import { buildICS, reminderEvents } from '../../domain/ics';
+import { planToText } from '../../domain/recipetext';
+import { downloadFile, shareText } from '../share';
+import { CalendarArrowDown, CopyPlus, Share2 } from 'lucide-react';
 import { PageHeader, RecipeCard, RecipeThumb, SearchInput, Segmented, Sheet } from '../components';
 import { useAppData, type AppData } from '../data';
 import { useCoverage, useDishInfo, usePrices } from '../hooks';
@@ -78,6 +82,7 @@ export function Plan() {
   const [useUpIds, setUseUpIds] = useSessionState<string[]>('plan:useUp', () => []);
   const [quickDay, setQuickDay] = useState<{ date: string; slot: Slot } | null>(null);
   const [kept, setKept] = useSessionState<string[]>('plan:kept', () => []);
+  const [weekMenu, setWeekMenu] = useState(false);
 
   const weekMeals = meals.filter((m) => m.date >= weekStart && m.date <= weekEnd);
   const plannedCount = weekMeals.filter((m) => m.status === 'planned' && !m.leftoverOf).length;
@@ -148,6 +153,9 @@ export function Plan() {
             </Link>
             <button className="btn btn-ghost px-3" onClick={startAuto}>
               <Sparkles size={18} /> Auto-fill
+            </button>
+            <button className="icon-btn" aria-label="Week options" onClick={() => setWeekMenu(true)}>
+              <MoreHorizontal size={20} />
             </button>
           </div>
         }
@@ -398,6 +406,77 @@ export function Plan() {
               </div>
             );
           })}
+        </div>
+      </Sheet>
+
+      <Sheet open={weekMenu} onClose={() => setWeekMenu(false)} title={`Week of ${formatDay(weekStart, 'MMM d')}`}>
+        <div className="space-y-1">
+          <button
+            className="btn btn-secondary w-full justify-start"
+            onClick={async () => {
+              const res = await copyWeek(addDaysISO(weekStart, -7), weekStart, today);
+              setWeekMenu(false);
+              toast(
+                res.copied
+                  ? `Copied ${res.copied} meal${res.copied === 1 ? '' : 's'} from last week${res.skipped ? ` · ${res.skipped} skipped` : ''}`
+                  : 'Nothing to copy from last week',
+              );
+            }}
+          >
+            <CopyPlus size={18} /> Repeat last week
+          </button>
+          <button
+            className="btn btn-secondary w-full justify-start"
+            onClick={async () => {
+              const res = await copyWeek(weekStart, addDaysISO(weekStart, 7), today);
+              setWeekMenu(false);
+              if (res.copied) setWeekStart(addDaysISO(weekStart, 7));
+              toast(res.copied ? `Copied ${res.copied} meal${res.copied === 1 ? '' : 's'} into next week` : 'Nothing in this week to copy');
+            }}
+          >
+            <CopyPlus size={18} /> Copy this week forward
+          </button>
+          <button
+            className="btn btn-secondary w-full justify-start"
+            disabled={!weekMeals.length}
+            onClick={async () => {
+              const text = planToText({
+                days: days.map((day) => ({
+                  date: day,
+                  label: formatDay(day, 'EEE MMM d'),
+                  meals: weekMeals
+                    .filter((m) => m.date === day)
+                    .map((m) => ({ slot: m.slot, title: recipeById.get(m.recipeId)?.title ?? 'Leftovers', servings: m.servings })),
+                })),
+              });
+              const res = await shareText('Meal plan', text);
+              setWeekMenu(false);
+              toast(res === 'copied' ? 'Plan copied to the clipboard' : res === 'failed' ? "Couldn't share that" : 'Shared');
+            }}
+          >
+            <Share2 size={18} /> Share this week as text
+          </button>
+          <button
+            className="btn btn-secondary w-full justify-start"
+            onClick={() => {
+              const events = reminderEvents({
+                meals: d.meals, recipesById: recipeById, ingById: d.ingById, lots: d.lots, loose: d.loose,
+                today, shoppingDay: settings.shoppingDay, days: 14,
+              });
+              setWeekMenu(false);
+              if (!events.length) {
+                toast('Nothing to remind you about in the next two weeks');
+                return;
+              }
+              downloadFile('meal-planner.ics', 'text/calendar', buildICS(events, Date.now()));
+              toast(`${events.length} reminder${events.length === 1 ? '' : 's'} — open the file to add them to Calendar`);
+            }}
+          >
+            <CalendarArrowDown size={18} /> Send reminders to Calendar
+          </button>
+          <p className="px-1 pt-2 text-xs text-stone-500">
+            Calendar reminders cover thawing, prep the night before, use-by dates and your shopping day for the next two weeks. They carry alarms, which a web app can't set on its own.
+          </p>
         </div>
       </Sheet>
     </>

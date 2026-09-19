@@ -6,6 +6,8 @@ import { db } from '../db/schema';
 import { withDefaults } from '../db/settings';
 import { todayISO } from '../domain/dates';
 import { usageRate } from '../domain/forecast';
+import { parseCollections, type Collection } from '../domain/collections';
+import { parseJournal, type JournalEntry } from '../domain/journal';
 import type {
   CookLog, Ingredient, InventoryTxn, ISODate, LooseStock, PlannedMeal, Recipe, Settings, ShoppingState, StockLot, Trip,
 } from '../domain/types';
@@ -38,6 +40,10 @@ export interface AppData {
   /** Ingredients already answered for in the pantry walkthrough. */
   stockChecked: Set<string>;
   dailyRates: Map<string, number>;
+  /** Recipe collections you made yourself. */
+  collections: Collection[];
+  /** Notes you left after cooking. */
+  journal: JournalEntry[];
 }
 
 const Ctx = createContext<AppData | null>(null);
@@ -56,7 +62,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
 
   const raw = useLiveQuery(async () => {
     const since = Date.now() - 60 * DAY;
-    const [ingredients, recipes, lots, loose, txns, meals, cookLogs, shopping, trips, settingsRow, backupRow, autoRow, restoredRow, checksRow, stockCheckRow] =
+    const [ingredients, recipes, lots, loose, txns, meals, cookLogs, shopping, trips, settingsRow, backupRow, autoRow, restoredRow, checksRow, stockCheckRow, collectionsRow, journalRow] =
       await Promise.all([
         db.ingredients.toArray(),
         db.recipes.toArray(),
@@ -64,7 +70,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         db.loose.toArray(),
         db.txns.where('at').above(since).toArray(),
         db.meals.toArray(),
-        db.cookLogs.orderBy('at').reverse().limit(200).toArray(),
+        db.cookLogs.orderBy('at').reverse().toArray(),
         db.shopping.toArray(),
         db.trips.orderBy('finishedAt').reverse().limit(500).toArray(),
         db.kv.get('settings'),
@@ -73,6 +79,8 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         db.kv.get('autoRestoredAt'),
         db.kv.get('prepChecks'),
         db.kv.get('stockCheck'),
+        db.kv.get('collections'),
+        db.kv.get('journal'),
       ]);
     return {
       ingredients, recipes, lots, loose, txns, meals, cookLogs, shopping, trips,
@@ -82,6 +90,8 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       autoRestoredAt: restoredRow?.value as number | undefined,
       prepChecks: new Set((checksRow?.value as string[] | undefined) ?? []),
       stockChecked: new Set(((stockCheckRow?.value as { done?: string[] } | undefined)?.done ?? [])),
+      collections: parseCollections(collectionsRow?.value),
+      journal: parseJournal(journalRow?.value),
       loadedAt: Date.now(),
     };
   }, []);

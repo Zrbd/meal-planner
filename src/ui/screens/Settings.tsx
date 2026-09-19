@@ -124,6 +124,24 @@ export function SettingsScreen() {
               {STORES.map((st) => <option key={st.id} value={st.id}>{st.label}</option>)}
             </select>
           </Row>
+          <Row title="Weekly grocery budget" hint="Shows a bar on your shopping list. 0 turns it off.">
+            <div className="flex items-center gap-1">
+              <span className="text-stone-400">$</span>
+              <input
+                className="input w-20 px-2 py-1.5 text-right"
+                type="number"
+                inputMode="decimal"
+                min={0}
+                step={5}
+                value={s.weeklyBudget || ''}
+                placeholder="0"
+                onChange={(e) => set({ weeklyBudget: Math.max(0, Number(e.target.value) || 0) })}
+              />
+            </div>
+          </Row>
+          <Row title="Price book" hint="Every price you've typed in, and what's gone up">
+            <Link className="btn btn-secondary px-3 py-1.5" to="/prices">Open</Link>
+          </Row>
           <Row title="Units">
             <div className="w-36">
               <Segmented value={s.units} options={[{ value: 'us', label: 'US' }, { value: 'metric', label: 'Metric' }]} onChange={(v) => set({ units: v })} />
@@ -163,6 +181,16 @@ export function SettingsScreen() {
         <div className="card divide-y divide-stone-100">
           <Row title="Stock check" hint="Go through your kitchen one ingredient at a time">
             <Link className="btn btn-secondary px-3 py-1.5" to="/pantry/check">Start</Link>
+          </Row>
+        </div>
+
+        <h2 className="section-title">Looking back</h2>
+        <div className="card divide-y divide-stone-100">
+          <Row title="Kitchen stats" hint="What you cook, what it costs, what gets thrown out">
+            <Link className="btn btn-secondary px-3 py-1.5" to="/stats">Open</Link>
+          </Row>
+          <Row title="Collections" hint="Your own shelves of recipes">
+            <Link className="btn btn-secondary px-3 py-1.5" to="/collections">Open</Link>
           </Row>
         </div>
 

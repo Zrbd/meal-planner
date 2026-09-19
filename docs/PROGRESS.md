@@ -171,6 +171,21 @@ Living handoff log. Newest notes at the top of each section.
 - Later in the same session: more world mains (arepas de queso, tteokbokki, chicken katsu, chicken congee, pancit bihon, borscht, moussaka with ground turkey, japchae, mapo tofu, palak paneer, chicken biryani, pozole verde, vegetarian shepherd's pie, misir wat), more desserts (no-bake cheesecake, churros, tiramisu, baklava, carrot cake, bread pudding, cut-out sugar cookies, panna cotta) and ten more sides (gomen, cilantro lime rice, cumin lime coleslaw, roasted cauliflower, street corn salad, roasted brussels sprouts, glazed carrots, braised red cabbage, creamed corn, macaroni salad).
 - Bundle: the recipe catalog and ingredient catalog are now dynamic imports inside `seedIfNeeded`, and the six screens you only reach by navigating (cook mode, recipe editor, settings, stock check, prep, pantry item) are `React.lazy` behind a `Suspense` fallback. Launch JS went from 1,953 kB (545 kB gzip) to ~735 kB (229 kB gzip).
 
+## Fifteen-feature batch (looking back, budgets, collections)
+New screens: Kitchen stats (`/stats`), Price book (`/prices`), Cook with… (`/find`), Collections
+(`/collections`, `/collections/:id`), plus a global search sheet on Home.
+New pure modules: `domain/stats.ts`, `rotation.ts`, `budget.ts`, `pantryvalue.ts`, `collections.ts`,
+`journal.ts`, `recipetext.ts`, and `priceHistory`/`priceBook` added to `domain/prices.ts`.
+New services: `services/collections.ts`, `services/journal.ts`, `copyWeek` in `services/plan.ts`,
+`setCheckedMany` in `services/shopping.ts`. Collections and the cook journal live in the `kv` table, so
+there is no Dexie version bump and backup/restore picks them up unchanged.
+Touched screens: Home (digest, rotation nudges, search, tile grid), Recipes (surprise me, collection chips,
+"not lately" filter), RecipeDetail (collections, journal, share as text), Shopping (weekly budget bar,
+per-aisle tick-all, progress), Pantry (pantry value + dead stock), Plan (copy/repeat a week, .ics export,
+share as text), Settings (budget, price book, looking-back links), CookMode (last time's note).
+`data.tsx` now loads all cook logs (was capped at 200) so all-time stats are right.
+Covered by `tests/stats.test.ts` (53 cases).
+
 ## Known gaps / ideas for next session
 - Notifications only fire while the app is open (iOS web app limit). Calendar export covers timed reminders.
 - The auto-backup copy lives in the same site storage iOS may evict; it protects against DB corruption/partial loss, not against deleting the app.

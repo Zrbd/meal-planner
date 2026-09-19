@@ -20,6 +20,10 @@ const SettingsScreen = lazy(() => import('./screens/Settings').then((m) => ({ de
 const StockCheck = lazy(() => import('./screens/StockCheck').then((m) => ({ default: m.StockCheck })));
 const Prep = lazy(() => import('./screens/Prep').then((m) => ({ default: m.Prep })));
 const PantryItem = lazy(() => import('./screens/PantryItem').then((m) => ({ default: m.PantryItem })));
+const Stats = lazy(() => import('./screens/Stats').then((m) => ({ default: m.Stats })));
+const PriceBook = lazy(() => import('./screens/PriceBook').then((m) => ({ default: m.PriceBook })));
+const FindByIngredient = lazy(() => import('./screens/FindByIngredient').then((m) => ({ default: m.FindByIngredient })));
+const Collections = lazy(() => import('./screens/Collections').then((m) => ({ default: m.Collections })));
 
 const TABS = [
   { to: '/', label: 'Today', icon: House },
@@ -151,6 +155,11 @@ export function App() {
               <Route path="/pantry/check" element={<StockCheck />} />
               <Route path="/pantry/:id" element={<PantryItem />} />
               <Route path="/prep" element={<Prep />} />
+              <Route path="/stats" element={<Stats />} />
+              <Route path="/prices" element={<PriceBook />} />
+              <Route path="/find" element={<FindByIngredient />} />
+              <Route path="/collections" element={<Collections />} />
+              <Route path="/collections/:id" element={<Collections />} />
               <Route path="/settings" element={<SettingsScreen />} />
               <Route path="*" element={<Home />} />
             </Routes>

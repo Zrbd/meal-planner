@@ -223,4 +223,6 @@ export interface Settings {
   smoker?: SmokerMode;
   /** Ask before a smoker recipe goes into the plan. */
   smokerConfirm?: boolean;
+  /** Weekly grocery budget in dollars; 0 or undefined means no budget is being tracked. */
+  weeklyBudget?: number;
 }

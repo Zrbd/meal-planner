@@ -14,6 +14,9 @@ import { addDaysISO as plusDays } from '../../domain/dates';
 import { Lightbulb } from 'lucide-react';
 import { AmountInput, EmptyState, IngredientPicker, PageHeader, SearchInput, Segmented, Sheet } from '../components';
 import { useAppData } from '../data';
+import { usePrices } from '../hooks';
+import { deadStock, pantryValue } from '../../domain/pantryvalue';
+import { money } from '../../domain/prices';
 import { useToast } from '../toast';
 
 type Tab = 'all' | Location | 'spices' | 'staples';
@@ -56,6 +59,12 @@ export function Pantry() {
   const [q, setQ] = useState('');
   const [pickOpen, setPickOpen] = useState(false);
   const [adding, setAdding] = useState<Ingredient | null>(null);
+  const prices = usePrices();
+  const value = useMemo(() => pantryValue(lots, prices), [lots, prices]);
+  const dead = useMemo(
+    () => deadStock({ lots, ingById: d.ingById, recipes: d.recipes, meals: d.meals, prices, today }),
+    [lots, d.ingById, d.recipes, d.meals, prices, today],
+  );
 
   const fuse = useMemo(() => new Fuse(ingredients, { keys: ['name', 'aliases'], threshold: 0.35, ignoreLocation: true }), [ingredients]);
   const matchIds = useMemo(() => (q.trim() ? new Set(fuse.search(q.trim()).map((r) => r.item.id)) : null), [q, fuse]);
@@ -133,6 +142,40 @@ export function Pantry() {
           ))}
         </div>
         <SearchInput value={q} onChange={setQ} placeholder="Search your kitchen" />
+
+        {tab === 'all' && !q && (value.total > 0 || dead.length > 0) && (
+          <div className="card p-3">
+            {value.total > 0 && (
+              <div className="flex items-baseline justify-between">
+                <div>
+                  <div className="text-xs text-stone-500">Roughly what's on the shelves</div>
+                  <div className="text-xl font-semibold">{money(value.total)}</div>
+                </div>
+                <Link to="/stats" className="text-sm font-semibold text-brand">Stats ›</Link>
+              </div>
+            )}
+            {dead.length > 0 && (
+              <>
+                <div className="pt-3 text-xs font-semibold text-stone-500">Bought a while back, nothing planned for it</div>
+                <ul className="mt-1.5 space-y-1">
+                  {dead.map((x) => (
+                    <li key={x.ingredientId}>
+                      <Link to={`/pantry/${x.ingredientId}`} className="flex items-baseline justify-between gap-2 text-sm">
+                        <span className="truncate">{x.name}</span>
+                        <span className="shrink-0 text-xs text-stone-400">
+                          {x.daysHeld} days{x.value !== undefined ? ` · ${money(x.value)}` : ''}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+                <Link to={`/find?i=${dead.map((x) => x.ingredientId).join(',')}`} className="btn btn-secondary mt-3 w-full">
+                  Find something to cook with these
+                </Link>
+              </>
+            )}
+          </div>
+        )}
 
         {tab === 'spices' || tab === 'staples' ? (
           <>
