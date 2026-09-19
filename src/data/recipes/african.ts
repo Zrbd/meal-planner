@@ -396,7 +396,7 @@ export const AFRICAN = [
       'Stir in the rinsed rice, cover tightly (foil under the lid helps), and cook on low 20 minutes without lifting the lid.',
       'Fluff with a fork, pull out the bay leaves, and serve with kachumbari.',
     ],
-    notes: 'Goat and lamb are traditional here too; chicken thighs cook fastest and are what most home cooks reach for. Stock cubes stand in for broth in the original — broth plus salt does the same job. Grind a double batch of masala and keep it in a jar.',
+    notes: 'Chicken thighs cook fastest here and are what most home cooks reach for. Stock cubes stand in for broth in the original — broth plus salt does the same job. Grind a double batch of masala and keep it in a jar.',
   }),
   defineRecipe({
     id: 'suqaar-digaag', title: 'Suqaar Digaag (Somali Cubed Chicken)',
