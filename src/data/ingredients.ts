@@ -135,6 +135,7 @@ const CATALOG: Ingredient[] = [
   meat('chicken-wings', 'Chicken wings', { aliases: ['wings', 'party wings', 'flats and drumettes'], gramsPerEach: 60, packages: [{ label: '5 lb bag', qty: lb(5) }, { label: '2 lb pack', qty: lb(2) }] }),
   meat('ham', 'Spiral-cut ham', { aliases: ['spiral ham', 'smoked ham', 'bone-in ham', 'holiday ham'], packages: [{ label: '8 lb spiral ham', qty: lb(8) }], shelfLife: { fridge: 7, freezer: 120 } }),
   meat('pork-shoulder', 'Pork shoulder (Boston butt)', { aliases: ['pork butt', 'boston butt', 'bone-in pork shoulder', 'pork shoulder roast'], packages: [{ label: '8 lb bone-in', qty: lb(8) }], shelfLife: { fridge: 4, freezer: 180 } }),
+  meat('whole-turkey', 'Whole turkey', { aliases: ['turkey', 'frozen turkey', 'thanksgiving turkey'], gramsPerEach: lb(15), packages: [{ label: '15 lb bird', qty: lb(15) }], shelfLife: { fridge: 2, freezer: 365 } }),
   meat('turkey-legs', 'Turkey legs', { aliases: ['turkey drumsticks', 'turkey leg'], gramsPerEach: lb(1.2), packages: [{ label: '2-count pack', qty: lb(2.4) }], shelfLife: { fridge: 2, freezer: 180 } }),
   meat('turkey-breast', 'Turkey breast (bone-in)', { aliases: ['bone-in turkey breast', 'whole turkey breast'], packages: [{ label: '6 lb breast', qty: lb(6) }], shelfLife: { fridge: 2, freezer: 180 } }),
   meat('rotisserie-chicken', 'Cooked chicken (rotisserie)', { aliases: ['rotisserie chicken', 'cooked chicken', 'shredded chicken'], density: 0.55, unitAliases: { chicken: 900 }, packages: [{ label: 'whole rotisserie (~2 lb meat)', qty: 900 }], shelfLife: { fridge: 4, freezer: 90 } }),
@@ -323,6 +324,7 @@ const CATALOG: Ingredient[] = [
   looseLiquid('pomegranate-molasses', 'Pomegranate molasses', 'international', 1.35, '12 oz bottle', oz(12), { aliases: ['pomegranate syrup', 'dibs rumman'] }),
   looseLiquid('honey', 'Honey', 'oils-condiments', 1.42, '12 oz bottle', 240),
   looseLiquid('molasses', 'Molasses', 'oils-condiments', 1.4, '12 oz bottle', floz(12), { aliases: ['dark molasses', 'unsulphured molasses'] }),
+  I('apple-juice', 'Apple juice', 'beverages', 'ml', { aliases: ['apple cider', 'unfiltered apple juice'], density: 1.04, packages: [{ label: '64 oz jug', qty: floz(64) }], shelfLife: { pantry: 270, fridge: 10 } }),
   looseLiquid('maple-syrup', 'Maple syrup', 'oils-condiments', 1.32, '12 oz bottle', floz(12), { aliases: ['pure maple syrup', 'syrup'] }),
 
   // ---------- Oils, vinegars & condiments ----------

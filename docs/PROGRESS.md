@@ -109,7 +109,8 @@ Living handoff log. Newest notes at the top of each section.
 - Smoked pork chops and smoked sausage stuffing added (15 smoker recipes); dried cranberries added to the catalog.
 - Dropped lamb: the Tunisian ojja now uses hot Italian sausage (merguez noted as the traditional option) and the merguez catalog entry is gone.
 - Twelve more smoker recipes from Hey Grill Hey: pork loin, whole chicken, chicken legs, chicken breast, al pastor, twice smoked ham, chicken gyros, armadillo eggs, plus smoked baked potatoes, sweet potatoes, corn on the cob and bacon wrapped carrots as smoker sides. New ingredients: pork loin, ham, pineapple.
-- SEED_VERSION 142.
+- Six more smoker recipes: whole turkey, BBQ pork belly, split chicken with Kansas City sauce, and smoked chantilly potatoes, mashed potatoes and bacon wrapped onion rings as sides. New ingredients: whole turkey, apple juice.
+- SEED_VERSION 143.
 - Later in the same session: more world mains (arepas de queso, tteokbokki, chicken katsu, chicken congee, pancit bihon, borscht, moussaka with ground turkey, japchae, mapo tofu, palak paneer, chicken biryani, pozole verde, vegetarian shepherd's pie, misir wat), more desserts (no-bake cheesecake, churros, tiramisu, baklava, carrot cake, bread pudding, cut-out sugar cookies, panna cotta) and ten more sides (gomen, cilantro lime rice, cumin lime coleslaw, roasted cauliflower, street corn salad, roasted brussels sprouts, glazed carrots, braised red cabbage, creamed corn, macaroni salad).
 - Bundle: the recipe catalog and ingredient catalog are now dynamic imports inside `seedIfNeeded`, and the six screens you only reach by navigating (cook mode, recipe editor, settings, stock check, prep, pantry item) are `React.lazy` behind a `Suspense` fallback. Launch JS went from 1,953 kB (545 kB gzip) to ~735 kB (229 kB gzip).
 
