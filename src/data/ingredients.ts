@@ -215,6 +215,7 @@ const CATALOG: Ingredient[] = [
   I('penne', 'Penne', 'pasta-grains', 'g', { aliases: ['ziti', 'rigatoni', 'penne pasta'], packages: [{ label: '1 lb box', qty: lb(1) }] }),
   I('egg-noodles', 'Egg noodles', 'pasta-grains', 'g', { aliases: ['wide egg noodles'], density: 0.16, packages: [{ label: '12 oz bag', qty: oz(12) }] }),
   I('aji-amarillo', 'Aji amarillo paste', 'international', 'g', { aliases: ['yellow chili paste', 'aji amarillo', 'peruvian yellow pepper paste'], density: 1.0, packages: [{ label: '7.5 oz jar', qty: oz(7.5) }], defaultLocation: 'pantry', shelfLife: { pantry: 540, fridge: 60 } }),
+  I('achiote-paste', 'Achiote paste', 'international', 'g', { aliases: ['annatto paste', 'recado rojo', 'achiote'], density: 1.2, packages: [{ label: '3.5 oz block', qty: oz(3.5) }], shelfLife: { pantry: 365, fridge: 540 } }),
   I('guava-paste', 'Guava paste', 'international', 'g', { aliases: ['pasta de guayaba', 'guava jelly block'], density: 1.3, packages: [{ label: '14 oz block', qty: oz(14) }], shelfLife: { pantry: 540, fridge: 90 } }),
   I('cassava-flour', 'Cassava flour', 'international', 'g', { aliases: ['farinha de mandioca', 'manioc flour', 'yuca flour', 'farofa flour'], density: 0.55, packages: [{ label: '17 oz bag', qty: oz(17) }], shelfLife: { pantry: 365 } }),
   I('tapioca-flour', 'Tapioca flour', 'international', 'g', { aliases: ['tapioca starch', 'manioc starch', 'polvilho'], density: 0.6, packages: [{ label: '16 oz bag', qty: oz(16) }], shelfLife: { pantry: 540 } }),
