@@ -107,6 +107,7 @@ const CATALOG: Ingredient[] = [
   I('butternut-squash', 'Butternut squash', 'produce', 'g', { aliases: ['squash', 'butternut'], density: 0.6, gramsPerEach: 1100, defaultLocation: 'pantry', shelfLife: { pantry: 60 } }),
   I('corn-on-cob', 'Fresh corn', 'produce', 'ea', { aliases: ['corn on the cob', 'ears of corn', 'ear of corn'], gramsPerEach: 150, unitAliases: { ear: 1 }, shelfLife: { fridge: 3 } }),
   I('okra', 'Okra', 'produce', 'g', { aliases: ['fresh okra', 'frozen okra', 'lady fingers'], density: 0.4, packages: [{ label: '1 lb bag', qty: lb(1) }], shelfLife: { fridge: 5, freezer: 300 } }),
+  I('celery-root', 'Celery root', 'produce', 'g', { aliases: ['celeriac', 'knob celery'], gramsPerEach: 700, density: 0.6, shelfLife: { fridge: 21 } }),
   I('eggplant', 'Eggplant', 'produce', 'ea', { aliases: ['aubergine'], gramsPerEach: 450, density: 0.35, shelfLife: { fridge: 7 } }),
   I('mango', 'Mango', 'produce', 'ea', { aliases: ['mangoes'], gramsPerEach: 200, defaultLocation: 'pantry', shelfLife: { pantry: 5, fridge: 7 } }),
   I('peaches', 'Peaches', 'produce', 'g', { aliases: ['peach', 'fresh peaches', 'nectarines'], gramsPerEach: 150, density: 0.6, packages: [{ label: '2 lb', qty: lb(2) }], defaultLocation: 'pantry', shelfLife: { pantry: 4, fridge: 7 } }),
@@ -206,6 +207,7 @@ const CATALOG: Ingredient[] = [
   I('couscous', 'Couscous', 'pasta-grains', 'g', { aliases: ['pearl couscous'], density: 0.7, packages: [{ label: '10 oz box', qty: oz(10) }] }),
   I('lo-mein-noodles', 'Lo mein / ramen noodles', 'international', 'g', { aliases: ['chow mein noodles', 'ramen noodles', 'lo mein noodles', 'udon', 'soba noodles'], packages: [{ label: '8 oz pack', qty: oz(8) }], shelfLife: { pantry: 365 } }),
   I('gnocchi', 'Potato gnocchi', 'pasta-grains', 'g', { aliases: ['gnocchi'], packages: [{ label: '1 lb pack', qty: lb(1) }], shelfLife: { pantry: 180 } }),
+  I('split-peas', 'Green split peas', 'pasta-grains', 'g', { aliases: ['split peas', 'dried split peas', 'yellow split peas'], density: 0.8, packages: [{ label: '1 lb bag', qty: lb(1) }], shelfLife: { pantry: 730 } }),
   I('brown-lentils', 'Brown/green lentils (dry)', 'pasta-grains', 'g', { aliases: ['lentils', 'green lentils', 'brown lentils', 'french lentils'], density: 0.8, packages: [{ label: '1 lb bag', qty: lb(1) }] }),
   I('red-lentils', 'Red lentils (dry)', 'pasta-grains', 'g', { aliases: ['red lentils', 'split red lentils', 'yellow lentils'], density: 0.82, packages: [{ label: '1 lb bag', qty: lb(1) }] }),
 
