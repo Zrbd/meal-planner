@@ -123,7 +123,10 @@ Living handoff log. Newest notes at the top of each section.
   okra and tomatoes, and sock-it-to-me cake, from Grandbaby Cakes and Coop Can Cook.
   Added a `pecans` catalog entry and removed the now-duplicate 'pecans' aliases from
   almonds and walnuts.
-- SEED_VERSION 147.
+- Added `src/data/recipes/eastAsia.ts`: ten Japanese and Korean recipes from Just One Cookbook and My Korean Kitchen, including three banchan sides.
+- Added `src/data/recipes/iberiaFrance.ts`: ten French, Spanish and Portuguese recipes from Pardon Your French, Spanish Sabores and Leite's Culinaria, with tarte tatin as a dessert.
+- New catalog ingredients: sake, nori, doenjang, gruyere, creme fraiche, chorizo, brandy, deli ham, serrano ham.
+- SEED_VERSION 149.
 - Later in the same session: more world mains (arepas de queso, tteokbokki, chicken katsu, chicken congee, pancit bihon, borscht, moussaka with ground turkey, japchae, mapo tofu, palak paneer, chicken biryani, pozole verde, vegetarian shepherd's pie, misir wat), more desserts (no-bake cheesecake, churros, tiramisu, baklava, carrot cake, bread pudding, cut-out sugar cookies, panna cotta) and ten more sides (gomen, cilantro lime rice, cumin lime coleslaw, roasted cauliflower, street corn salad, roasted brussels sprouts, glazed carrots, braised red cabbage, creamed corn, macaroni salad).
 - Bundle: the recipe catalog and ingredient catalog are now dynamic imports inside `seedIfNeeded`, and the six screens you only reach by navigating (cook mode, recipe editor, settings, stock check, prep, pantry item) are `React.lazy` behind a `Suspense` fallback. Launch JS went from 1,953 kB (545 kB gzip) to ~735 kB (229 kB gzip).
 
