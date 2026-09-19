@@ -160,7 +160,11 @@ Living handoff log. Newest notes at the top of each section.
   aloo keema, chapli kabab and fruit chaat; Sri Lankan parippu, pol sambol, kottu roti and watalappan;
   Bengali chicken rezala and mishti doi; Nepali chicken sekuwa and aloo ko achar; Afghan bolani.
   New catalog items: chaat masala, mustard seeds, fenugreek seeds.
-- SEED_VERSION 159.
+- Added thirteen Caribbean recipes (`src/data/recipes/caribbean.ts`): Dominican sancocho, mangu and maduros;
+  Puerto Rican pastelon and tembleque; Haitian griot and pikliz; Jamaican brown stew chicken and curry
+  chicken patties; Trini pelau and macaroni pie; Cuban sandwich and pastelitos de guayaba.
+  New catalog item: guava paste.
+- SEED_VERSION 160.
 - Later in the same session: more world mains (arepas de queso, tteokbokki, chicken katsu, chicken congee, pancit bihon, borscht, moussaka with ground turkey, japchae, mapo tofu, palak paneer, chicken biryani, pozole verde, vegetarian shepherd's pie, misir wat), more desserts (no-bake cheesecake, churros, tiramisu, baklava, carrot cake, bread pudding, cut-out sugar cookies, panna cotta) and ten more sides (gomen, cilantro lime rice, cumin lime coleslaw, roasted cauliflower, street corn salad, roasted brussels sprouts, glazed carrots, braised red cabbage, creamed corn, macaroni salad).
 - Bundle: the recipe catalog and ingredient catalog are now dynamic imports inside `seedIfNeeded`, and the six screens you only reach by navigating (cook mode, recipe editor, settings, stock check, prep, pantry item) are `React.lazy` behind a `Suspense` fallback. Launch JS went from 1,953 kB (545 kB gzip) to ~735 kB (229 kB gzip).
 
