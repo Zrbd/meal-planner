@@ -219,6 +219,7 @@ const CATALOG: Ingredient[] = [
 
   I('elbow-macaroni', 'Elbow macaroni', 'pasta-grains', 'g', { aliases: ['macaroni', 'elbows', 'small shells'], density: 0.45, packages: [{ label: '1 lb box', qty: lb(1) }] }),
   I('penne', 'Penne', 'pasta-grains', 'g', { aliases: ['ziti', 'rigatoni', 'penne pasta'], packages: [{ label: '1 lb box', qty: lb(1) }] }),
+  I('vermicelli', 'Vermicelli', 'pasta-grains', 'g', { aliases: ['sehriye', 'thin noodles', 'fideo', 'angel hair'], density: 0.5, packages: [{ label: '16 oz box', qty: oz(16) }], shelfLife: { pantry: 540 } }),
   I('egg-noodles', 'Egg noodles', 'pasta-grains', 'g', { aliases: ['wide egg noodles'], density: 0.16, packages: [{ label: '12 oz bag', qty: oz(12) }] }),
   I('aji-amarillo', 'Aji amarillo paste', 'international', 'g', { aliases: ['yellow chili paste', 'aji amarillo', 'peruvian yellow pepper paste'], density: 1.0, packages: [{ label: '7.5 oz jar', qty: oz(7.5) }], defaultLocation: 'pantry', shelfLife: { pantry: 540, fridge: 60 } }),
   I('achiote-paste', 'Achiote paste', 'international', 'g', { aliases: ['annatto paste', 'recado rojo', 'achiote'], density: 1.2, packages: [{ label: '3.5 oz block', qty: oz(3.5) }], shelfLife: { pantry: 365, fridge: 540 } }),
