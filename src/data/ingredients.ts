@@ -102,6 +102,7 @@ const CATALOG: Ingredient[] = [
   I('leek', 'Leeks', 'produce', 'ea', { aliases: ['leek'], gramsPerEach: 250, density: 0.37, shelfLife: { fridge: 14 } }),
   I('bean-sprouts', 'Bean sprouts', 'produce', 'g', { aliases: ['mung bean sprouts'], density: 0.44, packages: [{ label: '12 oz bag', qty: oz(12) }], shelfLife: { fridge: 3 } }),
   I('snow-peas', 'Snow peas', 'produce', 'g', { aliases: ['snap peas', 'sugar snap peas', 'snow pea'], density: 0.4, packages: [{ label: '8 oz bag', qty: oz(8) }], shelfLife: { fridge: 5 } }),
+  I('chives', 'Fresh chives', 'produce', 'g', { aliases: ['chive', 'schnittlauch'], density: 0.06, unitAliases: { bunch: 25 }, packages: [{ label: 'bunch', qty: 25 }], shelfLife: { fridge: 7 } }),
   I('fresh-dill', 'Fresh dill', 'produce', 'g', { aliases: ['dill'], density: 0.06, unitAliases: { bunch: 30 }, packages: [{ label: 'bunch', qty: 30 }], shelfLife: { fridge: 5 } }),
   I('fresh-thyme', 'Fresh thyme', 'produce', 'g', { aliases: ['thyme sprigs'], density: 0.15, unitAliases: { sprig: 1 }, packages: [{ label: '0.75 oz pack', qty: 21 }], shelfLife: { fridge: 10 } }),
   I('fresh-rosemary', 'Fresh rosemary', 'produce', 'g', { aliases: ['rosemary', 'rosemary sprigs'], density: 0.15, unitAliases: { sprig: 2 }, packages: [{ label: '0.75 oz pack', qty: 21 }], shelfLife: { fridge: 14 } }),
