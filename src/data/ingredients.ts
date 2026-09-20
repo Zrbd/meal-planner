@@ -121,6 +121,7 @@ const CATALOG: Ingredient[] = [
   I('plums', 'Plums', 'produce', 'ea', { aliases: ['plum', 'italian prune plums', 'damson plums', 'szilva'], gramsPerEach: 60, density: 0.6, shelfLife: { pantry: 4, fridge: 14 } }),
   I('peaches', 'Peaches', 'produce', 'g', { aliases: ['peach', 'fresh peaches', 'nectarines'], gramsPerEach: 150, density: 0.6, packages: [{ label: '2 lb', qty: lb(2) }], defaultLocation: 'pantry', shelfLife: { pantry: 4, fridge: 7 } }),
   I('arugula', 'Arugula', 'produce', 'g', { aliases: ['rocket', 'mixed greens', 'spring mix', 'salad greens'], density: 0.08, packages: [{ label: '5 oz clamshell', qty: oz(5) }], shelfLife: { fridge: 5 } }),
+  I('cantaloupe', 'Cantaloupe', 'produce', 'g', { aliases: ['melon', 'muskmelon', 'honeydew'], density: 0.6, packages: [{ label: '1 melon', qty: 900 }], defaultLocation: 'fridge', shelfLife: { fridge: 7 } }),
   I('winter-melon', 'Winter melon', 'produce', 'g', { aliases: ['bi dao', 'wax gourd', 'ash gourd', 'dong gua'], density: 0.6, packages: [{ label: '2 lb wedge', qty: lb(2) }], shelfLife: { fridge: 14 } }),
   I('daikon', 'Daikon radish', 'produce', 'g', { aliases: ['daikon', 'white radish', 'labanos'], density: 0.6, packages: [{ label: '1 lb root', qty: 450 }], shelfLife: { fridge: 21 } }),
   I('radishes', 'Radishes', 'produce', 'ea', { aliases: ['radish'], gramsPerEach: 10, unitAliases: { bunch: 12 }, packages: [{ label: 'bunch', qty: 12 }], shelfLife: { fridge: 10 } }),
