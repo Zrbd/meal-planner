@@ -143,6 +143,7 @@ import { WORLD_34 } from './world34';
 import { WORLD_35 } from './world35';
 import { WORLD_36 } from './world36';
 import { WORLD_37 } from './world37';
+import { WORLD_38 } from './world38';
 import { WORLD_21 } from './world21';
 import { AMERICAS_14 } from './americas14';
 
@@ -181,6 +182,7 @@ export const RECIPES: Recipe[] = [
   ...WORLD_35,
   ...WORLD_36,
   ...WORLD_37,
+  ...WORLD_38,
 ];
 
 export { SEED_VERSION } from '../seedVersion';
