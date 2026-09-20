@@ -237,4 +237,22 @@ export interface Settings {
   textScale?: number;
   /** Time you normally want dinner on the table, 'HH:MM', used by the dinner timeline. */
   serveTime?: string;
+  /** Light, dark, or follow the phone. */
+  theme?: 'system' | 'light' | 'dark';
+  /** Equipment ids you own; recipes needing anything else are flagged. */
+  equipment?: string[];
+  /** Hide recipes that need gear you do not have. */
+  equipmentFilter?: boolean;
+  /** Daily nutrition targets, per person. Unset means the app only reports, never judges. */
+  nutritionGoals?: { kcal?: number; protein?: number; carbs?: number; fat?: number };
+  /** Show nutrition on recipe cards and the plan. */
+  showNutrition?: boolean;
+  /** Allergens to warn about, from src/domain/allergens.ts. */
+  avoidAllergens?: string[];
+  /** Names of the people who cook, for the sous-chef split. */
+  cookNames?: string[];
+  /** Read steps aloud in cook mode. */
+  readAloud?: boolean;
+  /** Speech rate for read-aloud, 1 = normal. */
+  speechRate?: number;
 }

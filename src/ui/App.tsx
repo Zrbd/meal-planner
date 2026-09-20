@@ -11,6 +11,7 @@ import { Plan } from './screens/Plan';
 import { RecipeDetail } from './screens/RecipeDetail';
 import { Recipes } from './screens/Recipes';
 import { Shopping } from './screens/Shopping';
+import { TimerTray } from './TimerTray';
 import { ToastProvider } from './toast';
 
 // Screens you reach from somewhere else, not on launch: loaded on demand to keep the first paint small.
@@ -30,6 +31,20 @@ const Timeline = lazy(() => import('./screens/Timeline').then((m) => ({ default:
 const ExpiryCalendar = lazy(() => import('./screens/ExpiryCalendar').then((m) => ({ default: m.ExpiryCalendar })));
 const Staples = lazy(() => import('./screens/Staples').then((m) => ({ default: m.Staples })));
 const StorePlan = lazy(() => import('./screens/StorePlan').then((m) => ({ default: m.StorePlan })));
+const Nutrition = lazy(() => import('./screens/Nutrition').then((m) => ({ default: m.Nutrition })));
+const Kitchen = lazy(() => import('./screens/Kitchen').then((m) => ({ default: m.Kitchen })));
+const Roulette = lazy(() => import('./screens/Roulette').then((m) => ({ default: m.Roulette })));
+const CheatSheet = lazy(() => import('./screens/CheatSheet').then((m) => ({ default: m.CheatSheet })));
+const Labels = lazy(() => import('./screens/Labels').then((m) => ({ default: m.Labels })));
+const MonthPlan = lazy(() => import('./screens/MonthPlan').then((m) => ({ default: m.MonthPlan })));
+const Badges = lazy(() => import('./screens/Badges').then((m) => ({ default: m.Badges })));
+const Sweep = lazy(() => import('./screens/Sweep').then((m) => ({ default: m.Sweep })));
+const Shortlist = lazy(() => import('./screens/Shortlist').then((m) => ({ default: m.Shortlist })));
+const Templates = lazy(() => import('./screens/Templates').then((m) => ({ default: m.Templates })));
+const PriceCompare = lazy(() => import('./screens/PriceCompare').then((m) => ({ default: m.PriceCompare })));
+const RecipeHistory = lazy(() => import('./screens/RecipeHistory').then((m) => ({ default: m.RecipeHistory })));
+const ShareRecipe = lazy(() => import('./screens/ShareRecipe').then((m) => ({ default: m.ShareRecipe })));
+const ReceiveRecipe = lazy(() => import('./screens/ShareRecipe').then((m) => ({ default: m.ReceiveRecipe })));
 
 const TABS = [
   { to: '/', label: 'Today', icon: House },
@@ -112,6 +127,17 @@ function TextScale() {
   return null;
 }
 
+/** Feature 9: `system` leaves it to the OS; the explicit choices pin `html[data-theme]`. */
+function ThemeBridge() {
+  const { settings } = useAppData();
+  const theme = settings.theme ?? 'system';
+  useEffect(() => {
+    if (theme === 'system') delete document.documentElement.dataset.theme;
+    else document.documentElement.dataset.theme = theme;
+  }, [theme]);
+  return null;
+}
+
 function NotificationBridge() {
   const { settings } = useAppData();
   const alerts = useAlerts();
@@ -184,14 +210,30 @@ export function App() {
               <Route path="/settings" element={<SettingsScreen />} />
               <Route path="/settings/staples" element={<Staples />} />
               <Route path="/settings/stores" element={<StorePlan />} />
+              <Route path="/settings/kitchen" element={<Kitchen />} />
+              <Route path="/nutrition" element={<Nutrition />} />
+              <Route path="/roulette" element={<Roulette />} />
+              <Route path="/cheatsheet" element={<CheatSheet />} />
+              <Route path="/labels" element={<Labels />} />
+              <Route path="/plan/month" element={<MonthPlan />} />
+              <Route path="/plan/templates" element={<Templates />} />
+              <Route path="/badges" element={<Badges />} />
+              <Route path="/pantry/sweep" element={<Sweep />} />
+              <Route path="/next" element={<Shortlist />} />
+              <Route path="/prices/compare" element={<PriceCompare />} />
+              <Route path="/recipes/receive" element={<ReceiveRecipe />} />
+              <Route path="/recipes/:id/history" element={<RecipeHistory />} />
+              <Route path="/recipes/:id/share" element={<ShareRecipe />} />
               <Route path="*" element={<Home />} />
             </Routes>
             </Suspense>
           </main>
           <TabBar />
+          <TimerTray />
           <UpdateBanner />
           <NotificationBridge />
           <TextScale />
+          <ThemeBridge />
         </ToastProvider>
       </AppDataProvider>
     </HashRouter>

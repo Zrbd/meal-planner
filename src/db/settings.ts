@@ -1,4 +1,5 @@
 import { DEFAULT_AISLE_ORDER } from '../data/aisles';
+import { ASSUMED_OWNED, OPTIONAL_EQUIPMENT } from '../domain/equipment';
 import type { Settings } from '../domain/types';
 import { db } from './schema';
 
@@ -27,6 +28,15 @@ export const DEFAULT_SETTINGS: Settings = {
   recipeServings: {},
   textScale: 1,
   serveTime: '18:30',
+  theme: 'system',
+  equipment: [...ASSUMED_OWNED, ...OPTIONAL_EQUIPMENT],
+  equipmentFilter: false,
+  nutritionGoals: {},
+  showNutrition: true,
+  avoidAllergens: [],
+  cookNames: [],
+  readAloud: false,
+  speechRate: 1,
 };
 
 export function withDefaults(s: Partial<Settings> | undefined): Settings {

@@ -1,5 +1,5 @@
 import Fuse from 'fuse.js';
-import { ChevronRight, Plus, CalendarClock } from 'lucide-react';
+import { Brush, ChevronRight, Plus, CalendarClock } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { db } from '../../db/schema';
@@ -129,6 +129,7 @@ export function Pantry() {
         subtitle={`${new Set(lots.map((l) => l.ingredientId)).size} items in stock`}
         right={
           <div className="flex items-center gap-1">
+            <Link className="icon-btn" to="/pantry/sweep" aria-label="Fridge sweep"><Brush size={20} /></Link>
             <Link className="icon-btn" to="/pantry/expiry" aria-label="Use it up"><CalendarClock size={20} /></Link>
             <button className="btn btn-primary px-3 py-2" onClick={() => setPickOpen(true)}>
               <Plus size={18} /> Add

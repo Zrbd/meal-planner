@@ -2,20 +2,24 @@ import { substitute } from '../domain/substitute';
 import type { Recipe } from '../domain/types';
 import { db } from '../db/schema';
 import { newId, slugify } from './ids';
+import { recordRevision } from './history';
 
 export type RecipeDraft = Omit<Recipe, 'id' | 'source' | 'userEdited' | 'createdAt' | 'updatedAt' | 'favorite' | 'archived'> &
   Partial<Pick<Recipe, 'id' | 'favorite' | 'archived'>>;
 
 export async function saveRecipe(draft: RecipeDraft): Promise<string> {
   const now = Date.now();
-  return db.transaction('rw', db.recipes, async () => {
+  return db.transaction('rw', db.recipes, db.kv, async () => {
     const existing = draft.id ? await db.recipes.get(draft.id) : undefined;
     if (existing) {
-      await db.recipes.put({
+      const updated: Recipe = {
         ...existing, ...draft, id: existing.id,
         userEdited: existing.source === 'builtin' ? true : existing.userEdited,
         updatedAt: now,
-      });
+      };
+      // Keep the version you are about to overwrite, so an edit is always undoable.
+      await recordRevision(existing, updated);
+      await db.recipes.put(updated);
       return existing.id;
     }
     let id = slugify(draft.title) || newId();

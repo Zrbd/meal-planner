@@ -20,7 +20,7 @@ import { useToast } from '../toast';
 import Fuse from 'fuse.js';
 import { useUpCandidates, type UseUpItem } from '../../domain/freshness';
 import { formatQty } from '../../domain/units';
-import { BookMarked, Clock3, Printer, Snowflake, Soup } from 'lucide-react';
+import { BookMarked, CalendarRange, Clock3, HeartPulse, LayoutTemplate, Printer, Snowflake, Soup } from 'lucide-react';
 import { weekBalance } from '../../domain/balance';
 import { fillFromPool } from '../../services/plan';
 import { freezePortions, planBatchCook, unbatch } from '../../services/leftovers';
@@ -424,6 +424,15 @@ export function Plan() {
 
       <Sheet open={weekMenu} onClose={() => setWeekMenu(false)} title={`Week of ${formatDay(weekStart, 'MMM d')}`}>
         <div className="space-y-1">
+          <Link className="btn btn-secondary w-full justify-start" to="/plan/month" onClick={() => setWeekMenu(false)}>
+            <CalendarRange size={18} /> Month at a glance
+          </Link>
+          <Link className="btn btn-secondary w-full justify-start" to="/plan/templates" onClick={() => setWeekMenu(false)}>
+            <LayoutTemplate size={18} /> Saved weeks
+          </Link>
+          <Link className="btn btn-secondary w-full justify-start" to="/nutrition" onClick={() => setWeekMenu(false)}>
+            <HeartPulse size={18} /> What the week adds up to
+          </Link>
           <button
             className="btn btn-secondary w-full justify-start"
             onClick={async () => {

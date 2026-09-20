@@ -16,6 +16,7 @@ import { storeById, storeSearchUrl } from '../../domain/stores';
 import { groupByStore, storeStops } from '../../domain/storeplan';
 import { AmountInput, EmptyState, PageHeader, Sheet } from '../components';
 import { useAppData } from '../data';
+import { shoppingHint } from '../../domain/ingredientnotes';
 import { usePrices } from '../hooks';
 import { useToast } from '../toast';
 
@@ -141,6 +142,12 @@ export function Shopping() {
             ) : null}
           </div>
           {!l.checked && l.waste && <div className="truncate text-xs text-amber-700">{wasteText(l, ing, settings.units)}</div>}
+          {/* Feature 16b: your own note, at the only moment it is useful — standing in the aisle. */}
+          {!l.checked && l.ingredientId && shoppingHint(d.ingredientNotes[l.ingredientId]) && (
+            <div className={`truncate text-xs ${d.ingredientNotes[l.ingredientId]?.avoid ? 'text-red-600' : 'text-sky-700'}`}>
+              {shoppingHint(d.ingredientNotes[l.ingredientId])}
+            </div>
+          )}
         </button>
       </li>
     );

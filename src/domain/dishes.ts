@@ -127,6 +127,9 @@ const EQUIPMENT: (Equipment & { re: RegExp })[] = [
   { id: 'mixing-bowl', label: 'Mixing bowl', emoji: '🥣', re: /\b(large bowl|mixing bowl)\b/ },
 ];
 
+/** Look up a piece of gear by id, for the "what you own" list in settings. */
+export const equipmentById = (id: string): Equipment | undefined => EQUIPMENT.find((e) => e.id === id);
+
 export function equipmentOf(recipe: Recipe): Equipment[] {
   const text = recipe.steps.join(' ').toLowerCase();
   const found = EQUIPMENT.filter((e) => e.re.test(text));

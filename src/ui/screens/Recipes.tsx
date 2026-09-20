@@ -1,9 +1,11 @@
-import { BookMarked, ClipboardPaste, Dices, PenLine, Plus, Search } from 'lucide-react';
+import { BookMarked, Bookmark, ClipboardPaste, Dices, PenLine, Plus, Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import type { Recipe } from '../../domain/types';
 import { EmptyState, PageHeader, RecipeCard, SearchInput, Sheet, totalTime } from '../components';
 import { useAppData } from '../data';
+import { recipeIsSafe, type AllergenId } from '../../domain/allergens';
+import { canCookWith } from '../../domain/equipment';
 import { useCoverage, useDishInfo } from '../hooks';
 import { DISH_TYPES, PROTEIN_TYPES } from '../../domain/dishes';
 import { searchRecipes } from '../../domain/search';
@@ -31,7 +33,6 @@ const FILTERS: { id: string; label: string; test: (r: Recipe, canMake: boolean) 
 export function Recipes() {
   const d = useAppData();
   const { recipes, ingById } = d;
-  const navigate = useNavigate();
   const coverage = useCoverage();
   const dish = useDishInfo();
   const [params, setParams] = useSearchParams();
@@ -72,6 +73,9 @@ export function Recipes() {
       if (protein && info?.protein !== protein) return false;
       if (dishType && info?.dishType !== dishType) return false;
       if (inCollection && !inCollection.has(r.id)) return false;
+      // Features 2b and 7b: the two household filters that quietly shrink the list.
+      if (d.settings.equipmentFilter && !canCookWith(r, d.settings.equipment ?? [])) return false;
+      if (!recipeIsSafe(r, ingById, (d.settings.avoidAllergens ?? []) as AllergenId[])) return false;
       if (filter === 'season' && !r.ingredients.some((ri) => !ri.optional && inSeason(ri.ingredientId, d.today))) return false;
       if (filter === 'stale') {
         const at = cooked.get(r.id);
@@ -88,7 +92,7 @@ export function Recipes() {
       out.sort((a, b) => peak(b) - peak(a));
     }
     return out;
-  }, [recipes, q, ingById, filter, showHidden, coverage, dish, cuisine, protein, dishType, inCollection, cooked, d.today]);
+  }, [recipes, q, ingById, filter, showHidden, coverage, dish, cuisine, protein, dishType, inCollection, cooked, d.today, d.settings.equipmentFilter, d.settings.equipment, d.settings.avoidAllergens]);
 
   const hiddenCount = recipes.filter((r) => r.archived).length;
 
@@ -99,14 +103,7 @@ export function Recipes() {
         subtitle={`${recipes.filter((r) => !r.archived).length} recipes`}
         right={
           <>
-            <button
-              className="icon-btn"
-              aria-label="Surprise me"
-              disabled={!list.length}
-              onClick={() => navigate(`/recipes/${list[Math.floor(Math.random() * list.length)].id}`)}
-            >
-              <Dices size={22} />
-            </button>
+            <Link className="icon-btn" aria-label="Dinner roulette" to="/roulette"><Dices size={22} /></Link>
             <Link className="icon-btn" aria-label="Collections" to="/collections"><BookMarked size={21} /></Link>
             <button className="icon-btn" aria-label="Add recipe" onClick={() => setAddOpen(true)}>
               <Plus size={24} />
@@ -116,6 +113,13 @@ export function Recipes() {
       />
       <div className="space-y-3 px-4">
         <SearchInput value={q} onChange={setQ} placeholder="Search recipes, cuisines…" />
+        {d.shortlist.length > 0 && (
+          <Link to="/next" className="card flex items-center gap-2 px-3 py-2 text-sm">
+            <Bookmark size={16} className="text-brand" />
+            <span className="flex-1">Cook next · {d.shortlist.length} waiting</span>
+            <span className="text-stone-400">›</span>
+          </Link>
+        )}
         <Link to="/find" className="card flex items-center gap-2 px-3 py-2 text-sm">
           <Search size={16} className="text-brand" />
           <span className="flex-1">Cook with what's in the fridge</span>

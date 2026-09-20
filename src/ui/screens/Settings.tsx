@@ -200,13 +200,41 @@ export function SettingsScreen() {
           <Row title="Use it up" hint="Three weeks of use-by dates, and what to cook to beat them">
             <Link className="btn btn-secondary px-3 py-1.5" to="/pantry/expiry">Open</Link>
           </Row>
+          <Row title="Fridge sweep" hint="Walk the fridge one item at a time: keep, use now, or bin">
+            <Link className="btn btn-secondary px-3 py-1.5" to="/pantry/sweep">Open</Link>
+          </Row>
           <Row title="Freezer" hint="Cooked portions waiting for a night off">
             <Link className="btn btn-secondary px-3 py-1.5" to="/freezer">Open</Link>
           </Row>
         </div>
 
+        <h2 className="section-title">Your kitchen</h2>
+        <div className="card divide-y divide-stone-100">
+          <Row title="Allergies, gear, theme, cooks" hint="What to avoid, what you own, dark mode, who cooks with you">
+            <Link className="btn btn-secondary px-3 py-1.5" to="/settings/kitchen">Open</Link>
+          </Row>
+          <Row title="Nutrition" hint="What the week adds up to, and your daily goals">
+            <Link className="btn btn-secondary px-3 py-1.5" to="/nutrition">Open</Link>
+          </Row>
+          <Row title="Kitchen cheat sheet" hint="Conversions, oven temperatures, doneness, emergency swaps">
+            <Link className="btn btn-secondary px-3 py-1.5" to="/cheatsheet">Open</Link>
+          </Row>
+          <Row title="Which is cheaper?" hint="Unit-price calculator with waste factored in">
+            <Link className="btn btn-secondary px-3 py-1.5" to="/prices/compare">Open</Link>
+          </Row>
+          <Row title="Freezer & leftover labels" hint="Printable labels with the date to eat it by">
+            <Link className="btn btn-secondary px-3 py-1.5" to="/labels">Open</Link>
+          </Row>
+          <Row title="Add a shared recipe" hint="Open a recipe file someone sent you">
+            <Link className="btn btn-secondary px-3 py-1.5" to="/recipes/receive">Open</Link>
+          </Row>
+        </div>
+
         <h2 className="section-title">Looking back</h2>
         <div className="card divide-y divide-stone-100">
+          <Row title="Kitchen badges" hint="Habits worth keeping, counted up">
+            <Link className="btn btn-secondary px-3 py-1.5" to="/badges">Open</Link>
+          </Row>
           <Row title="Kitchen stats" hint="What you cook, what it costs, what gets thrown out">
             <Link className="btn btn-secondary px-3 py-1.5" to="/stats">Open</Link>
           </Row>

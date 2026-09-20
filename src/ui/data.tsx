@@ -10,6 +10,12 @@ import { parseCollections, type Collection } from '../domain/collections';
 import { parseJournal, type JournalEntry } from '../domain/journal';
 import { parseFreezer, type FreezerMeal } from '../domain/leftovers';
 import { parseRecent } from '../domain/recent';
+import { parseTimers, type KitchenTimer } from '../domain/timers';
+import { parseTemplates, type PlanTemplate } from '../domain/templates';
+import { parseShortlist, type ShortlistEntry } from '../domain/shortlist';
+import { parseDurations, type DurationMap } from '../domain/durations';
+import { parseNotes, type NoteMap } from '../domain/ingredientnotes';
+import { parseHistory, type HistoryMap } from '../domain/history';
 import type {
   CookLog, Ingredient, InventoryTxn, ISODate, LooseStock, PlannedMeal, Recipe, Settings, ShoppingState, StockLot, Trip,
 } from '../domain/types';
@@ -52,6 +58,18 @@ export interface AppData {
   freezer: FreezerMeal[];
   /** Recipe ids you opened lately, most recent first. */
   recent: string[];
+  /** Running kitchen timers. */
+  timers: KitchenTimer[];
+  /** Saved weeks you can drop onto the plan. */
+  templates: PlanTemplate[];
+  /** The cook-next queue. */
+  shortlist: ShortlistEntry[];
+  /** How long your cooks actually take, by recipe id. */
+  durations: DurationMap;
+  /** Your brand and shelf notes, by ingredient id. */
+  ingredientNotes: NoteMap;
+  /** Pre-edit snapshots, by recipe id. */
+  recipeHistory: HistoryMap;
 }
 
 const Ctx = createContext<AppData | null>(null);
@@ -70,7 +88,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
 
   const raw = useLiveQuery(async () => {
     const since = Date.now() - 60 * DAY;
-    const [ingredients, recipes, lots, loose, txns, meals, cookLogs, shopping, trips, settingsRow, backupRow, autoRow, restoredRow, checksRow, stockCheckRow, collectionsRow, journalRow, photos, freezerRow, recentRow] =
+    const [ingredients, recipes, lots, loose, txns, meals, cookLogs, shopping, trips, settingsRow, backupRow, autoRow, restoredRow, checksRow, stockCheckRow, collectionsRow, journalRow, photos, freezerRow, recentRow, timersRow, templatesRow, shortlistRow, durationsRow, notesRow, historyRow] =
       await Promise.all([
         db.ingredients.toArray(),
         db.recipes.toArray(),
@@ -92,6 +110,12 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         db.photos.toArray(),
         db.kv.get('freezer'),
         db.kv.get('recent'),
+        db.kv.get('timers'),
+        db.kv.get('planTemplates'),
+        db.kv.get('shortlist'),
+        db.kv.get('cookDurations'),
+        db.kv.get('ingredientNotes'),
+        db.kv.get('recipeHistory'),
       ]);
     return {
       ingredients, recipes, lots, loose, txns, meals, cookLogs, shopping, trips,
@@ -106,6 +130,12 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       photos,
       freezer: parseFreezer(freezerRow?.value),
       recent: parseRecent(recentRow?.value),
+      timers: parseTimers(timersRow?.value),
+      templates: parseTemplates(templatesRow?.value),
+      shortlist: parseShortlist(shortlistRow?.value),
+      durations: parseDurations(durationsRow?.value),
+      ingredientNotes: parseNotes(notesRow?.value),
+      recipeHistory: parseHistory(historyRow?.value),
       loadedAt: Date.now(),
     };
   }, []);

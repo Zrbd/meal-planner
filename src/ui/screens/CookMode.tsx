@@ -12,9 +12,13 @@ import { FlipAmount, StorageTip, useRecipeUnits } from '../amounts';
 import { cookRecipe, previewCook, undoCook } from '../../services/cook';
 import { setLooseLevel } from '../../services/pantry';
 import { AmountInput, EmptyState, PageHeader, Segmented, Sheet } from '../components';
+import { updateSettings } from '../../db/settings';
 import { useAppData } from '../data';
 import { entriesFor } from '../../domain/journal';
 import { useToast } from '../toast';
+import { Volume2, VolumeX } from 'lucide-react';
+import { markCookStart, recordCookDuration } from '../../services/durations';
+import { QuickAdd } from '../TimerTray';
 
 interface RunningTimer {
   id: number;
@@ -64,6 +68,7 @@ export function CookMode() {
   const [, setTick] = useState(0);
   const fired = useRef(new Set<number>());
   const units = useRecipeUnits(id, settings.units);
+  const [spoken, setSpoken] = useState('');
 
   // keep the screen on
   useEffect(() => {
@@ -85,6 +90,23 @@ export function CookMode() {
       void lock?.release();
     };
   }, []);
+
+  // Feature 17: the stopwatch behind "usually takes you 55 minutes". kv, not state, so a locked
+  // screen or a trip to the shop mid-cook doesn't lose it.
+  useEffect(() => {
+    if (id) void markCookStart(id);
+  }, [id]);
+
+  // Feature 8: read the step out loud when hands are busy. Cancelled on every change so two
+  // steps never talk over each other.
+  useEffect(() => {
+    if (!settings.readAloud || !('speechSynthesis' in window) || !spoken) return;
+    const u = new SpeechSynthesisUtterance(spoken);
+    u.rate = settings.speechRate ?? 1;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+    return () => window.speechSynthesis.cancel();
+  }, [spoken, settings.readAloud, settings.speechRate]);
 
   useEffect(() => {
     if (!timers.length) return;
@@ -115,6 +137,8 @@ export function CookMode() {
   const last = step === recipe.steps.length - 1;
   const stepTips = tipsByStep(recipe, ingById).get(step) ?? [];
 
+  if (settings.readAloud && spoken !== text) setSpoken(text);
+
   const myNotes = entriesFor(journal, recipe.id);
   return (
     <div className="pt-safe flex min-h-dvh flex-col bg-white">
@@ -123,6 +147,16 @@ export function CookMode() {
           <X size={24} />
         </button>
         <div className="min-w-0 flex-1 truncate text-center font-semibold">{recipe.title}</div>
+        <button
+          className={`icon-btn ${settings.readAloud ? 'text-brand' : ''}`}
+          aria-label={settings.readAloud ? 'Stop reading steps aloud' : 'Read steps aloud'}
+          onClick={() => {
+            window.speechSynthesis?.cancel();
+            void updateSettings({ readAloud: !settings.readAloud });
+          }}
+        >
+          {settings.readAloud ? <Volume2 size={22} /> : <VolumeX size={22} />}
+        </button>
         <button className="icon-btn" aria-label="Ingredients" onClick={() => setIngOpen(true)}>
           <ListChecks size={22} />
         </button>
@@ -151,6 +185,7 @@ export function CookMode() {
             <Timer size={18} /> Start {mmss(timerSec * 1000)} timer
           </button>
         )}
+        <QuickAdd recipeId={recipe.id} suggestSec={timerSec} />
         {stepTips.length > 0 && (
           <div className="mt-6 space-y-2">
             {stepTips.map((ing) => <StorageTip key={ing.id} ing={ing} />)}
@@ -210,6 +245,7 @@ export function CookMode() {
           looseLevels={new Map([...looseById].map(([k, v]) => [k, v.level]))}
           onConfirm={async (amounts, looseChanges) => {
             const logId = await cookRecipe({ recipeId: recipe.id, servings, plannedMealId: meal?.id, amounts });
+            void recordCookDuration(recipe.id);
             for (const [ingId, level] of looseChanges) await setLooseLevel(ingId, level);
             navigate('/', { replace: true });
             toast('Enjoy! Pantry updated.', { label: 'Undo', run: () => undoCook(logId) });

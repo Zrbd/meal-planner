@@ -33,6 +33,13 @@ import { inSeason } from '../../domain/seasons';
 import { removePhoto, savePhoto } from '../../services/photos';
 import { rememberServings, touchRecipe } from '../../services/prefs';
 import { SeasonBadge } from '../components';
+import { describeHits, recipeAllergens, type AllergenId } from '../../domain/allergens';
+import { checkEquipment, describeMissing } from '../../domain/equipment';
+import { recipeNutrition, roundN } from '../../domain/nutrition';
+import { describeTypical, typicalMinutes } from '../../domain/durations';
+import { has as onShortlist } from '../../domain/shortlist';
+import { shortlistToggle } from '../../services/shortlist';
+import { AlertTriangle, Bookmark, History, Send } from 'lucide-react';
 
 export function RecipeDetail() {
   const { id = '' } = useParams();
@@ -55,6 +62,12 @@ export function RecipeDetail() {
   const [journalOpen, setJournalOpen] = useState(false);
   const units = useRecipeUnits(id, settings.units);
   const prices = usePrices();
+  // Features 1, 2, 7, 17: the four things worth knowing before you commit to cooking this.
+  const hits = recipe ? recipeAllergens(recipe, ingById, (settings.avoidAllergens ?? []) as AllergenId[]) : [];
+  const gear = recipe ? checkEquipment(recipe, d.settings.equipment ?? []) : undefined;
+  const nutrition = recipe && settings.showNutrition !== false ? recipeNutrition(recipe, servings, ingById) : undefined;
+  const typical = recipe ? typicalMinutes(d.durations, recipe.id, totalTime(recipe)) : undefined;
+  const queued = recipe ? onShortlist(d.shortlist, recipe.id) : false;
 
   // Opening a recipe is what "recently viewed" means, so record it here and nowhere else.
   useEffect(() => {
@@ -165,6 +178,36 @@ export function RecipeDetail() {
           </div>
         </div>
         {recipe.description && <p className="mt-3 text-stone-600">{recipe.description}</p>}
+        {hits.length > 0 && (
+          <div className="mt-3 flex items-start gap-2 rounded-2xl bg-red-50 p-3 text-sm text-red-800">
+            <AlertTriangle size={18} className="mt-0.5 shrink-0" />
+            <div>
+              <div className="font-semibold">{describeHits(hits)}</div>
+              <div className="text-xs">
+                {hits.every((h) => h.avoidable)
+                  ? 'Only in optional ingredients — leave them out and it is fine.'
+                  : hits
+                      .flatMap((h) => h.ingredientIds)
+                      .map((iid) => ingById.get(iid)?.name.toLowerCase() ?? iid)
+                      .join(', ')}
+              </div>
+            </div>
+          </div>
+        )}
+        {gear && !gear.ok && (
+          <p className="mt-2 text-sm text-amber-700">{describeMissing(gear)}</p>
+        )}
+        {(nutrition || typical) && (
+          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-stone-500">
+            {nutrition && (
+              <span>
+                ≈{roundN(nutrition.perServing.kcal)} cal · {roundN(nutrition.perServing.protein)} g protein a serving
+                {!nutrition.confident && ' (rough)'}
+              </span>
+            )}
+            {typical && typical.confident && <span>{describeTypical(typical)}</span>}
+          </div>
+        )}
         {recipe.credit && (
           <a href={recipe.credit.url} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1 text-sm text-brand">
             Adapted from {recipe.credit.author ? `${recipe.credit.author}, ` : ''}{recipe.credit.name} <ExternalLink size={13} />
@@ -345,6 +388,24 @@ export function RecipeDetail() {
           <button className="btn btn-secondary w-full justify-start" onClick={() => navigate(`/recipes/${recipe.id}/edit`)}>
             <Pencil size={18} /> Edit recipe
           </button>
+          <button
+            className="btn btn-secondary w-full justify-start"
+            onClick={async () => {
+              await shortlistToggle(recipe.id);
+              setMenuOpen(false);
+              toast(queued ? 'Taken off the cook-next list' : 'Added to “Cook next”');
+            }}
+          >
+            <Bookmark size={18} className={queued ? 'fill-current' : ''} /> {queued ? 'On the cook-next list' : 'Cook next'}
+          </button>
+          <button className="btn btn-secondary w-full justify-start" onClick={() => navigate(`/recipes/${recipe.id}/share`)}>
+            <Send size={18} /> Send to someone
+          </button>
+          {(d.recipeHistory[recipe.id]?.length ?? 0) > 0 && (
+            <button className="btn btn-secondary w-full justify-start" onClick={() => navigate(`/recipes/${recipe.id}/history`)}>
+              <History size={18} /> Edit history ({d.recipeHistory[recipe.id].length})
+            </button>
+          )}
           <button
             className="btn btn-secondary w-full justify-start"
             onClick={async () => {

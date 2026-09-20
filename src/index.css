@@ -8,6 +8,67 @@
   --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
 }
 
+/*
+ * Dark mode, feature 9. Rather than sprinkling `dark:` variants across two dozen screens, we
+ * redefine the handful of theme tokens every screen already uses: white becomes near-black, the
+ * stone scale is inverted, and the brand green is lightened so it still reads on a dark card.
+ * `data-theme` is set on <html> from settings; 'system' leaves it unset and the media query
+ * below takes over.
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-white: #1c1c1a;
+    --color-ground: #121211;
+    --color-brand: #4ade80;
+    --color-brand-dark: #22c55e;
+    --color-brand-soft: #14532d;
+    --color-stone-50: #1c1c1a;
+    --color-stone-100: #262624;
+    --color-stone-200: #33332f;
+    --color-stone-300: #4a4a45;
+    --color-stone-400: #8a8a82;
+    --color-stone-500: #a8a8a0;
+    --color-stone-600: #c4c4bc;
+    --color-stone-700: #d6d6ce;
+    --color-stone-800: #e7e7e0;
+    --color-stone-900: #f5f5f0;
+    --color-red-50: #3b1d1d;
+    --color-red-100: #4c2424;
+    --color-amber-50: #3a2c12;
+    --color-amber-100: #4a3917;
+    --color-green-50: #10301d;
+    --color-green-100: #15402a;
+    --color-body-text: #ece9e2;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --color-white: #1c1c1a;
+  --color-ground: #121211;
+  --color-brand: #4ade80;
+  --color-brand-dark: #22c55e;
+  --color-brand-soft: #14532d;
+  --color-stone-50: #1c1c1a;
+  --color-stone-100: #262624;
+  --color-stone-200: #33332f;
+  --color-stone-300: #4a4a45;
+  --color-stone-400: #8a8a82;
+  --color-stone-500: #a8a8a0;
+  --color-stone-600: #c4c4bc;
+  --color-stone-700: #d6d6ce;
+  --color-stone-800: #e7e7e0;
+  --color-stone-900: #f5f5f0;
+  --color-red-50: #3b1d1d;
+  --color-red-100: #4c2424;
+  --color-amber-50: #3a2c12;
+  --color-amber-100: #4a3917;
+  --color-green-50: #10301d;
+  --color-green-100: #15402a;
+  --color-body-text: #ece9e2;
+  color-scheme: dark;
+}
+
 html,
 body,
 #root {
@@ -16,7 +77,7 @@ body,
 
 body {
   background: var(--color-ground);
-  color: #1c1917;
+  color: var(--color-body-text, #1c1917);
   -webkit-tap-highlight-color: transparent;
   -webkit-font-smoothing: antialiased;
   overscroll-behavior-y: none;

@@ -11,6 +11,7 @@ import { LOCATIONS, type Location, type LooseLevel } from '../../domain/types';
 import { formatQty } from '../../domain/units';
 import { moveLot, openPackage, ranOut, setAmount, setLooseLevel, tossLot, updateIngredient, updateLot, useSome } from '../../services/pantry';
 import { AmountInput, EmptyState, PageHeader, Segmented, Sheet } from '../components';
+import { saveIngredientNote } from '../../services/notes';
 import { useAppData } from '../data';
 import { useToast } from '../toast';
 import { AddStockSheet, expiryLabel } from './Pantry';
@@ -143,6 +144,53 @@ export function PantryItem() {
             </ul>
           </section>
         )}
+
+        <section>
+          <h2 className="section-title pt-0">Your notes on this</h2>
+          <div className="card space-y-3 p-4">
+            <p className="text-xs text-stone-500">
+              Private to you, and shown on the shopping list when you're standing in the aisle trying to remember which one
+              was the good one.
+            </p>
+            {([
+              ['brand', 'Brand you buy', 'e.g. Kikkoman'],
+              ['where', 'Where it is in your store', 'e.g. international aisle, bottom shelf'],
+              ['note', 'Anything else', "e.g. don't buy the low-sodium"],
+            ] as const).map(([key, label, ph]) => (
+              <label key={key} className="block">
+                <span className="label">{label}</span>
+                <input
+                  className="input"
+                  placeholder={ph}
+                  defaultValue={d.ingredientNotes[id]?.[key] ?? ''}
+                  onBlur={(e) => void saveIngredientNote(id, { ...d.ingredientNotes[id], [key]: e.target.value })}
+                />
+              </label>
+            ))}
+            <div className="flex gap-3">
+              <label className="flex-1">
+                <span className="label">Lasts once opened (days)</span>
+                <input
+                  className="input"
+                  inputMode="numeric"
+                  defaultValue={d.ingredientNotes[id]?.openedDays ?? ''}
+                  onBlur={(e) =>
+                    void saveIngredientNote(id, { ...d.ingredientNotes[id], openedDays: Number(e.target.value) || undefined })
+                  }
+                />
+              </label>
+              <label className="flex flex-1 items-end gap-2 pb-2 text-sm">
+                <input
+                  type="checkbox"
+                  className="h-5 w-5 accent-red-600"
+                  checked={!!d.ingredientNotes[id]?.avoid}
+                  onChange={(e) => void saveIngredientNote(id, { ...d.ingredientNotes[id], avoid: e.target.checked })}
+                />
+                Don't buy this again
+              </label>
+            </div>
+          </div>
+        </section>
 
         <section>
           <h2 className="section-title pt-0">Settings</h2>
