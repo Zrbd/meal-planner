@@ -119,6 +119,7 @@ import { WORLD_11 } from './world11';
 import { AMERICAS_12 } from './americas12';
 import { WORLD_12 } from './world12';
 import { AMERICAS_13 } from './americas13';
+import { WORLD_13 } from './world13';
 
 /** Built-in recipes, each adapted from (and crediting) a human recipe developer. No beef by user preference. */
 export const RECIPES: Recipe[] = [
@@ -129,6 +130,7 @@ export const RECIPES: Recipe[] = [
   ...AMERICAS_12,
   ...WORLD_12,
   ...AMERICAS_13,
+  ...WORLD_13,
 ];
 
 export { SEED_VERSION } from '../seedVersion';
