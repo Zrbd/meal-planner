@@ -259,6 +259,7 @@ const CATALOG: Ingredient[] = [
   can('tuna', 'Tuna', 142, { aliases: ['canned tuna'] }),
   I('bulgur', 'Bulgur wheat', 'pasta-grains', 'g', { aliases: ['bulghur', 'cracked wheat', 'fine bulgur'], density: 0.75, packages: [{ label: '1 lb bag', qty: lb(1) }], shelfLife: { pantry: 540 } }),
   I('dry-pinto-beans', 'Pinto beans (dry)', 'pasta-grains', 'g', { aliases: ['dried pinto beans'], density: 0.8, packages: [{ label: '1 lb bag', qty: lb(1) }], shelfLife: { pantry: 540 } }),
+  I('dry-black-beans', 'Black beans (dry)', 'pasta-grains', 'g', { aliases: ['dried black beans', 'feijao preto', 'turtle beans'], density: 0.8, packages: [{ label: '1 lb bag', qty: lb(1) }], shelfLife: { pantry: 540 } }),
   I('dry-chickpeas', 'Chickpeas (dry)', 'pasta-grains', 'g', { aliases: ['dried chickpeas', 'dried garbanzo beans', 'dry garbanzos'], density: 0.8, packages: [{ label: '1 lb bag', qty: lb(1) }], shelfLife: { pantry: 540 } }),
   I('black-lentils', 'Black lentils (urad dal)', 'pasta-grains', 'g', { aliases: ['urad dal', 'whole black lentils', 'sabut urad', 'black gram'], density: 0.85, packages: [{ label: '2 lb bag', qty: lb(2) }], shelfLife: { pantry: 540 } }),
   I('dry-kidney-beans', 'Red kidney beans (dry)', 'pasta-grains', 'g', { aliases: ['dried kidney beans', 'dried red beans', 'dry red beans'], density: 0.8, packages: [{ label: '1 lb bag', qty: lb(1) }], shelfLife: { pantry: 540 } }),
@@ -407,6 +408,7 @@ const CATALOG: Ingredient[] = [
   // ---------- Oils, vinegars & condiments ----------
   looseLiquid('olive-oil', 'Olive oil', 'oils-condiments', 0.91, '500 ml bottle', 500, { aliases: ['extra virgin olive oil', 'extra-virgin olive oil', 'evoo'], keepStocked: true }),
   looseLiquid('coconut-oil', 'Coconut oil', 'oils-condiments', 0.92, '14 oz jar', 414, { aliases: ['virgin coconut oil'] }),
+  looseLiquid('cachaca', 'Cachaca', 'beverages', 0.94, '750 ml bottle', 750, { aliases: ['cachaça', 'brazilian rum', 'pinga'] }),
   looseLiquid('palm-oil', 'Red palm oil', 'oils-condiments', 0.9, '16 oz jar', 473, { aliases: ['palm oil', 'red oil', 'zomi'] }),
   looseLiquid('vegetable-oil', 'Vegetable oil', 'oils-condiments', 0.92, '48 oz bottle', floz(48), { aliases: ['canola oil', 'neutral oil', 'cooking oil', 'avocado oil'], keepStocked: true }),
   looseLiquid('sesame-oil', 'Toasted sesame oil', 'international', 0.92, '5 oz bottle', floz(5), { aliases: ['sesame oil'] }),
