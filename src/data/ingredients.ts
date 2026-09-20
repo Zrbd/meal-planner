@@ -413,6 +413,7 @@ const CATALOG: Ingredient[] = [
   I('cocoa-powder', 'Cocoa powder', 'baking', 'g', { aliases: ['unsweetened cocoa powder'], density: 0.36, trackMode: 'loose', packages: [{ label: '8 oz can', qty: oz(8) }] }),
   I('chocolate-chips', 'Chocolate chips', 'baking', 'g', { aliases: ['semi-sweet chocolate chips', 'dark chocolate chips'], density: 0.72, packages: [{ label: '12 oz bag', qty: oz(12) }] }),
   I('dark-chocolate', 'Dark chocolate', 'baking', 'g', { aliases: ['bittersweet chocolate', '70% dark chocolate', 'dark chocolate bar', 'semi-sweet chocolate'], packages: [{ label: '3.5 oz bar', qty: 100 }], shelfLife: { pantry: 365 } }),
+  I('rye-flour', 'Rye flour', 'baking', 'g', { aliases: ['dark rye flour', 'whole rye flour', 'rugmel'], density: 0.45, trackMode: 'loose', packages: [{ label: '5 lb bag', qty: lb(5) }], shelfLife: { pantry: 180 } }),
   I('whole-wheat-flour', 'Whole wheat flour', 'baking', 'g', { aliases: ['white whole wheat flour', 'whole wheat pastry flour'], density: 0.51, trackMode: 'loose', packages: [{ label: '5 lb bag', qty: lb(5) }], shelfLife: { pantry: 180 } }),
   looseLiquid('water', 'Water', 'other', 1, 'tap', 1000, { aliases: ['cold water', 'warm water', 'hot water', 'boiling water'], alwaysOnHand: true, shelfLife: { pantry: 9999 } }),
   I('apricot-jam', 'Apricot jam', 'oils-condiments', 'g', { aliases: ['apricot preserves', 'apricot jelly'], density: 1.33, trackMode: 'loose', packages: [{ label: '12 oz jar', qty: oz(12) }], defaultLocation: 'pantry', shelfLife: { pantry: 540, fridge: 180 } }),
