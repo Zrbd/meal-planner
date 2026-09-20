@@ -118,6 +118,7 @@ const CATALOG: Ingredient[] = [
   I('celery-root', 'Celery root', 'produce', 'g', { aliases: ['celeriac', 'knob celery'], gramsPerEach: 700, density: 0.6, shelfLife: { fridge: 21 } }),
   I('eggplant', 'Eggplant', 'produce', 'ea', { aliases: ['aubergine'], gramsPerEach: 450, density: 0.35, shelfLife: { fridge: 7 } }),
   I('mango', 'Mango', 'produce', 'ea', { aliases: ['mangoes'], gramsPerEach: 200, defaultLocation: 'pantry', shelfLife: { pantry: 5, fridge: 7 } }),
+  I('plums', 'Plums', 'produce', 'ea', { aliases: ['plum', 'italian prune plums', 'damson plums', 'szilva'], gramsPerEach: 60, density: 0.6, shelfLife: { pantry: 4, fridge: 14 } }),
   I('peaches', 'Peaches', 'produce', 'g', { aliases: ['peach', 'fresh peaches', 'nectarines'], gramsPerEach: 150, density: 0.6, packages: [{ label: '2 lb', qty: lb(2) }], defaultLocation: 'pantry', shelfLife: { pantry: 4, fridge: 7 } }),
   I('arugula', 'Arugula', 'produce', 'g', { aliases: ['rocket', 'mixed greens', 'spring mix', 'salad greens'], density: 0.08, packages: [{ label: '5 oz clamshell', qty: oz(5) }], shelfLife: { fridge: 5 } }),
   I('winter-melon', 'Winter melon', 'produce', 'g', { aliases: ['bi dao', 'wax gourd', 'ash gourd', 'dong gua'], density: 0.6, packages: [{ label: '2 lb wedge', qty: lb(2) }], shelfLife: { fridge: 14 } }),
