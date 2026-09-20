@@ -322,6 +322,8 @@ const CATALOG: Ingredient[] = [
   I('pepitas', 'Pepitas / seeds', 'snacks', 'g', { aliases: ['pumpkin seeds', 'sunflower seeds', 'hemp seeds'], density: 0.55, packages: [{ label: '8 oz bag', qty: oz(8) }], shelfLife: { pantry: 180 } }),
 
   I('curry-roux', 'Japanese curry roux', 'international', 'g', { aliases: ['japanese curry roux', 'curry block', 'golden curry'], density: 1, packages: [{ label: '7.8 oz box', qty: oz(7.8) }], shelfLife: { pantry: 540 } }),
+  I('aji-panca', 'Aji panca paste', 'international', 'g', { aliases: ['aji panca', 'red chili paste', 'peruvian red pepper paste'], density: 1.05, trackMode: 'loose', packages: [{ label: '7.5 oz jar', qty: oz(7.5) }], defaultLocation: 'fridge', shelfLife: { fridge: 90 } }),
+  I('purple-corn', 'Dried purple corn', 'international', 'g', { aliases: ['maiz morado', 'purple corn', 'chicha morada corn'], density: 0.75, packages: [{ label: '15 oz bag', qty: oz(15) }], shelfLife: { pantry: 540 } }),
   I('aji-amarillo-paste', 'Aji amarillo paste', 'international', 'g', { aliases: ['aji amarillo', 'yellow chili paste', 'peruvian yellow pepper paste'], density: 1.05, trackMode: 'loose', packages: [{ label: '7.5 oz jar', qty: oz(7.5) }], defaultLocation: 'fridge', shelfLife: { fridge: 90 } }),
   looseLiquid('harissa', 'Harissa paste', 'international', 1.1, '10 oz jar', 285, { aliases: ['harissa', 'harissa paste', 'north african chili paste'] }),
   I('dried-chiles', 'Dried chiles', 'international', 'ea', { aliases: ['guajillo chiles', 'pasilla chiles', 'ancho chiles', 'dried chili pods'], gramsPerEach: 8, packages: [{ label: '2 oz bag', qty: oz(2) }], shelfLife: { pantry: 540 } }),
