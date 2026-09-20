@@ -393,6 +393,7 @@ const CATALOG: Ingredient[] = [
   I('baking-powder', 'Baking powder', 'baking', 'g', { density: 0.9, trackMode: 'loose', packages: [{ label: '8 oz can', qty: oz(8) }] }),
   I('baking-soda', 'Baking soda', 'baking', 'g', { density: 1.1, trackMode: 'loose', packages: [{ label: '1 lb box', qty: lb(1) }] }),
   I('cornstarch', 'Cornstarch', 'baking', 'g', { aliases: ['corn starch', 'corn starch'], density: 0.54, trackMode: 'loose', packages: [{ label: '16 oz box', qty: lb(1) }] }),
+  looseLiquid('pandan-extract', 'Pandan extract', 'international', 0.95, '1 oz bottle', 30, { aliases: ['pandan paste', 'pandan essence'] }),
   looseLiquid('vanilla-extract', 'Vanilla extract', 'baking', 0.88, '2 oz bottle', floz(2), { aliases: ['vanilla', 'pure vanilla extract'] }),
   I('lemon-lime-soda', 'Lemon-lime soda', 'beverages', 'ml', { aliases: ['7up', 'sprite', 'lemon lime soda'], density: 1.04, packages: [{ label: '2 liter', qty: 2000 }, { label: '12 oz can', qty: floz(12) }], shelfLife: { pantry: 270 } }),
   I('panko', 'Panko breadcrumbs', 'baking', 'g', { aliases: ['panko', 'breadcrumbs', 'bread crumbs'], density: 0.25, packages: [{ label: '8 oz box', qty: oz(8) }], shelfLife: { pantry: 180 } }),

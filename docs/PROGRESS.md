@@ -207,6 +207,12 @@ Covered by `tests/features.test.ts` (41 cases).
 - No UI tests yet (only domain/services). Consider Playwright smoke tests.
 - Hosting: any static host works (`base: './'` + HashRouter). Must be HTTPS for install/offline on iPhone.
 
+- Added 400 more world recipes across batches (`world24.ts`–`world39.ts`), no fish/lamb/beef: Portuguese (Maria Lawton),
+  Cuban (Jamie Silva), Hungarian (Zsuzsa Barta), Colombian (Erica Dinho), Dominican (Clara Gonzalez) and
+  Malaysian (Bee Yinn Low), among others. Traditionally beef or lamb dishes (gulyás, ropa vieja, picadillo, rendang,
+  sancocho) are recast with pork or chicken and the substitution is disclosed in `notes`. Catalog grew by
+  `plums` and `pandan-extract` only. 1,679 built-in recipes total; 1,927 tests passing.
+
 ## Next steps
 1. Deploy (GitHub Pages / Netlify / Cloudflare Pages) and install on iPhone via Safari → Share → Add to Home Screen.
 2. Items under "Known gaps".
