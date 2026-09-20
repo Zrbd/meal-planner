@@ -58,6 +58,7 @@ const CATALOG: Ingredient[] = [
   I('carrot', 'Carrots', 'produce', 'ea', { aliases: ['carrot'], gramsPerEach: 70, density: 0.54, packages: [{ label: '1 lb bag', qty: 6 }], shelfLife: { fridge: 28 } }),
   I('celery', 'Celery', 'produce', 'ea', { aliases: ['celery stalks', 'celery ribs'], gramsPerEach: 40, density: 0.43, unitAliases: { stalk: 1, rib: 1 }, displayUnit: 'stalk', packages: [{ label: 'bunch', qty: 9 }], shelfLife: { fridge: 21 } }),
   I('bell-pepper', 'Bell pepper', 'produce', 'ea', { aliases: ['red bell pepper', 'green bell pepper', 'yellow bell pepper', 'orange bell pepper', 'bell peppers'], gramsPerEach: 160, density: 0.63, shelfLife: { fridge: 10 } }),
+  I('shishito-peppers', 'Shishito peppers', 'produce', 'g', { aliases: ['padron peppers', 'pimientos de padron', 'shishito'], density: 0.35, packages: [{ label: '6 oz bag', qty: oz(6) }], shelfLife: { fridge: 7 } }),
   I('jalapeno', 'Jalapeño', 'produce', 'ea', { aliases: ['jalapeno pepper', 'jalapeño pepper'], gramsPerEach: 20, density: 0.6, shelfLife: { fridge: 10 } }),
   I('broccoli', 'Broccoli', 'produce', 'g', { aliases: ['broccoli florets', 'broccoli crowns'], density: 0.38, unitAliases: { crown: 340, head: 450 }, packages: [{ label: 'crown (~12 oz)', qty: 340 }], shelfLife: { fridge: 7 } }),
   I('asparagus', 'Asparagus', 'produce', 'g', { density: 0.57, unitAliases: { bunch: 450 }, packages: [{ label: 'bunch (~1 lb)', qty: 450 }], shelfLife: { fridge: 5 } }),
@@ -250,6 +251,7 @@ const CATALOG: Ingredient[] = [
 
   // ---------- Canned & jarred ----------
   can('black-beans', 'Black beans', 425, { aliases: ['canned black beans'] }),
+  can('butter-beans', 'Butter beans', 425, { aliases: ['lima beans', 'canned butter beans', 'garrofon'] }),
   can('chickpeas', 'Chickpeas', 425, { aliases: ['garbanzo beans', 'canned chickpeas'] }),
   can('kidney-beans', 'Kidney beans', 425, { aliases: ['red kidney beans'] }),
   can('evaporated-milk', 'Evaporated milk', 354, { aliases: ['canned evaporated milk'] }),
@@ -298,6 +300,7 @@ const CATALOG: Ingredient[] = [
   I('tortilla-chips', 'Tortilla chips', 'snacks', 'g', { aliases: ['corn chips'], density: 0.25, packages: [{ label: '11 oz bag', qty: oz(11) }], shelfLife: { pantry: 90 } }),
   I('dates', 'Medjool dates', 'snacks', 'g', { aliases: ['pitted dates', 'dried dates', 'date'], gramsPerEach: 24, density: 0.65, packages: [{ label: '8 oz tub', qty: oz(8) }], shelfLife: { pantry: 180, fridge: 365 } }),
   I('meringue-cookies', 'Meringue cookies', 'snacks', 'g', { aliases: ['meringues', 'meringue nests'], density: 0.2, packages: [{ label: '4 oz box', qty: oz(4) }], shelfLife: { pantry: 120 } }),
+  I('almond-flour', 'Almond flour', 'baking', 'g', { aliases: ['ground almonds', 'almond meal', 'harina de almendra'], density: 0.42, packages: [{ label: '16 oz bag', qty: oz(16) }], shelfLife: { pantry: 180, fridge: 365 } }),
   I('almonds', 'Almonds', 'snacks', 'g', { aliases: ['sliced almonds', 'slivered almonds', 'cashews', 'walnuts', 'nuts'], density: 0.45, packages: [{ label: '6 oz bag', qty: oz(6) }], shelfLife: { pantry: 180 } }),
   I('pecans', 'Pecans', 'snacks', 'g', { aliases: ['pecan halves', 'chopped pecans', 'pecan'], density: 0.45, packages: [{ label: '8 oz bag', qty: oz(8) }], shelfLife: { pantry: 120, fridge: 270 } }),
   I('walnuts', 'Walnuts', 'snacks', 'g', { aliases: ['walnut halves', 'chopped walnuts'], density: 0.5, packages: [{ label: '8 oz bag', qty: oz(8) }], shelfLife: { pantry: 180 } }),
