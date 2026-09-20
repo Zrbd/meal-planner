@@ -93,6 +93,8 @@ const CATALOG: Ingredient[] = [
   I('blueberries', 'Blueberries', 'produce', 'g', { aliases: ['blueberry'], density: 0.62, packages: [{ label: '6 oz container', qty: oz(6) }], shelfLife: { fridge: 7 } }),
   I('poblano', 'Poblano pepper', 'produce', 'ea', { aliases: ['poblano peppers', 'poblano'], gramsPerEach: 120, shelfLife: { fridge: 10 } }),
   I('cabbage', 'Green cabbage', 'produce', 'g', { aliases: ['cabbage', 'coleslaw mix', 'shredded cabbage', 'red cabbage', 'napa cabbage'], density: 0.3, unitAliases: { head: 900 }, packages: [{ label: 'small head (~2 lb)', qty: lb(2) }, { label: '14 oz coleslaw mix', qty: oz(14) }], shelfLife: { fridge: 21 } }),
+  I('chayote', 'Chayote', 'produce', 'ea', { aliases: ['cho cho', 'chayote squash', 'mirliton', 'christophene'], gramsPerEach: 200, density: 0.6, shelfLife: { fridge: 21 } }),
+  I('hibiscus', 'Dried hibiscus', 'international', 'g', { aliases: ['sorrel', 'flor de jamaica', 'dried sorrel', 'roselle'], density: 0.2, packages: [{ label: '8 oz bag', qty: oz(8) }], shelfLife: { pantry: 540 } }),
   I('kale', 'Kale', 'produce', 'g', { aliases: ['lacinato kale', 'curly kale', 'tuscan kale'], density: 0.09, unitAliases: { bunch: 250 }, packages: [{ label: 'bunch', qty: 250 }], shelfLife: { fridge: 7 } }),
   I('collard-greens', 'Collard greens', 'produce', 'g', { aliases: ['collards', 'collard'], density: 0.09, unitAliases: { bunch: 350 }, packages: [{ label: 'bunch', qty: 350 }], shelfLife: { fridge: 7 } }),
   I('habanero', 'Habanero pepper', 'produce', 'ea', { aliases: ['scotch bonnet', 'habanero chile', 'scotch bonnet pepper'], gramsPerEach: 9, density: 0.6, shelfLife: { fridge: 14 } }),
