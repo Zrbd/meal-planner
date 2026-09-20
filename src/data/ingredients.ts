@@ -309,6 +309,7 @@ const CATALOG: Ingredient[] = [
   I('cashews', 'Cashews', 'snacks', 'g', { aliases: ['raw cashews', 'cashew nuts'], density: 0.55, packages: [{ label: '8 oz bag', qty: oz(8) }], shelfLife: { pantry: 180 } }),
   I('shrimp-paste', 'Shrimp paste', 'international', 'g', { aliases: ['belacan', 'kapi', 'bagoong'], density: 1.2, trackMode: 'loose', packages: [{ label: '4 oz jar', qty: oz(4) }], defaultLocation: 'fridge', shelfLife: { fridge: 540 } }),
   spice('asafoetida', 'Asafoetida', 0.5, ['hing']),
+  I('grape-leaves', 'Grape leaves (jarred)', 'international', 'ea', { aliases: ['vine leaves', 'stuffed grape leaves'], gramsPerEach: 4, unitAliases: { leaf: 1 }, displayUnit: 'leaf', packages: [{ label: '16 oz jar', qty: 60 }], shelfLife: { pantry: 730 } }),
   I('tamarind-paste', 'Tamarind paste', 'international', 'g', { aliases: ['tamarind concentrate', 'tamarind pulp'], density: 1.2, trackMode: 'loose', packages: [{ label: '8 oz jar', qty: oz(8) }], shelfLife: { fridge: 365 } }),
   I('sofrito', 'Sofrito', 'international', 'g', { aliases: ['recaito', 'puerto rican sofrito'], density: 1, trackMode: 'loose', packages: [{ label: '12 oz jar', qty: oz(12) }], defaultLocation: 'fridge', shelfLife: { fridge: 14, freezer: 180 } }),
   I('tomato-paste', 'Tomato paste', 'canned', 'g', { density: 1.1, unitAliases: { can: 170 }, packages: [{ label: '6 oz can', qty: 170 }], shelfLife: { pantry: 730 } }),
